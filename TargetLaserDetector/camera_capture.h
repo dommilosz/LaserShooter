@@ -48,7 +48,7 @@ RGB888Resp GetRGB888() {
   return resp;
 }
 
-bool fmtoJPEG(camera_fb_t *fb, jpg_buffer *buf) {
+bool FmtoJPEG(camera_fb_t *fb, jpg_buffer *buf) {
   if (fb->format != PIXFORMAT_JPEG) {
     bool jpeg_converted = frame2jpg(fb, 80, &buf->buf, &buf->len);
     if (!jpeg_converted) {

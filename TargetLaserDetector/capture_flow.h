@@ -25,7 +25,7 @@ int GetFrame(jpg_buffer *buf, RGB888Resp *resp) {
     Cleanup(buf, resp);
     return ESP_FAIL;
   }
-  bool converted = fmtoJPEG(resp->fb, buf);
+  bool converted = FmtoJPEG(resp->fb, buf);
   if (!converted) {
     Cleanup(buf, resp);
     return ESP_FAIL;

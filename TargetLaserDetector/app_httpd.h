@@ -115,6 +115,40 @@ static int rgb_printf(dl_matrix3du_t *image_matrix, uint32_t color, const char *
   return len;
 }
 
+static esp_err_t SendSingleFrame(jpg_buffer *jpg_buf, RGB888Resp *resp, httpd_req_t *req, int64_t *last_frame) {
+  char *part_buf[64];
+  esp_err_t res = ESP_OK;
+  int64_t fr_start = esp_timer_get_time();
+  res = GetFrame(jpg_buf, resp);
+
+  if (res == ESP_OK) {
+    res = httpd_resp_send_chunk(req, _STREAM_BOUNDARY, strlen(_STREAM_BOUNDARY));
+  }
+  if (res == ESP_OK) {
+    size_t hlen = snprintf((char *)part_buf, 64, _STREAM_PART, jpg_buf->len);
+    res = httpd_resp_send_chunk(req, (const char *)part_buf, hlen);
+  }
+  if (res == ESP_OK) {
+    res = httpd_resp_send_chunk(req, (const char *)jpg_buf->buf, jpg_buf->len);
+  }
+
+  Cleanup(jpg_buf, resp);
+  if (res != ESP_OK) {
+    return res;
+  }
+  int64_t fr_end = esp_timer_get_time();
+  int64_t frame_time = fr_end - *last_frame;
+
+  *last_frame = fr_end;
+  frame_time /= 1000;
+  uint32_t avg_frame_time = ra_filter_run(&ra_filter, frame_time);
+  Serial.printf("MJPG: %uB %ums (%.1ffps), AVG: %ums (%.1ffps)\n",
+                (uint32_t)(jpg_buf->len),
+                (uint32_t)frame_time, 1000.0 / (uint32_t)frame_time,
+                avg_frame_time, 1000.0 / avg_frame_time);
+  return res;
+}
+
 static size_t jpg_encode_stream(void *arg, size_t index, const void *data, size_t len) {
   jpg_chunking_t *j = (jpg_chunking_t *)arg;
   if (!index) {
@@ -132,10 +166,12 @@ static esp_err_t capture_handler(httpd_req_t *req) {
   esp_err_t res = ESP_OK;
   int64_t fr_start = esp_timer_get_time();
 
-  jpg_buffer jpg_buf;
-  jpg_buf.buf = NULL;
-  RGB888Resp resp;
-  res = GetFrame(&jpg_buf, &resp);
+  fb = esp_camera_fb_get();
+  if (!fb) {
+    Serial.println("Camera capture failed");
+    httpd_resp_send_500(req);
+    return ESP_FAIL;
+  }
 
   httpd_resp_set_type(req, "image/jpeg");
   httpd_resp_set_hdr(req, "Content-Disposition", "inline; filename=capture.jpg");
@@ -143,21 +179,22 @@ static esp_err_t capture_handler(httpd_req_t *req) {
 
   size_t out_len, out_width, out_height;
   uint8_t *out_buf;
-  out_buf = resp.image_matrix->item;
-  out_len = resp.fb->width * fb->height * 3;
-  out_width = resp.fb->width;
-  out_height = resp.fb->height;
-
-  jpg_chunking_t jchunk = { req, 0 };
-  bool s = fmt2jpg_cb(out_buf, out_len, out_width, out_height, PIXFORMAT_RGB888, 90, jpg_encode_stream, &jchunk);
-  dl_matrix3du_free(resp.image_matrix);
-  if (!s) {
-    Serial.println("JPEG compression failed");
-    return ESP_FAIL;
+  bool s;
+  bool detected = false;
+  int face_id = 0;
+  size_t fb_len = 0;
+  if (fb->format == PIXFORMAT_JPEG) {
+    fb_len = fb->len;
+    res = httpd_resp_send(req, (const char *)fb->buf, fb->len);
+  } else {
+    jpg_chunking_t jchunk = { req, 0 };
+    res = frame2jpg_cb(fb, 80, jpg_encode_stream, &jchunk) ? ESP_OK : ESP_FAIL;
+    httpd_resp_send_chunk(req, NULL, 0);
+    fb_len = jchunk.len;
   }
-
+  esp_camera_fb_return(fb);
   int64_t fr_end = esp_timer_get_time();
-  Serial.printf("FACE: %uB %ums\n", (uint32_t)(jchunk.len), (uint32_t)((fr_end - fr_start) / 1000));
+  Serial.printf("JPG: %uB %ums\n", (uint32_t)(fb_len), (uint32_t)((fr_end - fr_start) / 1000));
   return res;
 }
 
@@ -166,10 +203,8 @@ static esp_err_t stream_handler(httpd_req_t *req) {
   jpg_buffer jpg_buf;
   RGB888Resp resp;
   jpg_buf.buf = NULL;
-  char *part_buf[64];
 
   static int64_t last_frame = 0;
-  int64_t fr_start = 0;
   if (!last_frame) {
     last_frame = esp_timer_get_time();
   }
@@ -182,34 +217,10 @@ static esp_err_t stream_handler(httpd_req_t *req) {
   httpd_resp_set_hdr(req, "Access-Control-Allow-Origin", "*");
 
   while (true) {
-    fr_start = esp_timer_get_time();
-    res = GetFrame(&jpg_buf, &resp);
-
-    if (res == ESP_OK) {
-      res = httpd_resp_send_chunk(req, _STREAM_BOUNDARY, strlen(_STREAM_BOUNDARY));
-    }
-    if (res == ESP_OK) {
-      size_t hlen = snprintf((char *)part_buf, 64, _STREAM_PART, jpg_buf.len);
-      res = httpd_resp_send_chunk(req, (const char *)part_buf, hlen);
-    }
-    if (res == ESP_OK) {
-      res = httpd_resp_send_chunk(req, (const char *)jpg_buf.buf, jpg_buf.len);
-    }
-
-    Cleanup(&jpg_buf, &resp);
+    res = SendSingleFrame(&jpg_buf, &resp, req, &last_frame);
     if (res != ESP_OK) {
       break;
     }
-    int64_t fr_end = esp_timer_get_time();
-    int64_t frame_time = fr_end - last_frame;
-
-    last_frame = fr_end;
-    frame_time /= 1000;
-    uint32_t avg_frame_time = ra_filter_run(&ra_filter, frame_time);
-    Serial.printf("MJPG: %uB %ums (%.1ffps), AVG: %ums (%.1ffps)\n",
-                  (uint32_t)(jpg_buf.len),
-                  (uint32_t)frame_time, 1000.0 / (uint32_t)frame_time,
-                  avg_frame_time, 1000.0 / avg_frame_time);
   }
 
   last_frame = 0;
@@ -277,7 +288,7 @@ static esp_err_t stream_point_handler(httpd_req_t *req) {
     uint32_t avg_frame_time = ra_filter_run(&ra_filter, frame_time);
     Serial.printf("POINT: %ums (%.1ffps), AVG: %ums (%.1ffps) x:%u, y:%u, r:%u, g:%u, b:%u\n",
                   (uint32_t)frame_time, 1000.0 / (uint32_t)frame_time,
-                  avg_frame_time, 1000.0 / avg_frame_time, p.x,p.y,p.R,p.G,p.B);
+                  avg_frame_time, 1000.0 / avg_frame_time, p.x, p.y, p.R, p.G, p.B);
   }
 
   last_frame = 0;
