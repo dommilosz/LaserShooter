@@ -86,8 +86,13 @@ void setup() {
   SetupUDPServer();
 }
 
+long nextKA = 5000;
 void loop() {
   // put your main code here, to run repeatedly:
   BroadcastPoint();
+  if (nextKA < millis()) {
+    SendKA();
+    nextKA = millis() + 5000;
+  }
   delay(5);
 }

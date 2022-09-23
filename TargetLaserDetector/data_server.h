@@ -9,15 +9,22 @@ struct IDPacket {
 };
 
 struct PointPacket {
+  int pktype = 0;
   IDPacket idPacket;
   int w, h;
   int score;
   Point p;
 };
 
+struct KeepAlivePacket {
+  int pktype = 1;
+  int n;
+};
+
 AsyncUDP udp;
 int lastIDpTime = 0;
 IDPacket lastIDp;
+int KAn = 0;
 
 void SetupUDPServer() {
   udp.connect(IPAddress(192, 168, 4, 255), 19700);
@@ -27,7 +34,7 @@ void SetupUDPServer() {
     udp.onPacket([](AsyncUDPPacket packet) {
       Serial.print("From: ");
       Serial.print(packet.remoteIP());
-      Serial.print("Length: ");
+      Serial.print(" Length: ");
       Serial.print(packet.length());
 
       uint8_t *data = packet.data();
@@ -46,7 +53,7 @@ void SetupUDPServer() {
 
 void BroadcastPoint() {
   if (lastIDp.clientId != 0) {
-    if((millis() - lastIDpTime) > 5000){
+    if ((millis() - lastIDpTime) > 5000) {
       lastIDp.clientId = 0;
     }
 
@@ -69,4 +76,11 @@ void BroadcastPoint() {
       lastIDp.clientId = 0;
     }
   }
+}
+
+void SendKA() {
+  KeepAlivePacket p;
+  p.n = KAn;
+  KAn++;
+  udp.broadcastTo((uint8_t *)&p, sizeof(KeepAlivePacket), 19700);
 }
