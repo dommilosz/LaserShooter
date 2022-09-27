@@ -12,11 +12,6 @@ void Cleanup(jpg_buffer *jpg_buf, RGB888Resp *resp) {
     free(jpg_buf->buf);
     jpg_buf->buf = NULL;
   }
-
-  if (resp->image_matrix) {
-    dl_matrix3du_free(resp->image_matrix);
-    resp->image_matrix = NULL;
-  }
 }
 
 int GetFrame(jpg_buffer *buf, RGB888Resp *resp) {
@@ -47,7 +42,7 @@ int GetPoint(Point *p) {
   RGB888Resp resp;
   jpg_buffer jpg_buf;
   int res = GetFrameNoConvert(&resp);
-  *p = DetectBrightPoint(resp.image_matrix);
+  *p = DetectBrightPoint(&resp.image_matrix);
   Cleanup(&jpg_buf, &resp);
   return res;
 }

@@ -10,11 +10,11 @@ struct Point {
 const int AVG_TRESHOLD = 150;
 const int MAX_ABOVE_AVG_POINTS = 50;
 
-bool checkPointValid(dl_matrix3du_t *image_matrix, int avg) {
-  int w = image_matrix->w;
-  int h = image_matrix->h;
+bool checkPointValid(fb_data_t *image_matrix, int avg) {
+  int w = image_matrix->width;
+  int h = image_matrix->height;
   int len = w * h * 3;
-  uint8_t *buf = image_matrix->item;
+  uint8_t *buf = image_matrix->data;
 
   int aboveAvgPoints = 0;
 
@@ -36,11 +36,11 @@ bool checkPointValid(dl_matrix3du_t *image_matrix, int avg) {
   return aboveAvgPoints <= MAX_ABOVE_AVG_POINTS;
 }
 
-Point DetectBrightPoint(dl_matrix3du_t *image_matrix) {
-  int w = image_matrix->w;
-  int h = image_matrix->h;
+Point DetectBrightPoint(fb_data_t *image_matrix) {
+  int w = image_matrix->width;
+  int h = image_matrix->height;
   int len = w * h * 3;
-  uint8_t *buf = image_matrix->item;
+  uint8_t *buf = image_matrix->data;
 
   int maxSum = -1;
   uint32_t maxSumIndex = -1;

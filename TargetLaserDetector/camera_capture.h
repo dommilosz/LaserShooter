@@ -1,13 +1,13 @@
 #pragma once
 
-struct jpg_buffer{
+struct jpg_buffer {
   size_t len = 0;
   uint8_t *buf = NULL;
 };
 
-struct RGB888Resp{
+struct RGB888Resp {
   camera_fb_t *fb;
-  dl_matrix3du_t *image_matrix;
+  fb_data_t image_matrix;
   bool valid;
 };
 
@@ -21,9 +21,11 @@ camera_fb_t *GetJPEG() {
   return fb;
 }
 
+uint8_t *out_buf = NULL;
+size_t out_buf_len =0;
+
 RGB888Resp GetRGB888() {
   camera_fb_t *fb = NULL;
-  dl_matrix3du_t *image_matrix = NULL;
   RGB888Resp resp;
   fb = esp_camera_fb_get();
   if (!fb) {
@@ -31,20 +33,35 @@ RGB888Resp GetRGB888() {
     resp.valid = false;
     return resp;
   }
-  image_matrix = dl_matrix3du_alloc(1, fb->width, fb->height, 3);
-  if (!image_matrix) {
-    Serial.println("dl_matrix3du_alloc failed");
+  size_t out_len = fb->width * fb->height * 3;
+  size_t out_width = fb->width;
+  size_t out_height = fb->height;
+  if (out_len != out_buf_len || !out_buf) {
+    if(out_buf){
+      free(out_buf);
+    }
+    out_buf = (uint8_t *)malloc(out_len);
+    out_buf_len = out_len;
+  }
+  if (!out_buf) {
+    Serial.println("malloc failed");
     resp.valid = false;
     return resp;
   }
-  if (!fmt2rgb888(fb->buf, fb->len, fb->format, image_matrix->item)) {
+  if (!fmt2rgb888(fb->buf, fb->len, fb->format, out_buf)) {
     Serial.println("fmt2rgb888 failed");
     resp.valid = false;
     return resp;
   }
   resp.valid = true;
   resp.fb = fb;
-  resp.image_matrix = image_matrix;
+  fb_data_t rfb;
+  rfb.width = out_width;
+  rfb.height = out_height;
+  rfb.data = out_buf;
+  rfb.bytes_per_pixel = 3;
+  rfb.format = FB_BGR888;
+  resp.image_matrix = rfb;
   return resp;
 }
 

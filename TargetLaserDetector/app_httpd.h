@@ -7,21 +7,7 @@
 #include "Arduino.h"
 
 #include "fb_gfx.h"
-#include "fd_forward.h"
-#include "fr_forward.h"
-
 #include "capture_flow.h"
-
-#define ENROLL_CONFIRM_TIMES 5
-
-#define FACE_COLOR_WHITE 0x00FFFFFF
-#define FACE_COLOR_BLACK 0x00000000
-#define FACE_COLOR_RED 0x000000FF
-#define FACE_COLOR_GREEN 0x0000FF00
-#define FACE_COLOR_BLUE 0x00FF0000
-#define FACE_COLOR_YELLOW (FACE_COLOR_RED | FACE_COLOR_GREEN)
-#define FACE_COLOR_CYAN (FACE_COLOR_BLUE | FACE_COLOR_GREEN)
-#define FACE_COLOR_PURPLE (FACE_COLOR_BLUE | FACE_COLOR_RED)
 
 typedef struct {
   size_t size;   //number of values used for filtering
@@ -78,41 +64,6 @@ static int ra_filter_run(ra_filter_t *filter, int value) {
     filter->count++;
   }
   return filter->sum / filter->count;
-}
-
-static void rgb_print(dl_matrix3du_t *image_matrix, uint32_t color, const char *str) {
-  fb_data_t fb;
-  fb.width = image_matrix->w;
-  fb.height = image_matrix->h;
-  fb.data = image_matrix->item;
-  fb.bytes_per_pixel = 3;
-  fb.format = FB_BGR888;
-  fb_gfx_print(&fb, (fb.width - (strlen(str) * 14)) / 2, 10, color, str);
-}
-
-static int rgb_printf(dl_matrix3du_t *image_matrix, uint32_t color, const char *format, ...) {
-  char loc_buf[64];
-  char *temp = loc_buf;
-  int len;
-  va_list arg;
-  va_list copy;
-  va_start(arg, format);
-  va_copy(copy, arg);
-  len = vsnprintf(loc_buf, sizeof(loc_buf), format, arg);
-  va_end(copy);
-  if (len >= sizeof(loc_buf)) {
-    temp = (char *)malloc(len + 1);
-    if (temp == NULL) {
-      return 0;
-    }
-  }
-  vsnprintf(temp, len + 1, format, arg);
-  va_end(arg);
-  rgb_print(image_matrix, color, temp);
-  if (len > 64) {
-    free(temp);
-  }
-  return len;
 }
 
 static esp_err_t SendSingleFrame(jpg_buffer *jpg_buf, RGB888Resp *resp, httpd_req_t *req, int64_t *last_frame) {
@@ -428,9 +379,6 @@ static esp_err_t index_handler(httpd_req_t *req) {
   httpd_resp_set_type(req, "text/html");
   httpd_resp_set_hdr(req, "Content-Encoding", "gzip");
   sensor_t *s = esp_camera_sensor_get();
-  if (s->id.PID == OV3660_PID) {
-    return httpd_resp_send(req, (const char *)index_ov3660_html_gz, index_ov3660_html_gz_len);
-  }
   return httpd_resp_send(req, (const char *)index_ov2640_html_gz, index_ov2640_html_gz_len);
 }
 

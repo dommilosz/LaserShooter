@@ -66,7 +66,7 @@ void setup() {
   }
 
   sensor_t* s = esp_camera_sensor_get();
-  s->set_framesize(s, (framesize_t)0);
+  s->set_framesize(s, (framesize_t)1);
   s->set_brightness(s, -2);
   s->set_saturation(s, 2);
   s->set_contrast(s, 2);
