@@ -53,17 +53,21 @@ void SetupUDPServer() {
 
 void BroadcastPoint() {
   if (lastIDp.clientId != 0) {
-    if ((millis() - lastIDpTime) > 5000) {
+    if ((millis() - lastIDpTime) > 500) {
       lastIDp.clientId = 0;
     }
 
     Point p;
-    int res = GetPoint(&p);
+    int w,h;
+    int res = GetPoint(&p,&w,&h);
 
     if (p.found) {
       PointPacket pp;
       pp.idPacket = lastIDp;
       pp.p = p;
+      pp.w = w;
+      pp.h = h;
+      pp.score = -1;
 
       udp.broadcastTo((uint8_t *)&pp, sizeof(PointPacket), 19700);
       delay(5);
@@ -74,6 +78,10 @@ void BroadcastPoint() {
       udp.broadcastTo((uint8_t *)&pp, sizeof(PointPacket), 19700);
       Serial.println("Point found");
       lastIDp.clientId = 0;
+
+      while(p.found){
+        int res = GetPoint(&p);
+      }
     }
   }
 }

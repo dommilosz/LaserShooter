@@ -3,12 +3,6 @@
 
 #include "app_httpd.h"
 
-//
-// WARNING!!! PSRAM IC required for UXGA resolution and high JPEG quality
-//            Ensure ESP32 Wrover Module or other board with PSRAM is selected
-//            Partial images will be transmitted if image exceeds buffer size
-//
-
 #define CAMERA_MODEL_AI_THINKER  // Has PSRAM
 
 #include "camera_pins.h"
@@ -68,9 +62,11 @@ void setup() {
   sensor_t* s = esp_camera_sensor_get();
   s->set_framesize(s, (framesize_t)1);
   s->set_brightness(s, -2);
-  s->set_saturation(s, 2);
+  s->set_saturation(s, -2);
   s->set_contrast(s, 2);
   s->set_lenc(s, 0);
+  s->set_gain_ctrl(s, 0);
+  s->set_agc_gain(s, 0);
 
   WiFi.softAP(ssid, password);
 

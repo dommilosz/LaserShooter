@@ -2,6 +2,9 @@
 #include <WiFi.h>
 #include "AsyncUDP.h"
 #include <Adafruit_NeoPixel.h>
+#include "DFRobotDFPlayerMini.h"
+
+DFRobotDFPlayerMini myDFPlayer;
 
 #define FIRE_BUTTON_PIN 27
 #define LASER_PIN 13
@@ -38,23 +41,39 @@ struct NullPacket {
   int pktype;
 };
 
-constexpr int GetUUID() {
-  return ((__TIME__[3] - '0') * 10 + (__TIME__[4] - '0')) * 3600 + ((__TIME__[3] - '0') * 10 + (__TIME__[4] - '0')) * 60 + ((__TIME__[6] - '0') * 10 + (__TIME__[7] - '0'));
-}
-
 AsyncUDP udp;
 long lastKA = 0;
 bool inFireMode = false;
+int SDFileCount;
+int clientID = 0;
+
+void PlayInfoSound(int i) {
+  myDFPlayer.volume(8);
+  myDFPlayer.playFolder(1, i);
+  delay(2000);
+  myDFPlayer.volume(30);
+}
 
 void ConnectToWiFi() {
   WiFi.begin("ESP32", "123456789");
+  delay(200);
+  if (WiFi.status() != WL_CONNECTED) {
+    WiFi.begin("ESP32", "123456789");
+  }
 
   for (int i = 0; WiFi.status() != WL_CONNECTED; i++) {
-    if (i > 20) {
+    if (i == 1) {
+      WiFi.begin("ESP32", "123456789");
+    }
+    if (i == 4) {
+      WiFi.begin("ESP32", "123456789");
+    }
+    if (i > 30) {
       digitalWrite(LASER_PIN, HIGH);
+      PlayInfoSound(3);
       esp_deep_sleep_start();
     }
-    delay(500);
+    delay(1000);
     Serial.print(".");
   }
 
@@ -62,17 +81,34 @@ void ConnectToWiFi() {
   Serial.println("WiFi connected");
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
+  PlayInfoSound(1);
 }
 
 void setup() {
-  // put your setup code here, to run once:
   Serial.begin(115200);
+  Serial1.begin(9600, SERIAL_8N1, 4, 12);
+
+  byte mac[6];
+  WiFi.macAddress(mac);
+
+  clientID = (mac[2] << 24) | (mac[3] << 16) | (mac[4] << 8) | mac[5];
+
   pinMode(FIRE_BUTTON_PIN, INPUT_PULLUP);
   pinMode(LASER_PIN, OUTPUT);
   digitalWrite(LASER_PIN, !LASER_ACTIVE_STATE);
   button.setCallback(buttonChanged);
-  randomSeed(GetUUID());
 
+  if (!myDFPlayer.begin(Serial1)) {
+    Serial.println(F("Unable to begin:"));
+    Serial.println(F("1.Please recheck the connection!"));
+    Serial.println(F("2.Please insert the SD card!"));
+    Serial.println(F("Audio may not work properly"));
+  } else {
+    SDFileCount = 2;
+    Serial.printf("Found %u files\n", SDFileCount);
+  }
+
+  delay(250);
   ConnectToWiFi();
 
   if (udp.listen(19700)) {
@@ -102,6 +138,7 @@ void loop() {
   button.update();
 
   if ((millis() - lastKA) > 15000 || WiFi.status() != WL_CONNECTED) {
+    PlayInfoSound(3);
     WiFi.disconnect();
     ConnectToWiFi();
   }
@@ -114,21 +151,33 @@ void buttonChanged(const int state) {
   }
 }
 
+void playRandomShot() {
+  if (SDFileCount <= 0) {
+    Serial.println("No shot files to play (should be in 02 directory)");
+    return;
+  }
+  int selected = random(1, SDFileCount + 1);
+  myDFPlayer.playFolder(2, selected);
+}
 
 void fire() {
   Serial.println("FIRE!");
   IDPacket p;
-  p.clientId = GetUUID();
-  p.shotId = random(60000) + 5000;
+  p.clientId = clientID;
+  p.shotId = esp_random();
   udp.writeTo((uint8_t *)&p, sizeof(IDPacket), WiFi.gatewayIP(), 19701);
   inFireMode = true;
+  playRandomShot();
   digitalWrite(LASER_PIN, LASER_ACTIVE_STATE);
+  delay(150);
+  digitalWrite(LASER_PIN, !LASER_ACTIVE_STATE);
   for (int i = 0; i < 6; i++) {
     if (!inFireMode) {
+      Serial.println("Got response!");
+      myDFPlayer.playFolder(3, 1);
       break;
     }
     delay(25);
   }
-  digitalWrite(LASER_PIN, !LASER_ACTIVE_STATE);
   Serial.println("AFTER FIRE!");
 }

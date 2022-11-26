@@ -1,0 +1,29 @@
+{
+  "name": "controllerserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.14",
+    "@types/node": "^18.11.9",
+    "@types/pngjs": "^6.0.1",
+    "@types/struct": "^0.0.3",
+    "configuredjs": "^1.0.6",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-wsutils": "^1.0.2",
+    "pngjs": "^6.0.0",
+    "struct": "^0.0.12"
+  }
+}

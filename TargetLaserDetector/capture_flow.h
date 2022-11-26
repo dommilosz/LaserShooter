@@ -46,3 +46,14 @@ int GetPoint(Point *p) {
   Cleanup(&jpg_buf, &resp);
   return res;
 }
+
+int GetPoint(Point *p, int *w, int *h) {
+  RGB888Resp resp;
+  jpg_buffer jpg_buf;
+  int res = GetFrameNoConvert(&resp);
+  *p = DetectBrightPoint(&resp.image_matrix);
+  *w = resp.fb->width;
+  *h = resp.fb->height;
+  Cleanup(&jpg_buf, &resp);
+  return res;
+}
