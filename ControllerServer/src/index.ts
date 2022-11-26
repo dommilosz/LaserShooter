@@ -66,7 +66,7 @@ app.get('/sessions', (req: Request, res: Response) => {
 })
 
 app.get('/session', (req: Request, res: Response) => {
-    sendJSON(res, {session: currentSession,shots:sessionData.shots.length}, 200);
+    sendJSON(res, {session: currentSession,shots:sessionData.shots.length,lastKA}, 200);
 })
 
 app.get('/new-session', (req: Request, res: Response) => {
@@ -82,6 +82,7 @@ app.listen(port, () => {
 const client = dgram.createSocket('udp4');
 let currentSession = +new Date();
 let sessionData: { shots: ShotData[], clients: { [key: number]: 1 } } = {shots: [], clients: {}}
+let lastKA = 0;
 
 if (!fs.existsSync("data")) {
     fs.mkdirSync("data");
@@ -115,6 +116,10 @@ client.on('message', async function (message, rinfo) {
             await fs.writeFileSync(`data/${currentSession}.json.gz`, buf, {encoding: "utf-8"});
             console.log(`x:${p.p.x} y:${p.p.y} id: ${p.idPacket.shotId} from: ${p.idPacket.clientId} score: ${data.score}`);
         }
+    }
+    // @ts-ignore
+    if(EmptyPacket.fields.pktype === 1){
+        lastKA = +new Date()
     }
 });
 
