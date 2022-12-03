@@ -92,10 +92,28 @@ app.get("/session", (req: Request, res: Response) => {
   );
 });
 
-app.get("/new-session", (req: Request, res: Response) => {
+app.put("/session", (req: Request, res: Response) => {
+  let body = req.body;
+  let session = req.body.session;
+
+  if(session){
+    if(fs.existsSync("data/" + session + ".json.gz")){
+      let buf = fs.readFileSync("data/" + session + ".json.gz");
+      let unzip = zlib.gunzipSync(buf);
+      sessionData = JSON.parse(unzip.toString());
+      currentSession = session;
+      sendJSON(res, { session: currentSession }, 200);
+      return;
+    }else{
+      sendText(res,"Couldn't load the session" , 500);
+      return;
+    }
+  }
+
   currentSession = +new Date();
   sessionData = { shots: [], clients: {} };
   sendJSON(res, { session: currentSession }, 200);
+
 });
 
 app.listen(port, () => {
@@ -109,10 +127,6 @@ let sessionData: { shots: ShotData[]; clients: { [key: number]: 1 } } = {
   clients: {},
 };
 let lastKA = 0;
-
-sessionData = JSON.parse(
-  fs.readFileSync("./data/1669498716090.json").toString()
-);
 
 if (!fs.existsSync("data")) {
   fs.mkdirSync("data");
