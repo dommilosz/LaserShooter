@@ -21,3 +21,5 @@ export type SessionData = {
   shots: ShotData[];
   clients: { [key: number]: 1 };
 };
+
+export type SessionInfo = { lastKA: number; session: number; shots: number }

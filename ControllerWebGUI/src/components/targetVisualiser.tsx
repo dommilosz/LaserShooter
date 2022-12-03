@@ -5,10 +5,12 @@ export default function TargetVisualuser({
   shot,
   scale,
   dotSize,
+    dotColor,
 }: {
   shot: ShotData;
   scale: number;
   dotSize: number;
+  dotColor:string;
 }) {
   const canvasRef: React.LegacyRef<HTMLCanvasElement> = useRef(null);
   const canvas = canvasRef.current;
@@ -32,6 +34,7 @@ export default function TargetVisualuser({
         ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
         ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
         ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
+        ctx.fillStyle = dotColor;
         ctx.fillRect(
           shot.p.x * scale - dotSize / 2,
           shot.p.y * scale - dotSize / 2,
