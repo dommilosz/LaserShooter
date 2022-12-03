@@ -1,15 +1,24 @@
-import React, {useEffect, useState} from 'react';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import "./App.css";
 import moment from "moment";
-import {ShotData} from "./types";
-import TargetVisualuser from "./targetVisualiser";
+import { SessionData, ShotData } from "./types";
+import TargetVisualuser from "./components/targetVisualiser";
+import Header from "./components/header";
+import RecentShots from "./components/recentShots";
 
 function App() {
-  let [sessionInfo,setSessionInfo] = useState({session:0,shots:0,lastKA:0});
-  let [sessionData,setSessionData] = useState<{ shots: ShotData[], clients: { [key: number]: 1 } }>( {shots: [], clients: {}})
+  let [sessionInfo, setSessionInfo] = useState({
+    session: 0,
+    shots: 0,
+    lastKA: 0,
+  });
+  let [sessionData, setSessionData] = useState<SessionData>({
+    shots: [],
+    clients: {},
+  });
   let [lastFetch, setLastFetch] = useState(0);
 
-  useEffect(( ) => {
+  useEffect(() => {
     const intervalCall = setInterval(async () => {
       let sessionInfo = await fetch("http://localhost:8008/session");
       setSessionInfo(await sessionInfo.json());
@@ -21,16 +30,33 @@ function App() {
     };
   }, []);
 
-  useEffect(()=>{
-    setTimeout(async ()=>{
+  useEffect(() => {
+    setTimeout(async () => {
       let sessionData = await fetch("http://localhost:8008/sessions/current");
       setSessionData(await sessionData.json());
-    })
-  },[sessionInfo.shots])
+    });
+    console.log(sessionData);
+  }, [sessionInfo.shots]);
 
   return (
     <div className="App">
-      <header className="App-header">
+      <Header />
+      <div style={{ display: "flex" }}>
+        <RecentShots sessionData={sessionData} />
+        <TargetVisualuser
+          shot={sessionData.shots[sessionData.shots.length - 1]}
+          scale={5}
+          dotSize={10}
+        ></TargetVisualuser>
+      </div>
+    </div>
+  );
+}
+
+export default App;
+
+{
+  /* <header className="App-header">
         <div>
           Session: {sessionInfo.session}, Shots: {sessionInfo.shots} Update: {moment(lastFetch).format("h:mm:ss")} LastKA: {moment(sessionInfo.lastKA).format("h:mm:ss")}
         </div>
@@ -40,17 +66,5 @@ function App() {
             {shot.idPacket.shotId}
           </p>
         }).reverse()}
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+      </header> */
 }
-
-export default App;
