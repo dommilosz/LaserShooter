@@ -1,0 +1,13 @@
+<html>
+	<body>
+	<div  style="width:160;height:120;position:absolute;">
+	<iframe src="http://192.168.4.1:81/stream" style="width:100%;height:100%;border:0;"></iframe>
+	<canvas style="width:100%;height:100%;border:0;position:absolute;left:0" id="cnv" width="160" height="120"></canvas>
+	</div>
+	<script>
+		ctx = document.querySelector("#cnv").getContext("2d");
+		ctx.fillStyle = "blue";
+		ctx.fillRect(79, 59, 2, 2)
+	</script>
+	</body>
+</html>
