@@ -22,7 +22,7 @@ camera_fb_t *GetJPEG() {
 }
 
 uint8_t *out_buf = NULL;
-size_t out_buf_len =0;
+size_t out_buf_len = 0;
 
 RGB888Resp GetRGB888() {
   camera_fb_t *fb = NULL;
@@ -37,7 +37,7 @@ RGB888Resp GetRGB888() {
   size_t out_width = fb->width;
   size_t out_height = fb->height;
   if (out_len != out_buf_len || !out_buf) {
-    if(out_buf){
+    if (out_buf) {
       free(out_buf);
     }
     out_buf = (uint8_t *)malloc(out_len);

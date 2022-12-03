@@ -108,6 +108,17 @@ void setup() {
     Serial.printf("Found %u files\n", SDFileCount);
   }
 
+  if(!digitalRead(FIRE_BUTTON_PIN)){
+    digitalWrite(LASER_PIN, LASER_ACTIVE_STATE);
+    while(!digitalRead(FIRE_BUTTON_PIN)){
+      delay(100);
+    }
+    while(digitalRead(FIRE_BUTTON_PIN)){
+      delay(100);
+    }
+    digitalWrite(LASER_PIN, !LASER_ACTIVE_STATE);
+  }
+
   delay(250);
   ConnectToWiFi();
 
