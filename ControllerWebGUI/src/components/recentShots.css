@@ -1,3 +1,21 @@
 .recentShots {
   width: 50%;
 }
+
+.shot_object{
+  background-color: #750000;
+  width: 250px;
+  margin: 10px;
+  cursor: pointer;
+  display:flex;
+  flex-direction:row;
+  flex-wrap:wrap;
+}
+
+.shot_object:hover{
+  background-color: #980000;
+}
+
+.shot_object.active{
+  background-color: #cb0101;
+}

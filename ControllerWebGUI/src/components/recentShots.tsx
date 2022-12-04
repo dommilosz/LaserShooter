@@ -18,20 +18,23 @@ export default function recentShots({sessionData,}: { sessionData: SessionData }
         alignItems: "center"
     }}>
         {sessionData.shots.map((shot, i) => {
-            return <ShotObject shot={shot} key={i} index={sessionData.shots.length-i-1}></ShotObject>
+            return <ShotObject shot={shot} key={i} index={sessionData.shots.length - i - 1}></ShotObject>
         }).reverse()}
     </div>;
 }
 
 export function ShotObject({shot, index}: { shot: ShotData, index: number }) {
-    const [selectedShot, setSelectedShot] = useContext(selectedShotContext) ?? [0,()=>{}]
+    const [selectedShot, setSelectedShot] = useContext(selectedShotContext) ?? [0, undefined]
     let timeAgo = moment(shot.ts);
 
-    return <div style={{backgroundColor: "#750000", width: 200, margin: 10}} onClick={() => {
-        setSelectedShot(index)
-    }}>
-        <div>{shot.idPacket.shotId}</div>
-        <div>Score: {shot.score}</div>
-        <div>{timeAgo.fromNow()}</div>
+    return <div
+        className={"shot_object"+(selectedShot==index?" active":"")}
+        onClick={() => {
+            if (setSelectedShot)
+                setSelectedShot(index)
+        }}>
+        <div style={{width: "60%"}}>{shot.idPacket.shotId}</div>
+        <div style={{width: "40%"}}>{timeAgo.fromNow()}</div>
+        <div className={"w100"}>Score: {shot.score}</div>
     </div>
 }

@@ -30,12 +30,15 @@ export default function TargetVisualuser({shot, dotColor,}: { shot: ShotData; do
                 ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
                 ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
                 ctx.fillStyle = dotColor;
-                ctx.fillRect(
+                /*ctx.fillRect(
                     shot.p.x * scale - dotSize/2,
                     shot.p.y * scale - dotSize/2,
                     dotSize,
                     dotSize
-                );
+                );*/
+                ctx.beginPath();
+                ctx.arc(shot.p.x * scale, shot.p.y * scale, dotSize/2, 0, 2 * Math.PI);
+                ctx.fill();
             };
         }
     }
