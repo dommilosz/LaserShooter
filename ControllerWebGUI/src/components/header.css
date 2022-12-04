@@ -7,6 +7,8 @@
   font-family: "Zen Dots", cursive;
   color: white;
   display: flex;
+  height: 80px;
+  align-items: center;
 }
 
 .text {
@@ -17,9 +19,10 @@
   justify-content: center;
   margin: auto;
   margin-left: 10%;
+  align-items: center;
 }
 
-button {
+#settings-button {
   background: none;
   border: none;
   width: 10%;
@@ -27,7 +30,7 @@ button {
   padding: 20px;
 }
 
-img {
-  width: 100%;
+#settings-img {
+  width: 40px;
   height: auto;
 }

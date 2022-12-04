@@ -9,8 +9,8 @@ export default function header() {
   return (
     <div className="header">
       <div className="text">Strzelnica</div>
-      <button onClick={clicked}>
-        <img src={require("../images/settings.png")} alt="Ustawienia" />
+      <button onClick={clicked} id={"settings-button"}>
+        <img src={require("../images/settings.png")} id={"settings-img"} alt="Settings" />
       </button>
     </div>
   );
