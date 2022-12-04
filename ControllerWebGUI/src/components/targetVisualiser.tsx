@@ -2,7 +2,13 @@ import React, {useRef} from "react";
 import {ShotData} from "../types";
 import {useAppSize} from "../api/hooks";
 
-export default function TargetVisualuser({shot, dotColor,}: { shot: ShotData; dotColor: string; }) {
+export default function TargetVisualuser(
+    {
+        shot,
+        dotColor,
+        shots,
+        secondaryColor,
+    }: { shot: ShotData, dotColor: string, shots: ShotData[],secondaryColor:string }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     let scale = 10;
@@ -10,8 +16,6 @@ export default function TargetVisualuser({shot, dotColor,}: { shot: ShotData; do
 
     let w = 160 * scale;
     let h = 120 * scale;
-
-    let dotSize = scale*2;
 
     if (canvas !== null) {
         let _ctx = canvas.getContext("2d");
@@ -29,15 +33,19 @@ export default function TargetVisualuser({shot, dotColor,}: { shot: ShotData; do
                 ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
                 ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
                 ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
+
+                let dotSize = scale;
+                ctx.fillStyle = secondaryColor;
+                for (let _shot of shots) {
+                    ctx.beginPath();
+                    ctx.arc(_shot.p.x * scale, _shot.p.y * scale, dotSize / 2, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+
                 ctx.fillStyle = dotColor;
-                /*ctx.fillRect(
-                    shot.p.x * scale - dotSize/2,
-                    shot.p.y * scale - dotSize/2,
-                    dotSize,
-                    dotSize
-                );*/
+                dotSize = scale * 2;
                 ctx.beginPath();
-                ctx.arc(shot.p.x * scale, shot.p.y * scale, dotSize/2, 0, 2 * Math.PI);
+                ctx.arc(shot.p.x * scale, shot.p.y * scale, dotSize / 2, 0, 2 * Math.PI);
                 ctx.fill();
             };
         }
@@ -49,7 +57,7 @@ export default function TargetVisualuser({shot, dotColor,}: { shot: ShotData; do
             {/* <p>Points: {shot.score}</p>
       <p>x: {shot.p.x}</p>
       <p>y: {shot.p.y}</p> */}
-            <canvas style={{maxWidth:"100%",maxHeight:"100%"}} ref={canvasRef} width={w} height={h}/>
+            <canvas style={{maxWidth: "100%", maxHeight: "100%"}} ref={canvasRef} width={w} height={h}/>
         </div>
     );
 }

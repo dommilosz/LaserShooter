@@ -6,13 +6,15 @@ import TargetVisualuser from "./components/targetVisualiser";
 import Header from "./components/header";
 import RecentShots from "./components/recentShots";
 import {getSession, getSessionInfo, useCurrentSession} from "./api/backendApi";
-import {useAppSize} from "./api/hooks";
+import {useAppSize, useLocalStorage} from "./api/hooks";
 
 export const selectedShotContext = React.createContext<[number, React.Dispatch<React.SetStateAction<number>>]|undefined>(undefined);
 
 function App() {
     const [sessionInfo, sessionData] = useCurrentSession();
     const selectedShotState = useState(0);
+
+    const [showAllShotsOnTarget,setShowAllShotsOnTarget] = useLocalStorage("visualise_all_shots","false");
 
     useEffect(()=>{
         selectedShotState[1](0);
@@ -27,9 +29,14 @@ function App() {
                         <RecentShots sessionData={sessionData}/>
                     </div>
                     <div style={{display: "flex", width: "66%", height: "calc( 100% - 4px )",flexDirection:"column"}}>
+                        <button onClick={()=>{
+                            setShowAllShotsOnTarget(showAllShotsOnTarget==="true"?"false":"true")
+                        }}>Toggle show all</button>
                         <TargetVisualuser
                             shot={sessionData.shots[sessionData.shots.length - selectedShotState[0] - 1]}
+                            shots={showAllShotsOnTarget==="true"?sessionData.shots:[]}
                             dotColor={"red"}
+                            secondaryColor={"black"}
                         ></TargetVisualuser>
                         <div>
                             <div>X: {sessionData.shots[sessionData.shots.length - selectedShotState[0] - 1]?.p?.x}</div>
