@@ -20,6 +20,6 @@ fs.createReadStream("./target.png")
 
 export function calcPoints(x:number,y:number){
     if(parsedBitmap === undefined)return -1;
-    let idx = (parsedBitmap.width * x + y) << 2;
+    let idx = (parsedBitmap.width * y + x) << 2;
     return parsedBitmap.data[idx+3];
 }

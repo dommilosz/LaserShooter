@@ -117,6 +117,19 @@ app.put("/session", (req: Request, res: Response) => {
 
 });
 
+app.get("/shot/:shot/recalculate",async (req: Request, res: Response) => {
+    let _shot = req.params.shot;
+    for (const shot of sessionData.shots) {
+        if(String(shot.idPacket.shotId) === _shot){
+            shot.score = calcPoints(shot.p.x,shot.p.y);
+            await saveData();
+            sendJSON(res, shot, 200);
+            return;
+        }
+    }
+    sendText(res, "Not found", 404);
+})
+
 app.listen(port, () => {
     console.log(`Api listening on port ${port}`);
 });
@@ -131,6 +144,15 @@ let lastKA = 0;
 
 if (!fs.existsSync("data")) {
     fs.mkdirSync("data");
+}
+
+async function saveData(){
+    let str = JSON.stringify(sessionData);
+    let buf = zlib.gzipSync(Buffer.from(str));
+
+    await fs.writeFileSync(`data/${currentSession}.json.gz`, buf, {
+        encoding: "utf-8",
+    });
 }
 
 client.on("listening", function () {
@@ -157,12 +179,8 @@ client.on("message", async function (message, rinfo) {
             sessionData.shots.push(data);
             sessionData.clients[data.idPacket.clientId] = 1;
 
-            let str = JSON.stringify(sessionData);
-            let buf = zlib.gzipSync(Buffer.from(str));
+            saveData();
 
-            await fs.writeFileSync(`data/${currentSession}.json.gz`, buf, {
-                encoding: "utf-8",
-            });
             console.log(
                 `x:${p.p.x} y:${p.p.y} id: ${p.idPacket.shotId} from: ${p.idPacket.clientId} score: ${data.score}`
             );
