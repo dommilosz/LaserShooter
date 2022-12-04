@@ -5,9 +5,6 @@ import moment from "moment";
 import {selectedShotContext} from "../App";
 
 export default function recentShots({sessionData,}: { sessionData: SessionData }) {
-    useEffect(() => {
-        console.log(sessionData);
-    }, []);
     return <div style={{
         width: "100%",
         height: "100%",

@@ -36,9 +36,12 @@ export function useCurrentSession(): [SessionInfo, SessionData] {
 
     useEffect(() => {
         setTimeout(async () => {
+            if (sessionInfo.session === 0) {
+                setSessionInfo(await getSessionInfo());
+                setLastFetch(+new Date());
+            }
             setSessionData(await getSession("current"));
         });
-        console.log(sessionData);
     }, [sessionInfo.shots]);
 
     return [sessionInfo, sessionData]
