@@ -26,11 +26,15 @@ function App() {
                     <div style={{display: "flex", width: "33%"}}>
                         <RecentShots sessionData={sessionData}/>
                     </div>
-                    <div style={{display: "flex", width: "66%", height: "calc( 100% - 4px )"}}>
+                    <div style={{display: "flex", width: "66%", height: "calc( 100% - 4px )",flexDirection:"column"}}>
                         <TargetVisualuser
                             shot={sessionData.shots[sessionData.shots.length - selectedShotState[0] - 1]}
                             dotColor={"red"}
                         ></TargetVisualuser>
+                        <div>
+                            <div>X: {sessionData.shots[sessionData.shots.length - selectedShotState[0] - 1]?.p?.x}</div>
+                            <div>Y: {sessionData.shots[sessionData.shots.length - selectedShotState[0] - 1]?.p?.y}</div>
+                        </div>
                     </div>
                 </div>
             </selectedShotContext.Provider>
