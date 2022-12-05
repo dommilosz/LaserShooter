@@ -17,9 +17,25 @@ export type ShotData = {
   };
   session: number;
 };
+
+export type ClientData = {
+  id:number,
+  users:{from:number,userId:number}[]
+}
+
 export type SessionData = {
   shots: ShotData[];
-  clients: { [key: number]: 1 };
+  clients: { [key: number]: ClientData };
 };
 
 export type SessionInfo = { lastKA: number; session: number; shots: number }
+
+export type Users = {
+  [key:number]:string
+}
+
+export type Session = {
+  sessionData:SessionData,
+  sessionInfo:SessionInfo,
+  users:Users
+}

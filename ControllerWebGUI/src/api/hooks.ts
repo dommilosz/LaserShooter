@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 
 export function useAppSize(){
     const [windowSize, setWindowSize] = useState<{width:number,height:number}>({
@@ -69,4 +69,9 @@ export function useLocalStorage(key:string, initialValue:string) {
     };
 
     return [storedValue, setValue];
+}
+
+export function createContext<T>(){
+    // @ts-ignore
+    return React.createContext<T>(undefined);
 }

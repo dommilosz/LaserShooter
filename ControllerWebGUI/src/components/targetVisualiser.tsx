@@ -8,7 +8,7 @@ export default function TargetVisualuser(
         dotColor,
         shots,
         secondaryColor,
-    }: { shot: ShotData, dotColor: string, shots: ShotData[],secondaryColor:string }) {
+    }: { shot?: ShotData, dotColor: string, shots: ShotData[],secondaryColor:string }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     let scale = 10;
@@ -42,21 +42,19 @@ export default function TargetVisualuser(
                     ctx.fill();
                 }
 
-                ctx.fillStyle = dotColor;
-                dotSize = scale * 2;
-                ctx.beginPath();
-                ctx.arc(shot.p.x * scale, shot.p.y * scale, dotSize / 2, 0, 2 * Math.PI);
-                ctx.fill();
+                if(shot !== undefined){
+                    ctx.fillStyle = dotColor;
+                    dotSize = scale * 2;
+                    ctx.beginPath();
+                    ctx.arc(shot.p.x * scale, shot.p.y * scale, dotSize / 2, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
             };
         }
     }
 
-    shot = shot ?? {p: {x: 0, y: 0}};
     return (
         <div style={{width: "100%", height: "100%"}}>
-            {/* <p>Points: {shot.score}</p>
-      <p>x: {shot.p.x}</p>
-      <p>y: {shot.p.y}</p> */}
             <canvas style={{maxWidth: "100%", maxHeight: "100%"}} ref={canvasRef} width={w} height={h}/>
         </div>
     );

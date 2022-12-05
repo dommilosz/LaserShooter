@@ -1,50 +1,41 @@
 import React, {useEffect, useState} from "react";
 import "./App.css";
 import moment from "moment";
-import {SessionData, ShotData} from "./types";
+import {Session, SessionData, ShotData} from "./types";
 import TargetVisualuser from "./components/targetVisualiser";
 import Header from "./components/header";
 import RecentShots from "./components/recentShots";
 import {getSession, getSessionInfo, useCurrentSession} from "./api/backendApi";
-import {useAppSize, useLocalStorage} from "./api/hooks";
+import {createContext, useAppSize, useLocalStorage} from "./api/hooks";
+import {MemoryRouter, Routes, Route} from "react-router-dom";
+import HomeView from "./views/HomeView";
+import ClientsView from "./views/ClientsView";
+import UsersView from "./views/UsersView";
 
-export const selectedShotContext = React.createContext<[number, React.Dispatch<React.SetStateAction<number>>]|undefined>(undefined);
+export const sessionContext = createContext<Session>();
 
 function App() {
-    const [sessionInfo, sessionData] = useCurrentSession();
+    const {sessionInfo, sessionData, users} = useCurrentSession();
     const selectedShotState = useState(0);
+    const selectedClientState = useState(0);
 
-    const [showAllShotsOnTarget,setShowAllShotsOnTarget] = useLocalStorage("visualise_all_shots","false");
-
-    useEffect(()=>{
+    useEffect(() => {
         selectedShotState[1](0);
-    },[sessionInfo.shots])
+    }, [sessionInfo.shots])
 
     return (
         <div className="App">
-            <selectedShotContext.Provider value={selectedShotState}>
-                <Header/>
-                <div style={{display: "flex", height: "calc( 100% - 80px )"}}>
-                    <div style={{display: "flex", width: "33%"}}>
-                        <RecentShots sessionData={sessionData}/>
-                    </div>
-                    <div style={{display: "flex", width: "66%", height: "calc( 100% - 4px )",flexDirection:"column"}}>
-                        <button onClick={()=>{
-                            setShowAllShotsOnTarget(showAllShotsOnTarget==="true"?"false":"true")
-                        }}>Toggle show all</button>
-                        <TargetVisualuser
-                            shot={sessionData.shots[sessionData.shots.length - selectedShotState[0] - 1]}
-                            shots={showAllShotsOnTarget==="true"?sessionData.shots:[]}
-                            dotColor={"red"}
-                            secondaryColor={"black"}
-                        ></TargetVisualuser>
-                        <div>
-                            <div>X: {sessionData.shots[sessionData.shots.length - selectedShotState[0] - 1]?.p?.x}</div>
-                            <div>Y: {sessionData.shots[sessionData.shots.length - selectedShotState[0] - 1]?.p?.y}</div>
-                        </div>
-                    </div>
-                </div>
-            </selectedShotContext.Provider>
+            <sessionContext.Provider value={{sessionInfo, sessionData, users}}>
+                <MemoryRouter>
+                    <Header/>
+                    <Routes>
+                        <Route path="/" element={<HomeView/>}/>
+                        <Route path="/clients" element={<ClientsView/>}/>
+                        <Route path="/users" element={<UsersView/>}/>
+                    </Routes>
+                </MemoryRouter>
+
+            </sessionContext.Provider>
         </div>
     );
 }

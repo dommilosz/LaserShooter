@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {SessionData, SessionInfo} from "../types";
+import {Session, SessionData, SessionInfo, Users} from "../types";
 
 export async function getSession(session: number | "current") {
     let sessionData = await fetch("http://localhost:8008/sessions/" + session);
@@ -11,16 +11,26 @@ export async function getSessionInfo() {
     return await sessionInfo.json();
 }
 
-export function useCurrentSession(): [SessionInfo, SessionData] {
+export async function getUsers(){
+    let users = await fetch("http://localhost:8008/users");
+    return await users.json();
+}
+
+export function useCurrentSession(): Session {
     let [sessionInfo, setSessionInfo] = useState({
         session: 0,
         shots: 0,
         lastKA: 0,
+        changeIndex: 0
+
     });
     let [sessionData, setSessionData] = useState<SessionData>({
         shots: [],
         clients: {},
     });
+
+    let [users,setUsers] = useState<Users>({})
+
     let [lastFetch, setLastFetch] = useState(0);
 
     useEffect(() => {
@@ -40,9 +50,10 @@ export function useCurrentSession(): [SessionInfo, SessionData] {
                 setSessionInfo(await getSessionInfo());
                 setLastFetch(+new Date());
             }
+            setUsers(await getUsers());
             setSessionData(await getSession("current"));
         });
-    }, [sessionInfo.shots]);
+    }, [sessionInfo.changeIndex]);
 
-    return [sessionInfo, sessionData]
+    return {sessionInfo, sessionData,users}
 }

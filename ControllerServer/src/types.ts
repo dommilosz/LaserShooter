@@ -42,3 +42,10 @@ export type ShotData = {
     },
     session: number
 }
+
+export type ClientData = {
+    id:number,
+    users:{from:number,userId:number}[]
+}
+
+export type SessionData = { shots: ShotData[]; clients: { [key: number]: ClientData } }
