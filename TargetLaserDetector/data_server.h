@@ -69,6 +69,8 @@ void BroadcastPoint() {
       pp.h = h;
       pp.score = -1;
 
+      myDFPlayer.playFolder(3, 1);
+
       udp.broadcastTo((uint8_t *)&pp, sizeof(PointPacket), 19700);
       delay(5);
       udp.broadcastTo((uint8_t *)&pp, sizeof(PointPacket), 19700);

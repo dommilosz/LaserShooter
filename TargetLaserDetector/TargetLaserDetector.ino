@@ -6,6 +6,7 @@
 #define CAMERA_MODEL_AI_THINKER  // Has PSRAM
 
 #include "camera_pins.h"
+#include "dfplayer.h"
 #include "data_server.h"
 
 const char* ssid = "ESP32";
@@ -82,6 +83,7 @@ void setup() {
   Serial.println(IP);
 
   startCameraServer();
+  setupPlayer();
 
   Serial.print("Camera Ready! Use 'http://");
   Serial.print(WiFi.localIP());
