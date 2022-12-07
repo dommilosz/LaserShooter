@@ -1,14 +1,19 @@
-import React, {useRef} from "react";
-import {ShotData} from "../types";
-import {useAppSize} from "../api/hooks";
+import React, { useRef } from "react";
+import { ShotData } from "../types";
+import { useAppSize } from "../api/hooks";
+import { url } from "../api/backendApi";
 
-export default function TargetVisualuser(
-    {
-        shot,
-        dotColor,
-        shots,
-        secondaryColor,
-    }: { shot?: ShotData, dotColor: string, shots: ShotData[],secondaryColor:string }) {
+export default function TargetVisualuser({
+    shot,
+    dotColor,
+    shots,
+    secondaryColor,
+}: {
+    shot?: ShotData;
+    dotColor: string;
+    shots: ShotData[];
+    secondaryColor: string;
+}) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     let scale = 10;
@@ -23,7 +28,7 @@ export default function TargetVisualuser(
             let ctx: CanvasRenderingContext2D = _ctx;
             ctx.imageSmoothingEnabled = false;
             let img = new Image(w, h);
-            img.src = "http://localhost:8008/target.png";
+            img.src = url + "target.png";
             img.onload = function () {
                 ctx.clearRect(0, 0, w, h);
                 ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
@@ -38,15 +43,27 @@ export default function TargetVisualuser(
                 ctx.fillStyle = secondaryColor;
                 for (let _shot of shots) {
                     ctx.beginPath();
-                    ctx.arc(_shot.p.x * scale, _shot.p.y * scale, dotSize / 2, 0, 2 * Math.PI);
+                    ctx.arc(
+                        _shot.p.x * scale,
+                        _shot.p.y * scale,
+                        dotSize / 2,
+                        0,
+                        2 * Math.PI
+                    );
                     ctx.fill();
                 }
 
-                if(shot !== undefined){
+                if (shot !== undefined) {
                     ctx.fillStyle = dotColor;
                     dotSize = scale * 2;
                     ctx.beginPath();
-                    ctx.arc(shot.p.x * scale, shot.p.y * scale, dotSize / 2, 0, 2 * Math.PI);
+                    ctx.arc(
+                        shot.p.x * scale,
+                        shot.p.y * scale,
+                        dotSize / 2,
+                        0,
+                        2 * Math.PI
+                    );
                     ctx.fill();
                 }
             };
@@ -54,8 +71,13 @@ export default function TargetVisualuser(
     }
 
     return (
-        <div style={{width: "100%", height: "100%"}}>
-            <canvas style={{maxWidth: "100%", maxHeight: "100%"}} ref={canvasRef} width={w} height={h}/>
+        <div style={{ width: "100%", height: "100%" }}>
+            <canvas
+                style={{ maxWidth: "100%", maxHeight: "100%" }}
+                ref={canvasRef}
+                width={w}
+                height={h}
+            />
         </div>
     );
 }

@@ -1,18 +1,20 @@
-import {useEffect, useState} from "react";
-import {Session, SessionData, SessionInfo, Users} from "../types";
+import { useEffect, useState } from "react";
+import { Session, SessionData, SessionInfo, Users } from "../types";
+
+export const url = "https://pifpaf.atos-iks.de/";
 
 export async function getSession(session: number | "current") {
-    let sessionData = await fetch("http://localhost:8008/sessions/" + session);
+    let sessionData = await fetch(url + "sessions/" + session);
     return await sessionData.json();
 }
 
 export async function getSessionInfo() {
-    let sessionInfo = await fetch("http://localhost:8008/session");
+    let sessionInfo = await fetch(url + "session");
     return await sessionInfo.json();
 }
 
-export async function getUsers(){
-    let users = await fetch("http://localhost:8008/users");
+export async function getUsers() {
+    let users = await fetch(url + "users");
     return await users.json();
 }
 
@@ -21,15 +23,14 @@ export function useCurrentSession(): Session {
         session: 0,
         shots: 0,
         lastKA: 0,
-        changeIndex: 0
-
+        changeIndex: 0,
     });
     let [sessionData, setSessionData] = useState<SessionData>({
         shots: [],
         clients: {},
     });
 
-    let [users,setUsers] = useState<Users>({})
+    let [users, setUsers] = useState<Users>({});
 
     let [lastFetch, setLastFetch] = useState(0);
 
@@ -55,5 +56,5 @@ export function useCurrentSession(): Session {
         });
     }, [sessionInfo.changeIndex]);
 
-    return {sessionInfo, sessionData,users}
+    return { sessionInfo, sessionData, users };
 }

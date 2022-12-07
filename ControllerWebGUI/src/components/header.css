@@ -1,36 +1,52 @@
 @import url("https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap");
 
 .header {
-  background-color: #00a9d3;
-  width: 100%;
-  font-size: 2.5rem;
-  font-family: "Zen Dots", cursive;
-  color: white;
-  display: flex;
-  height: 80px;
-  align-items: center;
+    background-color: #00a9d3;
+    width: 100%;
+    font-size: 3rem;
+    font-family: "Zen Dots", cursive;
+    color: white;
+    display: flex;
+    height: 100px;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .text {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  text-align: center;
-  justify-content: center;
-  margin: auto;
-  margin-left: 10%;
-  align-items: center;
+    display: flex;
+    letter-spacing: 2px;
 }
 
-#settings-button {
-  background: none;
-  border: none;
-  width: 10%;
-  margin-right: 40px;
-  padding: 20px;
+.menu {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    margin-right: 10px;
 }
 
-#settings-img {
-  width: 40px;
-  height: auto;
+.menuItem {
+    color: #d2f6ff;
+    font-size: 1.3rem;
+    padding: 0px 20px;
+    text-decoration: none;
+    margin: 3px;
+}
+.hover-3 {
+    --b: 0.1em; /* the thickness of the line */
+    --c: #0f576f; /* the color */
+
+    color: rgba(255, 255, 255, 0);
+    padding-block: var(--b);
+    background: linear-gradient(var(--c) 50%, rgb(255, 255, 255) 0) 0%
+            calc(100% - var(--_p, 0%)) / 100% 200%,
+        linear-gradient(var(--c) 0 0) 0% var(--_p, 0%) / var(--_p, 0%) var(--b)
+            no-repeat;
+    -webkit-background-clip: text, padding-box;
+    background-clip: text, padding-box;
+    transition: 0.3s var(--_s, 0s) linear,
+        background-size 0.3s calc(0.3s - var(--_s, 0s));
+}
+.hover-3:hover {
+    --_p: 100%;
+    --_s: 0.3s;
 }

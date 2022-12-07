@@ -1,0 +1,13 @@
+.homeView {
+    width: 100%;
+    display: flex;
+    overflow-y: hidden;
+}
+
+.recentShots {
+    display: flex;
+}
+
+.targetVisualuser {
+    display: flex;
+}

@@ -1,43 +1,71 @@
 .recentShots {
-  width: 50%;
+    width: 50%;
 }
 
-.shot_object{
-  background-color: #750000;
-  width: 250px;
-  margin: 10px;
-  cursor: pointer;
-  display:flex;
-  flex-direction:row;
-  flex-wrap:wrap;
-  color:#a9fff3;
+.shot_object {
+    text-align: center;
+    display: flex;
+    flex: 30%;
+    flex-wrap: wrap;
+    background-color: #d1d1d1;
+    width: 100%;
+    min-width: 200px;
+    max-width: 300px;
+    height: 200px;
+    margin: 20px;
+    cursor: pointer;
+    color: #000000;
+    border-radius: 10px;
+    border: rgb(199, 199, 199) 4px solid;
+    box-shadow: 10px 10px 20px #b3b3b3;
 }
 
-.shot_object:hover{
-  background-color: #980000;
+.shot_object:hover {
+    background-color: #bfbfbf;
+    color: white;
+    border: rgb(56, 56, 56) 4px solid;
 }
 
-.shot_object.active{
-  background-color: #cb0101;
+.shot_object.active {
+    background-color: #737373;
+    color: white;
+    border: rgb(56, 56, 56) 4px solid;
 }
 
-.shot_object.adder{
-  background-color: #313131;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.shot_object.adder {
+    background-color: #313131;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.shot_object > .clientId{
-  background-color: #ff1a1a;
+.shot_object > .clientId {
+    background-color: #ff1a1a;
 }
 
-.object-container{
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-shrink: 0;
-  flex-direction: column;
-  overflow: auto;
-  align-items: center;
+.object-container {
+    background-color: #efefef;
+    width: 100%;
+    margin: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    border: rgb(138, 138, 138) 4px solid;
+    box-shadow: 10px 10px 20px #b3b3b3;
+    overflow-y: scroll;
+}
+
+.shotScore {
+    font-size: 3rem;
+}
+
+.shotID {
+    font-size: 0.8rem;
+    color: gray;
+}
+
+.shotUsername {
+    color: blue;
 }
