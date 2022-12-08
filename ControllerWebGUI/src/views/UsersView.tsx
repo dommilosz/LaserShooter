@@ -16,9 +16,9 @@ export default function UsersView() {
         "visualise_all_shots",
         "false"
     );
-
+        
     return (
-        <div style={{ display: "flex", height: "calc( 100% - 80px )" }}>
+        <div style={{ display: "flex", height: "calc( 100% - 80px )"}}>
             <div style={{ display: "flex", width: "33%" }}>
                 <UsersList
                     selectedUser={selectedUser}
@@ -33,17 +33,8 @@ export default function UsersView() {
                     flexDirection: "column",
                 }}
             >
-                <button
-                    onClick={() => {
-                        setShowAllShotsOnTarget(
-                            showAllShotsOnTarget === "true" ? "false" : "true"
-                        );
-                    }}
-                >
-                    Toggle show all
-                </button>
                 <TargetVisualuser
-                    shots={sessionData.shots.filter((shot) => {
+                    primaryShots={sessionData.shots.filter((shot) => {
                         let shotUser = -1;
                         for (
                             let i = 0;
@@ -69,8 +60,11 @@ export default function UsersView() {
                             Number(Object.keys(users)[selectedUser])
                         );
                     })}
-                    dotColor={"red"}
-                    secondaryColor={"red"}
+                    primaryColor={"red"}
+                    secondaryColor={"black"}
+                    secondaryShots={
+                        showAllShotsOnTarget ? sessionData.shots : []
+                    }
                 ></TargetVisualuser>
             </div>
         </div>

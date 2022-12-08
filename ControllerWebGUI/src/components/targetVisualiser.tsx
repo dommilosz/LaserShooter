@@ -4,14 +4,14 @@ import { useAppSize } from "../api/hooks";
 import { url } from "../api/backendApi";
 
 export default function TargetVisualuser({
-    shot,
-    dotColor,
-    shots,
+    primaryShots,
+    primaryColor,
+    secondaryShots,
     secondaryColor,
 }: {
-    shot?: ShotData;
-    dotColor: string;
-    shots: ShotData[];
+    primaryShots: ShotData[];
+    primaryColor: string;
+    secondaryShots: ShotData[];
     secondaryColor: string;
 }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -41,7 +41,7 @@ export default function TargetVisualuser({
 
                 let dotSize = scale;
                 ctx.fillStyle = secondaryColor;
-                for (let _shot of shots) {
+                for (let _shot of secondaryShots) {
                     ctx.beginPath();
                     ctx.arc(
                         _shot.p.x * scale,
@@ -53,13 +53,13 @@ export default function TargetVisualuser({
                     ctx.fill();
                 }
 
-                if (shot !== undefined) {
-                    ctx.fillStyle = dotColor;
-                    dotSize = scale * 2;
+                dotSize = scale*2;
+                ctx.fillStyle = primaryColor;
+                for (let _shot of primaryShots) {
                     ctx.beginPath();
                     ctx.arc(
-                        shot.p.x * scale,
-                        shot.p.y * scale,
+                        _shot.p.x * scale,
+                        _shot.p.y * scale,
                         dotSize / 2,
                         0,
                         2 * Math.PI

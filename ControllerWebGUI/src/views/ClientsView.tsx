@@ -31,17 +31,8 @@ export default function ClientsView() {
                     flexDirection: "column",
                 }}
             >
-                <button
-                    onClick={() => {
-                        setShowAllShotsOnTarget(
-                            showAllShotsOnTarget === "true" ? "false" : "true"
-                        );
-                    }}
-                >
-                    Toggle show all
-                </button>
                 <TargetVisualuser
-                    shots={sessionData.shots.filter((shot) => {
+                    primaryShots={sessionData.shots.filter((shot) => {
                         return (
                             shot.idPacket.clientId ===
                             Number(
@@ -49,7 +40,8 @@ export default function ClientsView() {
                             )
                         );
                     })}
-                    dotColor={"red"}
+                    secondaryShots={showAllShotsOnTarget?sessionData.shots:[]}
+                    primaryColor={"red"}
                     secondaryColor={"red"}
                 ></TargetVisualuser>
             </div>

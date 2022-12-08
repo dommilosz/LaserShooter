@@ -17,62 +17,6 @@ export default function HomeView() {
     );
 
     return (
-        // <div style={{ display: "flex", height: "calc( 100% - 80px )" }}>
-        //     <div style={{ display: "flex", width: "33%" }}>
-        //         <RecentShots
-        //             selectedShot={selectedShot}
-        //             setSelectedShot={setSelectedShot}
-        //         />
-        //     </div>
-        //     <div
-        //         style={{
-        //             display: "flex",
-        //             width: "66%",
-        //             height: "calc( 100% - 4px )",
-        //             flexDirection: "column",
-        //         }}
-        //     >
-        //         <button
-        //             onClick={() => {
-        //                 setShowAllShotsOnTarget(
-        //                     showAllShotsOnTarget === "true" ? "false" : "true"
-        //                 );
-        //             }}
-        //         >
-        //             Toggle show all
-        //         </button>
-        //         <TargetVisualuser
-        //             shot={
-        //                 sessionData.shots[
-        //                     sessionData.shots.length - selectedShot - 1
-        //                 ]
-        //             }
-        //             shots={
-        //                 showAllShotsOnTarget === "true" ? sessionData.shots : []
-        //             }
-        //             dotColor={"red"}
-        //             secondaryColor={"black"}
-        //         ></TargetVisualuser>
-        //         <div>
-        //             <div>
-        //                 X:{" "}
-        //                 {
-        //                     sessionData.shots[
-        //                         sessionData.shots.length - selectedShot - 1
-        //                     ]?.p?.x
-        //                 }
-        //             </div>
-        //             <div>
-        //                 Y:{" "}
-        //                 {
-        //                     sessionData.shots[
-        //                         sessionData.shots.length - selectedShot - 1
-        //                     ]?.p?.y
-        //                 }
-        //             </div>
-        //         </div>
-        //     </div>
-        // </div>
         <div className="homeView">
             <div className="recentShots">
                 <RecentShots
@@ -82,15 +26,13 @@ export default function HomeView() {
             </div>
             <div className="targetVisualuser">
                 <TargetVisualuser
-                    shot={
-                        sessionData.shots[
-                            sessionData.shots.length - selectedShot - 1
-                        ]
+                    primaryShots={[sessionData.shots[
+                        sessionData.shots.length - selectedShot - 1
+                    ]]}
+                    secondaryShots={
+                        showAllShotsOnTarget ? sessionData.shots : []
                     }
-                    shots={
-                        showAllShotsOnTarget === "true" ? sessionData.shots : []
-                    }
-                    dotColor={"red"}
+                    primaryColor={"red"}
                     secondaryColor={"black"}
                 ></TargetVisualuser>
             </div>

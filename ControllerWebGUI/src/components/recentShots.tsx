@@ -33,7 +33,7 @@ export default function recentShots({ selectedShot, setSelectedShot }: any) {
 export function ShotObject({ shot, index }: { shot: ShotData; index: number }) {
     const [selectedShot, setSelectedShot] = useContext(selectedShotContext);
     let { sessionInfo, sessionData, users } = useContext(sessionContext);
-    let shotUsername = resolveClientUserName(sessionData,shot.idPacket.clientId,shot.ts,users);
+    let shotUsername = resolveClientUserName(sessionData,shot.idPacket.clientId,users,shot.ts);
 
     let timeAgo = moment(shot.ts);
 

@@ -59,13 +59,18 @@
 
 .shotScore {
     font-size: 3rem;
+    padding-block: 5px;
 }
 
 .shotID {
     font-size: 0.8rem;
-    color: gray;
+    color: white;
+    padding-right: 5px;
 }
 
 .shotUsername {
-    color: blue;
+    color: #719b94;
+    font-size: 1.15rem;
+
 }
+

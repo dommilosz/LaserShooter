@@ -7,10 +7,11 @@ import Header from "./components/header";
 import RecentShots from "./components/recentShots";
 import {getSession, getSessionInfo, useCurrentSession} from "./api/backendApi";
 import {createContext, useAppSize, useLocalStorage} from "./api/hooks";
-import {MemoryRouter, Routes, Route} from "react-router-dom";
+import {Routes, Route, BrowserRouter} from "react-router-dom";
 import HomeView from "./views/HomeView";
 import ClientsView from "./views/ClientsView";
 import UsersView from "./views/UsersView";
+import SettingsView from "./views/SettingsView";
 
 export const sessionContext = createContext<Session>();
 
@@ -26,14 +27,15 @@ function App() {
     return (
         <div className="App">
             <sessionContext.Provider value={{sessionInfo, sessionData, users}}>
-                <MemoryRouter>
+                <BrowserRouter>
                     <Header/>
                     <Routes>
                         <Route path="/" element={<HomeView/>}/>
                         <Route path="/clients" element={<ClientsView/>}/>
                         <Route path="/users" element={<UsersView/>}/>
+                        <Route path="/settings" element={<SettingsView/>}/>
                     </Routes>
-                </MemoryRouter>
+                </BrowserRouter>
 
             </sessionContext.Provider>
         </div>
@@ -41,17 +43,3 @@ function App() {
 }
 
 export default App;
-
-{
-    /* <header className="App-header">
-          <div>
-            Session: {sessionInfo.session}, Shots: {sessionInfo.shots} Update: {moment(lastFetch).format("h:mm:ss")} LastKA: {moment(sessionInfo.lastKA).format("h:mm:ss")}
-          </div>
-          <TargetVisualuser shot={sessionData.shots[sessionData.shots.length-1]} scale={2}></TargetVisualuser>
-          {sessionData.shots.map(shot=>{
-            return <p>
-              {shot.idPacket.shotId}
-            </p>
-          }).reverse()}
-        </header> */
-}

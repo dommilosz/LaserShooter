@@ -1,7 +1,15 @@
 import { useEffect, useState } from "react";
 import { Session, SessionData, SessionInfo, Users } from "../types";
 
-export const url = "https://pifpaf.atos-iks.de/";
+export let url = "http://localhost:3000"
+try{
+    url = JSON.parse(localStorage.getItem("server-url")??url)
+}catch{
+
+}
+if(!url.endsWith("/")){
+    url = url + "/"
+}
 
 export async function getSession(session: number | "current") {
     let sessionData = await fetch(url + "sessions/" + session);

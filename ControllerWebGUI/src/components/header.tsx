@@ -1,31 +1,34 @@
-import React from "react";
+import React, { useContext } from "react";
 import "./header.css";
 import { Link } from "react-router-dom";
+import { sessionContext } from "../App";
+import moment from "moment";
 
 export default function header() {
+    let { sessionInfo, sessionData } = useContext(sessionContext);
+    let sessionTime = moment(Number(sessionInfo.session));
+
     const clicked = () => {
         console.log("clicked");
     };
 
     return (
         <div className="header">
-            {/* <Link to="/">Home</Link>
-            <Link to="/clients">Clients</Link>
-            <Link to="/users">Users</Link> */}
-            {/* <button onClick={clicked} id={"settings-button"}>
-                <img
-                src={require("../images/settings.png")}
-                id={"settings-img"}
-                alt="Settings"
-                />
-              </button> */}
             <div
                 className="text"
                 style={{ paddingTop: "5px", paddingLeft: "32px" }}
             >
                 Strzelnica
             </div>
+            <div style={{fontSize:"1rem"}}>
+                Session from {sessionTime.format("lll")}
+            </div>
             <div className="menu">
+            <div>
+                    <Link className="menuItem hover-3" to="/settings">
+                        Settings
+                    </Link>
+                </div>
                 <div>
                     <Link className="menuItem hover-3" to="/">
                         Home
