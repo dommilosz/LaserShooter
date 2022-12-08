@@ -6,6 +6,7 @@ import { BootstrapTooltip } from "../api/customElements";
 import { UserAssignModal } from "../customComponents/userAssignModal";
 import { selectedClientContext } from "../views/ClientsView";
 import { url } from "../api/backendApi";
+import { resolveClientUserName } from "../api/resolveClientUser";
 
 export default function ClientsList({
     selectedShot: selectedClient,
@@ -42,9 +43,7 @@ export function ClientObject({
     );
     let { sessionInfo, sessionData, users } = useContext(sessionContext);
 
-    let name = "Not named";
-    if (client.users.length > 0)
-        name = users[client.users[client.users.length - 1].userId];
+    let name = resolveClientUserName(sessionData,client.id,users);
 
     return (
         <div
