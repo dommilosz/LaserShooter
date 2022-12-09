@@ -1,20 +1,38 @@
 import RecentShots from "../components/recentShots";
 import TargetVisualuser from "../components/targetVisualiser";
-import React, { useContext, useState } from "react";
-import { sessionContext } from "../App";
-import { createContext, useLocalStorage } from "../api/hooks";
+import React, {useContext, useEffect, useState} from "react";
+import {sessionContext} from "../App";
+import {createContext, useLocalStorage} from "../api/hooks";
 import "./homeview.css";
+import {useLocation, useNavigate} from "react-router-dom";
 
 export const selectedShotContext =
     createContext<[number, React.Dispatch<React.SetStateAction<number>>]>();
 
 export default function HomeView() {
-    let { sessionInfo, sessionData } = useContext(sessionContext);
+    let {sessionInfo, sessionData} = useContext(sessionContext);
     let [selectedShot, setSelectedShot] = useState(0);
     const [showAllShotsOnTarget, setShowAllShotsOnTarget] = useLocalStorage(
         "visualise_all_shots",
         "false"
     );
+    let location = useLocation();
+    let navigate = useNavigate();
+
+    useEffect(() => {
+        // Clear the location state when the page is refreshed
+        history.replaceState({}, document.title, location.pathname);
+    }, [location]);
+
+    useEffect(() => {
+        if (location.state?.selectShot) {
+            sessionData.shots.forEach((shot, i) => {
+                if (shot.idPacket.shotId === location.state?.selectShot.idPacket.shotId) {
+                    setSelectedShot(sessionData.shots.length - i-1);
+                }
+            })
+        }
+    }, [location.state?.selectShot])
 
     return (
         <div className="homeView">
@@ -27,8 +45,8 @@ export default function HomeView() {
             <div className="targetVisualuser">
                 <TargetVisualuser
                     primaryShots={[sessionData.shots[
-                        sessionData.shots.length - selectedShot - 1
-                    ]]}
+                    sessionData.shots.length - selectedShot - 1
+                        ]]}
                     secondaryShots={
                         showAllShotsOnTarget ? sessionData.shots : []
                     }
