@@ -60,7 +60,7 @@
         5px 8px 4px rgba(73, 72, 75, 0.25);  
     
 }
-.hover-3:hover {
+.hover-3:hover, .hover-3.active {
     --_p: 100%;
     --_s: 0.3s;
 }

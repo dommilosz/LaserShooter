@@ -7,6 +7,7 @@ import { UserAssignModal } from "../customComponents/userAssignModal";
 import { selectedClientContext } from "../views/ClientsView";
 import { url } from "../api/backendApi";
 import { resolveClientUserName } from "../api/resolveClientUser";
+import "./ClientsList.css"
 
 export default function ClientsList({
     selectedShot: selectedClient,
@@ -42,13 +43,13 @@ export function ClientObject({
         selectedClientContext
     );
     let { sessionInfo, sessionData, users } = useContext(sessionContext);
-
     let name = resolveClientUserName(sessionData,client.id,users);
+    const [open, setOpen] = React.useState(false);
 
     return (
         <div
             className={
-                "shot_object" + (selectedClient == index ? " active" : "")
+                "shot_object clients" + (selectedClient == index ? " active" : "")
             }
             onClick={() => {
                 if (setSelectedClient) setSelectedClient(index);
@@ -72,9 +73,13 @@ export function ClientObject({
                         headers: { "content-type": "application/json" },
                     });
                 }}
-                trigger={<div style={{ width: "100%" }}>{name} (edit)</div>}
+                open={open}
+                setOpen={setOpen}
             ></UserAssignModal>
 
+            <div style={{ width: "100%",display:"flex",height:30,alignItems:"center",justifyContent:"center" }}>
+                <div>{name}</div>
+                <img src={require("../images/edit.png")} className="edit-btn" style={{height:30}} onClick={()=>setOpen(true)}/></div>
             <div style={{ width: "100%" }}>&nbsp;</div>
             <div style={{ width: "100%" }}>{client.id}</div>
         </div>

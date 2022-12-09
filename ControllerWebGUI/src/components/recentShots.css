@@ -32,13 +32,6 @@
     border: rgb(56, 56, 56) 4px solid;
 }
 
-.shot_object.adder {
-    background-color: #313131;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .shot_object > .clientId {
     background-color: #ff1a1a;
 }

@@ -3,6 +3,7 @@ import { sessionContext } from "../App";
 import { createContext } from "../api/hooks";
 import { selectedUserContext } from "../views/UsersView";
 import { url } from "../api/backendApi";
+import "./UsersList.css"
 
 export default function UsersList({ selectedUser, setSelectedUser }: any) {
     let { sessionInfo, sessionData, users } = useContext(sessionContext);
@@ -11,8 +12,7 @@ export default function UsersList({ selectedUser, setSelectedUser }: any) {
         <selectedUserContext.Provider value={[selectedUser, setSelectedUser]}>
             <div className="object-container">
                 <div
-                    className={"shot_object adder"}
-                    style={{ height: 42 }}
+                    className={"shot_object adder users"}
                     onClick={async () => {
                         let userName = prompt("Enter username to create");
                         let userId = +new Date();
@@ -54,13 +54,28 @@ export function UserObject({
 
     return (
         <div
-            className={"shot_object" + (selectedUser == index ? " active" : "")}
+            className={"shot_object users" + (selectedUser == index ? " active" : "")}
             onClick={() => {
                 if (setSelectedUser) setSelectedUser(index);
             }}
         >
-            <div style={{ width: "100%" }}>{user.name}</div>
-            <div style={{ width: "100%" }}>{user.id}</div>
+            <div style={{width:"80%",height:"100%"}}>
+                <div style={{ width: "100%" }}>{user.name}</div>
+                <div style={{ width: "100%" }}>{user.id}</div>
+            </div>
+            <div style={{width:"20%",height:"100%",display:"flex",alignItems:"center"}} onClick={async ()=>{
+                if(!confirm(`Do you want to remove ${user.id} user? Clients and shots with this user will be reverted to their ids`)){
+                    return;
+                }
+                let resp = await fetch(url + "users/" + user.id, {
+                    method: "DELETE",
+                });
+                if(resp.status !== 200){
+                    alert(await resp.text())
+                }
+            }}>
+                <img className={"remove-btn"} style={{width:"100%"}} src={require("../images/trashcan.png")}/>
+            </div>
         </div>
     );
 }

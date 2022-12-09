@@ -14,6 +14,7 @@ export default function SyntaxView() {
         "server-url",
         "http://localhost:3000"
     );
+
     const {sessionInfo, sessionData, users} = useContext(sessionContext);
     let sessionTime = moment(Number(sessionInfo.session));
     let [sessions, setSessions] = useState<string[]>([]);
@@ -66,6 +67,9 @@ export default function SyntaxView() {
             <input type="text" onChange={(e)=>{
                 setServerUrl(e.target.value);
             }} value={serverUrl}></input>
+            <button onClick={()=>{
+                location.reload()
+            }}>Apply</button>
         </div>
 
     </div>

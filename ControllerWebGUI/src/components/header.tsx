@@ -1,12 +1,25 @@
 import React, { useContext } from "react";
 import "./header.css";
-import { Link } from "react-router-dom";
+import { Link,useLocation  } from "react-router-dom";
 import { sessionContext } from "../App";
 import moment from "moment";
+
+export function LinkButton({path,children}:{path:string,children:any}){
+    const location = useLocation();
+
+    return  <div>
+        <Link
+            className={`menuItem hover-3 ${location.pathname === path?"active":""}`} to={path}
+        >
+            {children}
+        </Link>
+    </div>
+}
 
 export default function header() {
     let { sessionInfo, sessionData } = useContext(sessionContext);
     let sessionTime = moment(Number(sessionInfo.session));
+    const location = useLocation();
 
     const clicked = () => {
         console.log("clicked");
@@ -21,33 +34,15 @@ export default function header() {
                 Strzelnica
             </div>
             <div style={{fontSize:"1rem"}}>
-                Session from {sessionTime.format("lll")}
+                {sessionInfo.session > 0?(`Session from ${sessionTime.format("lll")}`):(<div style={{color:"#b90707"}}>
+                    Error while connecting to server.
+                </div>)}
             </div>
             <div className="menu">
-            <div>
-                    <Link className="menuItem hover-3" to="/settings">
-                        Settings
-                    </Link>
-                </div>
-                <div>
-                    <Link className="menuItem hover-3" to="/">
-                        Home
-                    </Link>
-                </div>
-                <div>
-                    <Link className="menuItem hover-3" to="/clients">
-                        Clients
-                    </Link>
-                </div>
-                <div>
-                    <Link
-                        className="menuItem hover-3"
-                        style={{ border: "none" }}
-                        to="/users"
-                    >
-                        Users
-                    </Link>
-                </div>
+                <LinkButton path={"/settings"}>Settings</LinkButton>
+                <LinkButton path={"/"}>Home</LinkButton>
+                <LinkButton path={"/clients"}>Clients</LinkButton>
+                <LinkButton path={"/users"}>Users</LinkButton>
             </div>
         </div>
     );
