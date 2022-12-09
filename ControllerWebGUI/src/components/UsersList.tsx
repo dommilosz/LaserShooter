@@ -2,8 +2,10 @@ import React, { useContext, useState } from "react";
 import { sessionContext } from "../App";
 import { createContext } from "../api/hooks";
 import { selectedUserContext } from "../views/UsersView";
+import DeleteIcon from '@mui/icons-material/Delete';
 import { url } from "../api/backendApi";
 import "./UsersList.css"
+import {IconButton} from "@mui/material";
 
 export default function UsersList({ selectedUser, setSelectedUser }: any) {
     let { sessionInfo, sessionData, users } = useContext(sessionContext);
@@ -63,18 +65,20 @@ export function UserObject({
                 <div style={{ width: "100%" }}>{user.name}</div>
                 <div style={{ width: "100%" }}>{user.id}</div>
             </div>
-            <div style={{width:"20%",height:"100%",display:"flex",alignItems:"center"}} onClick={async ()=>{
-                if(!confirm(`Do you want to remove ${user.id} user? Clients and shots with this user will be reverted to their ids`)){
-                    return;
-                }
-                let resp = await fetch(url + "users/" + user.id, {
-                    method: "DELETE",
-                });
-                if(resp.status !== 200){
-                    alert(await resp.text())
-                }
-            }}>
-                <img className={"remove-btn"} style={{width:"100%"}} src={require("../images/trashcan.png")}/>
+            <div style={{width:"20%",height:"100%",display:"flex",alignItems:"center"}}>
+                <IconButton onClick={async ()=>{
+                    if(!confirm(`Do you want to remove ${user.id} user? Clients and shots with this user will be reverted to their ids`)){
+                        return;
+                    }
+                    let resp = await fetch(url + "users/" + user.id, {
+                        method: "DELETE",
+                    });
+                    if(resp.status !== 200){
+                        alert(await resp.text())
+                    }
+                }}>
+                    <DeleteIcon />
+                </IconButton>
             </div>
         </div>
     );

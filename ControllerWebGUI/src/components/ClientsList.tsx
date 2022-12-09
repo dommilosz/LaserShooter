@@ -3,11 +3,13 @@ import { sessionContext } from "../App";
 import { ClientData, ShotData } from "../types";
 import { createContext } from "../api/hooks";
 import { BootstrapTooltip } from "../api/customElements";
+import EditIcon from '@mui/icons-material/Edit';
 import { UserAssignModal } from "../customComponents/userAssignModal";
 import { selectedClientContext } from "../views/ClientsView";
 import { url } from "../api/backendApi";
 import { resolveClientUserName } from "../api/resolveClientUser";
 import "./ClientsList.css"
+import {IconButton} from "@mui/material";
 
 export default function ClientsList({
     selectedShot: selectedClient,
@@ -79,7 +81,10 @@ export function ClientObject({
 
             <div style={{ width: "100%",display:"flex",height:30,alignItems:"center",justifyContent:"center" }}>
                 <div>{name}</div>
-                <img src={require("../images/edit.png")} className="edit-btn" style={{height:30}} onClick={()=>setOpen(true)}/></div>
+                <IconButton onClick={()=>setOpen(true)}>
+                    <EditIcon />
+                </IconButton>
+            </div>
             <div style={{ width: "100%" }}>&nbsp;</div>
             <div style={{ width: "100%" }}>{client.id}</div>
         </div>
