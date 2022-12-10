@@ -1,9 +1,7 @@
 import React, { useContext, useState } from "react";
 import { sessionContext } from "../App";
 import { createContext, useLocalStorage } from "../api/hooks";
-import RecentShots from "../components/recentShots";
-import TargetVisualuser from "../components/targetVisualiser";
-import ClientsList from "../components/ClientsList";
+import TargetVisualiser from "../components/targetVisualiser";
 import UsersList from "../components/UsersList";
 
 export const selectedUserContext =
@@ -33,7 +31,7 @@ export default function UsersView() {
                     flexDirection: "column",
                 }}
             >
-                <TargetVisualuser
+                <TargetVisualiser
                     primaryShots={sessionData.shots.filter((shot) => {
                         let shotUser = -1;
                         for (
@@ -65,7 +63,7 @@ export default function UsersView() {
                     secondaryShots={
                         showAllShotsOnTarget ? sessionData.shots : []
                     }
-                ></TargetVisualuser>
+                ></TargetVisualiser>
             </div>
         </div>
     );

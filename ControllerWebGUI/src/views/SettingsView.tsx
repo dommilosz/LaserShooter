@@ -1,76 +1,33 @@
-import moment from "moment";
-import React, { useContext, useEffect, useState } from "react"
-import { url } from "../api/backendApi";
-import { useLocalStorage } from "../api/hooks";
-import { sessionContext } from "../App";
+import React from "react"
 import "./SettingsView.css"
+import { styled } from '@mui/material/styles';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
+import ServerSetting from "../components/SettingItems/ServerSetting";
+import SessionSetting from "../components/SettingItems/SessionSetting";
+import ShowAllOnTargetSetting from "../components/SettingItems/ShowAllOnTargetSetting";
 
-export default function SyntaxView() {
-    const [showAllShotsOnTarget, setShowAllShotsOnTarget] = useLocalStorage(
-        "visualise_all_shots",
-        "false"
-    );
-    const [serverUrl, setServerUrl] = useLocalStorage(
-        "server-url",
-        "http://localhost:3000"
-    );
+export const SettingItem = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+    height:150,
+}));
 
-    const {sessionInfo, sessionData, users} = useContext(sessionContext);
-    let sessionTime = moment(Number(sessionInfo.session));
-    let [sessions, setSessions] = useState<string[]>([]);
-    useEffect(()=>{
-        (async()=>{
-            let resp = await fetch(url + "sessions/");
-            setSessions(await resp.json())
-        })()
-    },[])
-
+export default function SettingsView() {
     return <div id="settings-view">
-        <div className="settings-item" style={{flexDirection:"column"}}>
-            <div>Current Session: {sessionInfo.session}</div>
-            <div>Session Date: {sessionTime.format("LLL")}</div>
-            <div>Load Session: </div>
-            <select id="session-load-box">
-                {sessions.map(session=>{
-                    return <option value={session}>{session}</option>
-                })}
-            </select>
-            <button onClick={async ()=>{
-                // @ts-ignore
-                let id = document.querySelector("#session-load-box").value;
-                try{
-                    let resp = await fetch(url + "session/", {
-                        method: "PUT",
-                        body: JSON.stringify({ session: id }),
-                        headers: { "content-type": "application/json" },
-                    });
-                    if(resp.status !== 200){
-                        alert(await resp.text());
-                        return;
-                    }
-                    alert("changed")
-                }catch(e){
-                    alert(e)
-                }
-                
-
-            }}>Load</button>
-        </div>
-        <div className="settings-item">
-            <div>Show all shots on target:</div>
-            <input type="checkbox" onChange={(e)=>{
-                setShowAllShotsOnTarget(e.target.checked);
-            }} checked={showAllShotsOnTarget}></input>
-        </div>
-        <div className="settings-item">
-            <div>Server url:</div>
-            <input type="text" onChange={(e)=>{
-                setServerUrl(e.target.value);
-            }} value={serverUrl}></input>
-            <button onClick={()=>{
-                location.reload()
-            }}>Apply</button>
-        </div>
-
+        <Grid container spacing={2}>
+            <Grid item xs={4}>
+                <ServerSetting/>
+            </Grid>
+            <Grid item xs={4}>
+                <SessionSetting/>
+            </Grid>
+            <Grid item xs={4}>
+                <ShowAllOnTargetSetting/>
+            </Grid>
+        </Grid>
     </div>
 }

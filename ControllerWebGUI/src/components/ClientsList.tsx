@@ -1,21 +1,19 @@
-import React, { useContext, useState } from "react";
-import { sessionContext } from "../App";
-import { ClientData, ShotData } from "../types";
-import { createContext } from "../api/hooks";
-import { BootstrapTooltip } from "../api/customElements";
+import React, {useContext} from "react";
+import {sessionContext} from "../App";
+import {ClientData} from "../types";
 import EditIcon from '@mui/icons-material/Edit';
-import { UserAssignModal } from "../customComponents/userAssignModal";
-import { selectedClientContext } from "../views/ClientsView";
-import { url } from "../api/backendApi";
-import { resolveClientUserName } from "../api/resolveClientUser";
+import {UserAssignModal} from "../customComponents/userAssignModal";
+import {selectedClientContext} from "../views/ClientsView";
+import {url} from "../api/backendApi";
+import {resolveClientUserName} from "../api/resolveClientUser";
 import "./ClientsList.css"
 import {IconButton} from "@mui/material";
 
 export default function ClientsList({
-    selectedShot: selectedClient,
-    setSelectedShot: setSelectedClient,
-}: any) {
-    let { sessionInfo, sessionData, users } = useContext(sessionContext);
+                                        selectedShot: selectedClient,
+                                        setSelectedShot: setSelectedClient,
+                                    }: any) {
+    let {sessionData} = useContext(sessionContext);
 
     return (
         <selectedClientContext.Provider
@@ -35,17 +33,17 @@ export default function ClientsList({
 }
 
 export function ClientObject({
-    client,
-    index,
-}: {
+                                 client,
+                                 index,
+                             }: {
     client: ClientData;
     index: number;
 }) {
     const [selectedClient, setSelectedClient] = useContext(
         selectedClientContext
     );
-    let { sessionInfo, sessionData, users } = useContext(sessionContext);
-    let name = resolveClientUserName(sessionData,client.id,users);
+    let { sessionData, users} = useContext(sessionContext);
+    let name = resolveClientUserName(sessionData, client.id, users);
     const [open, setOpen] = React.useState(false);
 
     return (
@@ -64,7 +62,6 @@ export function ClientObject({
                         value: user,
                     };
                 })}
-                title={"Select User to associate with this client id"}
                 callback={(value) => {
                     fetch(`${url}client/${client.id}/user`, {
                         method: "PUT",
@@ -72,21 +69,21 @@ export function ClientObject({
                             from: +new Date(),
                             newUser: value,
                         }),
-                        headers: { "content-type": "application/json" },
+                        headers: {"content-type": "application/json"},
                     });
                 }}
                 open={open}
                 setOpen={setOpen}
             ></UserAssignModal>
 
-            <div style={{ width: "100%",display:"flex",height:30,alignItems:"center",justifyContent:"center" }}>
+            <div style={{width: "100%", display: "flex", height: 30, alignItems: "center", justifyContent: "center"}}>
                 <div>{name}</div>
-                <IconButton onClick={()=>setOpen(true)}>
-                    <EditIcon />
+                <IconButton onClick={() => setOpen(true)}>
+                    <EditIcon/>
                 </IconButton>
             </div>
-            <div style={{ width: "100%" }}>&nbsp;</div>
-            <div style={{ width: "100%" }}>{client.id}</div>
+            <div style={{width: "100%"}}>&nbsp;</div>
+            <div style={{width: "100%"}}>{client.id}</div>
         </div>
     );
 }

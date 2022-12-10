@@ -19,11 +19,6 @@ export function LinkButton({path,children}:{path:string,children:any}){
 export default function header() {
     let { sessionInfo, sessionData } = useContext(sessionContext);
     let sessionTime = moment(Number(sessionInfo.session));
-    const location = useLocation();
-
-    const clicked = () => {
-        console.log("clicked");
-    };
 
     return (
         <div className="header">

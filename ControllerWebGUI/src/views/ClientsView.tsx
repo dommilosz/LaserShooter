@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { sessionContext } from "../App";
 import { createContext, useLocalStorage } from "../api/hooks";
 import ClientsList from "../components/ClientsList";
-import TargetVisualuser from "../components/targetVisualiser";
+import TargetVisualiser from "../components/targetVisualiser";
 
 export const selectedClientContext =
     createContext<[number, React.Dispatch<React.SetStateAction<number>>]>();
@@ -31,7 +31,7 @@ export default function ClientsView() {
                     flexDirection: "column",
                 }}
             >
-                <TargetVisualuser
+                <TargetVisualiser
                     primaryShots={sessionData.shots.filter((shot) => {
                         return (
                             shot.idPacket.clientId ===
@@ -43,7 +43,7 @@ export default function ClientsView() {
                     secondaryShots={showAllShotsOnTarget?sessionData.shots:[]}
                     primaryColor={"red"}
                     secondaryColor={"red"}
-                ></TargetVisualuser>
+                ></TargetVisualiser>
             </div>
         </div>
     );

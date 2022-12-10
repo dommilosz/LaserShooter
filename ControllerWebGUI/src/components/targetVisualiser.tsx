@@ -1,22 +1,25 @@
-import React, {useContext, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import {ShotData} from "../types";
-import {useAppSize} from "../api/hooks";
 import {url} from "../api/backendApi";
 import Tooltip from "@mui/material/Tooltip";
-import {sessionContext} from "../App";
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
-export default function TargetVisualuser({
-                                             primaryShots,
-                                             primaryColor,
-                                             secondaryShots,
-                                             secondaryColor,
-                                         }: {
-    primaryShots: ShotData[];
-    primaryColor: string;
-    secondaryShots: ShotData[];
-    secondaryColor: string;
-}) {
+export default function TargetVisualiser(
+    {
+        primaryShots,
+        primaryColor,
+        secondaryShots,
+        secondaryColor,
+        interactive,
+        dotSizeScale,
+    }: {
+        primaryShots: ShotData[];
+        primaryColor?: string;
+        secondaryShots: ShotData[];
+        secondaryColor?: string;
+        interactive?: boolean;
+        dotSizeScale?:number;
+    }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [highlightedShot, setHighlightedShot] = useState<ShotData | undefined>(undefined);
 
@@ -25,6 +28,10 @@ export default function TargetVisualuser({
 
     let w = 160 * scale;
     let h = 120 * scale;
+
+    if(!dotSizeScale)dotSizeScale=1;
+    if(!primaryColor)primaryColor="red";
+    if(!secondaryColor)secondaryColor="black";
 
     if (canvas !== null) {
         let _ctx = canvas.getContext("2d");
@@ -43,8 +50,8 @@ export default function TargetVisualuser({
                 ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
                 ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
 
-                let dotSize = scale;
-                ctx.fillStyle = secondaryColor;
+                let dotSize = scale*dotSizeScale!;
+                ctx.fillStyle = secondaryColor!;
                 for (let _shot of secondaryShots) {
                     ctx.beginPath();
                     ctx.arc(
@@ -57,8 +64,8 @@ export default function TargetVisualuser({
                     ctx.fill();
                 }
 
-                dotSize = scale * 2;
-                ctx.fillStyle = primaryColor;
+                dotSize = scale * 2*dotSizeScale!;
+                ctx.fillStyle = primaryColor!;
                 for (let _shot of primaryShots) {
                     ctx.beginPath();
                     ctx.arc(
@@ -76,7 +83,7 @@ export default function TargetVisualuser({
 
     return (
         <div style={{width: "100%", height: "100%"}}>
-            <ShotTooltip highlightedShot={highlightedShot}>
+            <ShotTooltip highlightedShot={highlightedShot} interactive={interactive!==false}>
                 <canvas
                     style={{maxWidth: "100%", maxHeight: "100%"}}
                     ref={canvasRef}
@@ -126,9 +133,10 @@ export default function TargetVisualuser({
     );
 }
 
-export function ShotTooltip({highlightedShot, children}: { highlightedShot: ShotData | undefined, children: any }) {
-    let { sessionInfo, sessionData, users } = useContext(sessionContext);
+export function ShotTooltip({highlightedShot, children,interactive}: { highlightedShot: ShotData | undefined, children: any,interactive:boolean }) {
     const navigate = useNavigate();
+
+    if(!interactive)return <>{children}</>;
 
     const content = <div>
         <div>{highlightedShot?.idPacket.shotId}</div>
@@ -137,9 +145,14 @@ export function ShotTooltip({highlightedShot, children}: { highlightedShot: Shot
     </div>
 
     return <div
-        style={{cursor: highlightedShot !== undefined ? "pointer" : "",display:"flex",height:"100%",alignItems:"center"}}
-        onClick={()=>{
-            navigate("/",{state:{selectShot:highlightedShot}})
+        style={{
+            cursor: highlightedShot !== undefined ? "pointer" : "",
+            display: "flex",
+            height: "100%",
+            alignItems: "center"
+        }}
+        onClick={() => {
+            navigate("/", {state: {selectShot: highlightedShot}})
         }}
     ><Tooltip
         open={highlightedShot !== undefined}

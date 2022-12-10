@@ -1,6 +1,5 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { sessionContext } from "../App";
-import { createContext } from "../api/hooks";
 import { selectedUserContext } from "../views/UsersView";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { url } from "../api/backendApi";
@@ -8,7 +7,7 @@ import "./UsersList.css"
 import {IconButton} from "@mui/material";
 
 export default function UsersList({ selectedUser, setSelectedUser }: any) {
-    let { sessionInfo, sessionData, users } = useContext(sessionContext);
+    let { users } = useContext(sessionContext);
 
     return (
         <selectedUserContext.Provider value={[selectedUser, setSelectedUser]}>
@@ -51,7 +50,6 @@ export function UserObject({
     user: { id: number; name: string };
     index: number;
 }) {
-    let { sessionInfo, sessionData, users } = useContext(sessionContext);
     let [selectedUser, setSelectedUser] = useContext(selectedUserContext);
 
     return (

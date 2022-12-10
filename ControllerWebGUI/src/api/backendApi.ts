@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Session, SessionData, SessionInfo, Users } from "../types";
+import { Session, SessionData, Users } from "../types";
 
 export let url = "http://localhost:3000"
 try{

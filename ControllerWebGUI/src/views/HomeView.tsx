@@ -1,23 +1,22 @@
 import RecentShots from "../components/recentShots";
-import TargetVisualuser from "../components/targetVisualiser";
+import TargetVisualiser from "../components/targetVisualiser";
 import React, {useContext, useEffect, useState} from "react";
 import {sessionContext} from "../App";
 import {createContext, useLocalStorage} from "../api/hooks";
 import "./homeview.css";
-import {useLocation, useNavigate} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 
 export const selectedShotContext =
     createContext<[number, React.Dispatch<React.SetStateAction<number>>]>();
 
 export default function HomeView() {
-    let {sessionInfo, sessionData} = useContext(sessionContext);
+    let { sessionData} = useContext(sessionContext);
     let [selectedShot, setSelectedShot] = useState(0);
     const [showAllShotsOnTarget, setShowAllShotsOnTarget] = useLocalStorage(
         "visualise_all_shots",
         "false"
     );
     let location = useLocation();
-    let navigate = useNavigate();
 
     useEffect(() => {
         // Clear the location state when the page is refreshed
@@ -43,7 +42,7 @@ export default function HomeView() {
                 />
             </div>
             <div className="targetVisualuser">
-                <TargetVisualuser
+                <TargetVisualiser
                     primaryShots={[sessionData.shots[
                     sessionData.shots.length - selectedShot - 1
                         ]]}
@@ -52,7 +51,7 @@ export default function HomeView() {
                     }
                     primaryColor={"red"}
                     secondaryColor={"black"}
-                ></TargetVisualuser>
+                ></TargetVisualiser>
             </div>
         </div>
     );
