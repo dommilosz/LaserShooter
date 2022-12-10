@@ -18,7 +18,7 @@ export default function TargetVisualiser(
         secondaryShots: ShotData[];
         secondaryColor?: string;
         interactive?: boolean;
-        dotSizeScale?:number;
+        dotSizeScale?: number;
     }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [highlightedShot, setHighlightedShot] = useState<ShotData | undefined>(undefined);
@@ -29,9 +29,9 @@ export default function TargetVisualiser(
     let w = 160 * scale;
     let h = 120 * scale;
 
-    if(!dotSizeScale)dotSizeScale=1;
-    if(!primaryColor)primaryColor="red";
-    if(!secondaryColor)secondaryColor="black";
+    if (!dotSizeScale) dotSizeScale = 1;
+    if (!primaryColor) primaryColor = "red";
+    if (!secondaryColor) secondaryColor = "black";
 
     if (canvas !== null) {
         let _ctx = canvas.getContext("2d");
@@ -50,7 +50,7 @@ export default function TargetVisualiser(
                 ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
                 ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
 
-                let dotSize = scale*dotSizeScale!;
+                let dotSize = scale * dotSizeScale!;
                 ctx.fillStyle = secondaryColor!;
                 for (let _shot of secondaryShots) {
                     ctx.beginPath();
@@ -64,7 +64,7 @@ export default function TargetVisualiser(
                     ctx.fill();
                 }
 
-                dotSize = scale * 2*dotSizeScale!;
+                dotSize = scale * 2 * dotSizeScale!;
                 ctx.fillStyle = primaryColor!;
                 for (let _shot of primaryShots) {
                     ctx.beginPath();
@@ -83,7 +83,7 @@ export default function TargetVisualiser(
 
     return (
         <div style={{width: "100%", height: "100%"}}>
-            <ShotTooltip highlightedShot={highlightedShot} interactive={interactive!==false}>
+            <ShotTooltip highlightedShot={highlightedShot} interactive={interactive !== false}>
                 <canvas
                     style={{maxWidth: "100%", maxHeight: "100%"}}
                     ref={canvasRef}
@@ -133,10 +133,14 @@ export default function TargetVisualiser(
     );
 }
 
-export function ShotTooltip({highlightedShot, children,interactive}: { highlightedShot: ShotData | undefined, children: any,interactive:boolean }) {
+export function ShotTooltip({
+                                highlightedShot,
+                                children,
+                                interactive
+                            }: { highlightedShot: ShotData | undefined, children: any, interactive: boolean }) {
     const navigate = useNavigate();
 
-    if(!interactive)return <>{children}</>;
+    if (!interactive) return <>{children}</>;
 
     const content = <div>
         <div>{highlightedShot?.idPacket.shotId}</div>
@@ -152,7 +156,8 @@ export function ShotTooltip({highlightedShot, children,interactive}: { highlight
             alignItems: "center"
         }}
         onClick={() => {
-            navigate("/", {state: {selectShot: highlightedShot}})
+            if (highlightedShot !== undefined)
+                navigate("/", {state: {selectShot: highlightedShot}})
         }}
     ><Tooltip
         open={highlightedShot !== undefined}
