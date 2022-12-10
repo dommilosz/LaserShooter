@@ -19,6 +19,7 @@ export function LinkButton({path,children}:{path:string,children:any}){
 export default function header() {
     let { sessionInfo, sessionData } = useContext(sessionContext);
     let sessionTime = moment(Number(sessionInfo.session));
+    let sessionValid = sessionInfo.session <= 0;
 
     return (
         <div className="header">
@@ -28,10 +29,8 @@ export default function header() {
             >
                 Strzelnica
             </div>
-            <div style={{fontSize:"1rem"}}>
-                {sessionInfo.session > 0?(`Session from ${sessionTime.format("lll")}`):(<div style={{color:"#b90707"}}>
-                    Error while connecting to server.
-                </div>)}
+            <div className={`sessionNotice ${sessionValid?"":"error"}`}>
+                {sessionValid?"Error while connecting to server.":`Session from ${sessionTime.format("lll")}`}
             </div>
             <div className="menu">
                 <LinkButton path={"/settings"}>Settings</LinkButton>

@@ -3,7 +3,7 @@
 .header {
     background-image: linear-gradient(to right,  #00a9d3, #084a5a);
     width: 100%;
-    font-size: 3rem;
+    font-size: 3vw;
     font-family: "Zen Dots", cursive;
     color: white;
     display: flex;
@@ -33,11 +33,21 @@
 
 .menuItem {
     color: #d2f6ff;
-    font-size: 1.3rem;
-    padding: 0px 20px;
+    font-size: 50%;
+    width: 10vw;
     text-decoration: none;
     margin: 3px;
+    justify-content: center;
 }
+
+.sessionNotice{
+    font-size: 50%;
+    width: 30%;
+}
+.sessionNotice.error{
+    color:#b90707;
+}
+
 .hover-3 {
     --b: 0.1em; /* the thickness of the line */
     --c: #aaa8a8; /* the color */
