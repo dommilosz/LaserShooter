@@ -1,6 +1,8 @@
 import React, {useState} from "react";
 import {SettingItem} from "../../views/SettingsView";
 import {useLocalStorage} from "../../api/hooks";
+import Button from '@mui/material/Button';
+import {TextField} from "@mui/material";
 
 export default function (){
     const [serverUrlLS, setServerUrlLS] = useLocalStorage(
@@ -11,10 +13,11 @@ export default function (){
 
     return <SettingItem className={"settings-item"}>
         <div className={"settings-text"}>Server url: {serverUrlLS}</div>
-        <input type="text" onChange={(e)=>{
+        <TextField style={{width:"100%"}} label="Enter server url" variant="standard" onChange={(e)=>{
             setServerUrl(e.target.value);
-        }} value={serverUrl}></input>
-        <button onClick={async ()=>{
+        }} value={serverUrl} />
+        <br/>
+        <Button variant="contained" color="secondary" onClick={async ()=>{
             try{
                 let surl = serverUrl;
                 if(!surl.endsWith("/"))
@@ -29,10 +32,11 @@ export default function (){
                 alert("Error while checking: "+e);
             }
 
-        }}>Check</button>
-        <button onClick={()=>{
+        }}>Check</Button>
+        <br/>
+        <Button variant="contained" color="success" onClick={()=>{
             setServerUrlLS(serverUrl);
             location.reload();
-        }}>Apply</button>
+        }}>Apply</Button>
     </SettingItem>
 }

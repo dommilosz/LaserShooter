@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: space-evenly;
 }
 
 .settings-item button, .settings-item select, .settings-item input{
@@ -10,6 +11,10 @@
 
 .settings-text{
     font-size: min(2vw, 12px);
+}
+
+.settings-text2{
+    font-size: min(3vw, 18px);
 }
 
 #settings-view{
