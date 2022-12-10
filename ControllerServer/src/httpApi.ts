@@ -113,6 +113,20 @@ app.get("/shot/:shot",async (req: Request, res: Response) => {
     sendText(res, "Not found", 404);
 })
 
+app.delete("/shot/:shot",async (req: Request, res: Response) => {
+    let _shot = req.params.shot;
+    for (let i = 0; i < stateData.sessionData.shots.length; i++){
+        const shot = stateData.sessionData.shots[i];
+        if(String(shot.idPacket.shotId) === _shot){
+            stateData.sessionData.shots.splice(i,1);
+            await saveData();
+            sendText(res, "Deleted", 200);
+            return;
+        }
+    }
+    sendText(res, "Not found", 404);
+})
+
 app.get("/shot/:shot/recalculate",async (req: Request, res: Response) => {
     let _shot = req.params.shot;
     for (const shot of stateData.sessionData.shots) {

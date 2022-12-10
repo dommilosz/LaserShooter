@@ -62,7 +62,7 @@ export function useCurrentSession(): Session {
             setUsers(await getUsers());
             setSessionData(await getSession("current"));
         });
-    }, [sessionInfo.changeIndex]);
+    }, [sessionInfo.changeIndex,sessionInfo.session]);
 
     return { sessionInfo, sessionData, users };
 }

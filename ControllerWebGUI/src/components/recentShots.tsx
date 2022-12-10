@@ -6,6 +6,9 @@ import {sessionContext} from "../App";
 import {selectedShotContext} from "../views/HomeView";
 import {resolveClientUserName} from "../api/resolveClientUser";
 import {useLocation} from "react-router-dom";
+import {url} from "../api/backendApi";
+import DeleteIcon from "@mui/icons-material/Delete";
+import {IconButton} from "@mui/material";
 
 export default function recentShots({selectedShot, setSelectedShot}: any) {
     let {sessionData} = useContext(sessionContext);
@@ -58,6 +61,19 @@ export function ShotObject({shot, index}: { shot: ShotData; index: number }) {
             <div className="shotScoreText">Score:</div>
             <div className="shotScore">{shot.score}</div>
             <div className="shotUsername">{shotUsername}</div>
+            <div style={{display:"flex",alignItems:"center"}}><IconButton onClick={async ()=>{
+                if(!confirm(`Do you want to remove ${shot.idPacket.shotId} shot?`)){
+                    return;
+                }
+                let resp = await fetch(url + "shot/" + shot.idPacket.shotId, {
+                    method: "DELETE",
+                });
+                if(resp.status !== 200){
+                    alert(await resp.text())
+                }
+            }}>
+                <DeleteIcon />
+            </IconButton></div>
         </div>
     );
 }
