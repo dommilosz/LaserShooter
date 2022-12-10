@@ -15,10 +15,10 @@ export default function (){
         })()
     },[])
 
-    return <SettingItem>
-        <div>Current Session: {sessionInfo.session}</div>
-        <div>Session Date: {sessionTime.format("LLL")}</div>
-        <div>Load Session: </div>
+    return <SettingItem className={"settings-item"}>
+        <div className={"settings-text"}>Current Session: {sessionInfo.session}</div>
+        <div className={"settings-text"}>Session Date: {sessionTime.format("LLL")}</div>
+        <div className={"settings-text"}>Load Session: </div>
         <select id="session-load-box">
             {sessions.map(session=>{
                 return <option value={session}>{session}</option>

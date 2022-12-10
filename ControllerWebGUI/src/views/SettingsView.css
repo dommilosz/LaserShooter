@@ -1,5 +1,15 @@
 .settings-item{
     display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.settings-item button, .settings-item select, .settings-item input{
+    width: 100%;
+}
+
+.settings-text{
+    font-size: min(2vw, 12px);
 }
 
 #settings-view{

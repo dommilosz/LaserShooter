@@ -9,9 +9,9 @@ export default function (){
         "false"
     );
 
-    return <SettingItem>
+    return <SettingItem className={"settings-item"}>
         <div style={{height:50}}>
-            <div>Show all shots on target:</div>
+            <div className={"settings-text"}>Show all shots on target:</div>
             <input type="checkbox" onChange={(e)=>{
                 setShowAllShotsOnTarget(e.target.checked);
             }} checked={showAllShotsOnTarget}></input>

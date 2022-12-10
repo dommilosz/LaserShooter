@@ -9,8 +9,8 @@ export default function (){
     );
     const [serverUrl, setServerUrl] = useState("");
 
-    return <SettingItem>
-        <div>Server url: {serverUrlLS}</div>
+    return <SettingItem className={"settings-item"}>
+        <div className={"settings-text"}>Server url: {serverUrlLS}</div>
         <input type="text" onChange={(e)=>{
             setServerUrl(e.target.value);
         }} value={serverUrl}></input>

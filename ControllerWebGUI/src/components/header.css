@@ -33,16 +33,17 @@
 
 .menuItem {
     color: #d2f6ff;
-    font-size: 50%;
+    font-size: calc((10vw - 0.5rem) / 7);
     width: 10vw;
     text-decoration: none;
     margin: 3px;
+    padding: 10px 5px;
     justify-content: center;
 }
 
 .sessionNotice{
-    font-size: 50%;
-    width: 30%;
+    font-size: 40%;
+    width: 20%;
 }
 .sessionNotice.error{
     color:#b90707;
