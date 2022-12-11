@@ -5,6 +5,7 @@ import {sessionContext} from "../App";
 import {createContext, useLocalStorage} from "../api/hooks";
 import "./homeview.css";
 import {useLocation} from "react-router-dom";
+import ObjectView from "../components/ObjectView";
 
 export const selectedShotContext =
     createContext<[number, React.Dispatch<React.SetStateAction<number>>]>();
@@ -35,12 +36,12 @@ export default function HomeView() {
 
     return (
         <div className="homeView">
-            <div className="recentShots">
+            <ObjectView>
                 <RecentShots
                     selectedShot={selectedShot}
                     setSelectedShot={setSelectedShot}
                 />
-            </div>
+            </ObjectView>
             <div className="targetVisualuser">
                 <TargetVisualiser
                     primaryShots={[sessionData.shots[

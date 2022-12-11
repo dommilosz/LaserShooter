@@ -56,3 +56,29 @@ body {
 body {
     background-color: gray;
 }
+
+.object-card{
+    width: 100%;
+    margin:5px;
+    cursor: pointer;
+}
+
+.object-card .MuiBox-root{
+    box-sizing: border-box;
+}
+
+.object-card .MuiBox-root > div{
+    width: 100%;
+}
+
+.object-card.active{
+    background-color: #cdcdcd;
+}
+
+.object-card.active:hover{
+    background-color: #b4b4b4;
+}
+
+.object-card:hover{
+    background-color: #cdcdcd;
+}

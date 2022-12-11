@@ -3,6 +3,7 @@ import { sessionContext } from "../App";
 import { createContext, useLocalStorage } from "../api/hooks";
 import TargetVisualiser from "../components/targetVisualiser";
 import UsersList from "../components/UsersList";
+import ObjectView from "../components/ObjectView";
 
 export const selectedUserContext =
     createContext<[number, React.Dispatch<React.SetStateAction<number>>]>();
@@ -17,12 +18,12 @@ export default function UsersView() {
         
     return (
         <div style={{ display: "flex", height: "calc( 100% - 80px )"}}>
-            <div style={{ display: "flex", width: "33%" }}>
+            <ObjectView>
                 <UsersList
                     selectedUser={selectedUser}
                     setSelectedUser={setSelectedUser}
                 />
-            </div>
+            </ObjectView>
             <div
                 style={{
                     display: "flex",

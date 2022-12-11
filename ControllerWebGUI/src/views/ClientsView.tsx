@@ -3,6 +3,7 @@ import { sessionContext } from "../App";
 import { createContext, useLocalStorage } from "../api/hooks";
 import ClientsList from "../components/ClientsList";
 import TargetVisualiser from "../components/targetVisualiser";
+import ObjectView from "../components/ObjectView";
 
 export const selectedClientContext =
     createContext<[number, React.Dispatch<React.SetStateAction<number>>]>();
@@ -17,12 +18,12 @@ export default function ClientsView() {
 
     return (
         <div style={{ display: "flex", height: "calc( 100% - 80px )" }}>
-            <div style={{ display: "flex", width: "33%" }}>
+            <ObjectView>
                 <ClientsList
                     selectedShot={selectedClient}
                     setSelectedShot={setSelectedClient}
                 />
-            </div>
+            </ObjectView>
             <div
                 style={{
                     display: "flex",

@@ -8,7 +8,31 @@ import {resolveClientUserName} from "../api/resolveClientUser";
 import {useLocation} from "react-router-dom";
 import {url} from "../api/backendApi";
 import DeleteIcon from "@mui/icons-material/Delete";
-import {IconButton} from "@mui/material";
+import {Box, Card, IconButton, Stack, Typography} from "@mui/material";
+import Edit from "@mui/icons-material/Edit";
+
+
+moment.updateLocale('en', {
+    relativeTime : {
+        future: "in %s",
+        past:   "%s ago",
+        s: function (number, withoutSuffix, key, isFuture){
+            return number + 's';
+        },
+        m:  "1m",
+        mm: function (number, withoutSuffix, key, isFuture){
+            return number + 'm';
+        },
+        h:  "1h",
+        hh: "%dh",
+        d:  "1d",
+        dd: "%dd",
+        M:  "1mo",
+        MM: "%dmo",
+        y:  "1y",
+        yy: "%dy"
+    }
+});
 
 export default function recentShots({selectedShot, setSelectedShot}: any) {
     let {sessionData} = useContext(sessionContext);
@@ -36,9 +60,8 @@ export function ShotObject({shot, index}: { shot: ShotData; index: number }) {
     let { sessionData, users} = useContext(sessionContext);
     let shotUsername = resolveClientUserName(sessionData, shot.idPacket.clientId, users, shot.ts);
 
-    let timeAgo = moment(shot.ts);
+    let timeAgo = moment(shot.ts).fromNow(true);
     let objRef = useRef<HTMLDivElement>(null);
-    let isActive = selectedShot == index;
     let location = useLocation();
 
     useEffect(() => {
@@ -47,33 +70,35 @@ export function ShotObject({shot, index}: { shot: ShotData; index: number }) {
         }
     }, [location.state?.selectShot])
 
-    return (
-        <div
-            className={"shot_object" + (isActive ? " active" : "")}
-            onClick={() => {
-                if (setSelectedShot) setSelectedShot(index);
-            }}
-            ref={objRef}
-        >
-            {/* <div style={{ width: "50%" }}>{shot.idPacket.shotId}</div> */}
-            {/* <div style={{ width: "100%" }}>{timeAgo.fromNow()}</div> */}
-            <div className="shotID">#{index}</div>
-            <div className="shotScoreText">Score:</div>
-            <div className="shotScore">{shot.score}</div>
-            <div className="shotUsername">{shotUsername}</div>
-            <div style={{display:"flex",alignItems:"center"}}><IconButton onClick={async ()=>{
-                if(!confirm(`Do you want to remove ${shot.idPacket.shotId} shot?`)){
-                    return;
-                }
-                let resp = await fetch(url + "shot/" + shot.idPacket.shotId, {
-                    method: "DELETE",
-                });
-                if(resp.status !== 200){
-                    alert(await resp.text())
-                }
-            }}>
-                <DeleteIcon />
-            </IconButton></div>
-        </div>
-    );
+    return <Card ref={objRef} className={`object-card shots ${selectedShot == index?"active":""}`} onClick={() => {
+        if (setSelectedShot) setSelectedShot(index);
+    }}>
+        <Box sx={{p: 2, display: 'flex', width: "100%", justifyContent: "center",alignItems:"center"}}>
+            <Stack spacing={0.5}>
+                <Typography fontWeight={700}>Score: {shot.score}</Typography>
+                <Typography variant="body2" color="text.secondary">
+                    {shotUsername}
+                </Typography>
+            </Stack>
+            <div style={{width:"20%"}}>
+                <Typography>
+                    {timeAgo}
+                </Typography>
+                <IconButton onClick={async ()=>{
+                    if(!confirm(`Do you want to remove ${shot.idPacket.shotId} shot?`)){
+                        return;
+                    }
+                    let resp = await fetch(url + "shot/" + shot.idPacket.shotId, {
+                        method: "DELETE",
+                    });
+                    if(resp.status !== 200){
+                        alert(await resp.text())
+                    }
+                }}>
+                    <DeleteIcon sx={{fontSize: 14}}/>
+                </IconButton>
+            </div>
+
+        </Box>
+    </Card>;
 }
