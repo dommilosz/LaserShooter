@@ -182,13 +182,5 @@ void fire() {
   digitalWrite(LASER_PIN, LASER_ACTIVE_STATE);
   delay(150);
   digitalWrite(LASER_PIN, !LASER_ACTIVE_STATE);
-  for (int i = 0; i < 6; i++) {
-    if (!inFireMode) {
-      Serial.println("Got response!");
-      myDFPlayer.playFolder(3, 1);
-      break;
-    }
-    delay(25);
-  }
   Serial.println("AFTER FIRE!");
 }
