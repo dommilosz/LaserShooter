@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {SettingItem} from "../../views/SettingsView";
 import {useLocalStorage} from "../../api/hooks";
 import Button from '@mui/material/Button';
+import {Typography} from "@mui/material";
 
 export default function (){
     const [serverUrlLS, setServerUrlLS] = useLocalStorage(
@@ -11,7 +12,12 @@ export default function (){
     const [serverUrl, setServerUrl] = useState("");
 
     return <SettingItem className={"settings-item"}>
-        <div className={"settings-text2"}>Reset client to it's defaults. It won't affect the sessions on server</div>
+        <Typography fontWeight={900}>
+            Reset client to it's defaults
+        </Typography>
+        <Typography>
+            It won't affect the sessions on server
+        </Typography>
         <Button variant="contained" color="error"  onClick={()=>{
             localStorage.clear();
             location.reload();

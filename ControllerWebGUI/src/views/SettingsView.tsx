@@ -20,17 +20,17 @@ export const SettingItem = styled(Paper)(({theme}) => ({
 export default function SettingsView() {
     return <div style={{overflow:"auto"}}>
         <div id="settings-view">
-            <Grid container spacing={2}>
-                <Grid item xs={4}>
+            <Grid container spacing={2} style={{display:"flex",flexDirection:"row",alignItems:"center",justifyContent:"center"}}>
+                <Grid item xs={"auto"}>
                     <ServerSetting/>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={"auto"}>
                     <SessionSetting/>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={"auto"}>
                     <ShowAllOnTargetSetting/>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={"auto"}>
                     <ResetClient/>
                 </Grid>
             </Grid>

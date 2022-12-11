@@ -15,7 +15,7 @@ export default function (){
         <div style={{height:50}}>
             <FormControlLabel control={<Checkbox defaultChecked color="success" onChange={(e)=>{
                 setShowAllShotsOnTarget(e.target.checked);
-            }} checked={showAllShotsOnTarget} />} label={<span style={{fontSize:"min(1.2vw, 12px)"}}>Show all shots on target</span>}/>
+            }} checked={showAllShotsOnTarget} />} label={<span>Show all shots on target</span>}/>
         </div>
         <div style={{height:"calc(100% - 50px)"}}>
             <TargetVisualiserDemo showAllShots={showAllShotsOnTarget}></TargetVisualiserDemo>
