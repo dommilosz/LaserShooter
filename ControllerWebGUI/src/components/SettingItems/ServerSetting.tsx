@@ -23,8 +23,7 @@ export default function (){
         <TextField style={{width:"100%"}} label="Enter server url" variant="standard" onChange={(e)=>{
             setServerUrl(e.target.value);
         }} value={serverUrl} />
-        <br/>
-        <Button variant="contained" color="secondary" onClick={async ()=>{
+        <Button variant="contained" color="success" onClick={async ()=>{
             try{
                 let surl = serverUrl;
                 if(!surl.endsWith("/"))
@@ -33,17 +32,13 @@ export default function (){
                 let resp = await fetch(surl+"session");
                 let json = await resp.json();
                 if(json.session){
-                    alert("Server url is valid")
+                    setServerUrlLS(serverUrl);
+                    location.reload();
                 }
             }catch (e){
                 alert("Error while checking: "+e);
+                return;
             }
-
-        }}>Check</Button>
-        <br/>
-        <Button variant="contained" color="success" onClick={()=>{
-            setServerUrlLS(serverUrl);
-            location.reload();
         }}>Apply</Button>
     </SettingItem>
 }
