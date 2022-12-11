@@ -28,7 +28,7 @@ export type SessionData = {
   clients: { [key: number]: ClientData };
 };
 
-export type SessionInfo = { lastKA: number; session: number; shots: number }
+export type SessionInfo = { lastKA: number; session: number; shots: number,changeIndex:number,lastFetch:number }
 
 export type Users = {
   [key:number]:string

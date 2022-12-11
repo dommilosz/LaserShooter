@@ -9,6 +9,7 @@ import HomeView from "./views/HomeView";
 import ClientsView from "./views/ClientsView";
 import UsersView from "./views/UsersView";
 import SettingsView from "./views/SettingsView";
+import ServerConnectionModal from "./customComponents/serverConnectionModal";
 
 export const sessionContext = createContext<Session>();
 
@@ -24,6 +25,7 @@ function App() {
     return (
         <div className="App">
             <sessionContext.Provider value={{sessionInfo, sessionData, users}}>
+                <ServerConnectionModal open={sessionInfo.lastFetch > 0 && sessionInfo.session <= 0}/>
                 <BrowserRouter>
                     <Header/>
                     <Routes>

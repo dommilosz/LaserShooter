@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Session, SessionData, Users } from "../types";
+import {SessionInfo, SessionData, Users, Session} from "../types";
 
 export let url = "http://localhost:3000"
 try{
@@ -11,13 +11,26 @@ if(!url.endsWith("/")){
     url = url + "/"
 }
 
+async function fetchWithTimeout(resource:string, options:any = {}) {
+    const { timeout = 5000 } = options;
+
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+    const response = await fetch(resource, {
+        ...options,
+        signal: controller.signal
+    });
+    clearTimeout(id);
+    return response;
+}
+
 export async function getSession(session: number | "current") {
     let sessionData = await fetch(url + "sessions/" + session);
     return await sessionData.json();
 }
 
 export async function getSessionInfo() {
-    let sessionInfo = await fetch(url + "session");
+    let sessionInfo = await fetchWithTimeout(url + "session");
     return await sessionInfo.json();
 }
 
@@ -27,11 +40,12 @@ export async function getUsers() {
 }
 
 export function useCurrentSession(): Session {
-    let [sessionInfo, setSessionInfo] = useState({
+    let [sessionInfo, setSessionInfo] = useState<SessionInfo>({
         session: 0,
         shots: 0,
         lastKA: 0,
         changeIndex: 0,
+        lastFetch:0,
     });
     let [sessionData, setSessionData] = useState<SessionData>({
         shots: [],
@@ -44,7 +58,12 @@ export function useCurrentSession(): Session {
 
     useEffect(() => {
         const intervalCall = setInterval(async () => {
-            setSessionInfo(await getSessionInfo());
+            try{
+                setSessionInfo(await getSessionInfo());
+            }catch(e) {
+                console.error(e);
+                setSessionInfo({session:0,lastKA:0,shots:0,changeIndex:0,lastFetch});
+            }
             setLastFetch(+new Date());
         }, 1500);
         return () => {
@@ -56,13 +75,20 @@ export function useCurrentSession(): Session {
     useEffect(() => {
         setTimeout(async () => {
             if (sessionInfo.session === 0) {
-                setSessionInfo(await getSessionInfo());
+                try{
+                    setSessionInfo(await getSessionInfo());
+                }catch(e) {
+                    console.error(e);
+                    setSessionInfo({session:0,lastKA:0,shots:0,changeIndex:0,lastFetch});
+                }
                 setLastFetch(+new Date());
             }
             setUsers(await getUsers());
             setSessionData(await getSession("current"));
         });
     }, [sessionInfo.changeIndex,sessionInfo.session]);
+
+    sessionInfo.lastFetch = lastFetch;
 
     return { sessionInfo, sessionData, users };
 }

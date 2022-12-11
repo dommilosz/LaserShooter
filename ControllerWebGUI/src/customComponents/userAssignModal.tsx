@@ -2,7 +2,6 @@ import React, {useRef, useState} from 'react';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import 'reactjs-popup/dist/index.css';
-import "./userAssignModal.css"
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
@@ -22,12 +21,13 @@ const style = {
     p: 4,
 };
 
-export function UserAssignModal({
-                                    elements,
-                                    callback,
-                                    open,
-                                    setOpen
-                                }: { elements: { name: string, value: string }[], callback: (value: string) => any, open: boolean, setOpen: any }) {
+export function UserAssignModal(
+    {
+        elements,
+        callback,
+        open,
+        setOpen
+    }: { elements: { name: string, value: string }[], callback: (value: string) => any, open: boolean, setOpen: any }) {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const [selectedUser, setSelectedUser] = useState("");
@@ -40,36 +40,38 @@ export function UserAssignModal({
         >
             <Paper sx={style}>
                 <div className={"settings-text2"}>Select user to assign with this client</div>
-                <FormControl variant="standard" sx={{ m: 1, minWidth: "100%" }}>
+                <FormControl variant="standard" sx={{m: 1, minWidth: "100%"}}>
                     <InputLabel id="user-select-label">User</InputLabel>
                     <Select
                         labelId="user-select-label"
                         label={"User"}
-                        onChange={(e)=>{{
-                            setSelectedUser(String(e.target.value));
-                        }}}
+                        onChange={(e) => {
+                            {
+                                setSelectedUser(String(e.target.value));
+                            }
+                        }}
                     >
-                        {elements.map(el=>{
+                        {elements.map(el => {
                             return <MenuItem value={el.value}>{el.name}</MenuItem>
                         })}
                     </Select>
                 </FormControl>
                 <Button variant="contained" color="success"
-                        className="button" style={{margin:5}}
-                    onClick={() => {
-                        console.log('modal closed ');
-                        callback(selectedUser)
-                        setOpen(false);
-                    }}
+                        className="button" style={{margin: 5}}
+                        onClick={() => {
+                            console.log('modal closed ');
+                            callback(selectedUser)
+                            setOpen(false);
+                        }}
                 >
                     Save
                 </Button>
                 <Button variant="contained" color="error"
-                    className="button" style={{margin:5}}
-                    onClick={() => {
-                        console.log('modal closed ');
-                        setOpen(false);
-                    }}
+                        className="button" style={{margin: 5}}
+                        onClick={() => {
+                            console.log('modal closed ');
+                            setOpen(false);
+                        }}
                 >
                     Cancel
                 </Button>

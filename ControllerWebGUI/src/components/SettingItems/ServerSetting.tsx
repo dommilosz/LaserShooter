@@ -1,8 +1,10 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {SettingItem} from "../../views/SettingsView";
 import {useLocalStorage} from "../../api/hooks";
 import Button from '@mui/material/Button';
-import {TextField} from "@mui/material";
+import {TextField,Typography} from "@mui/material";
+import {sessionContext} from "../../App";
+import moment from "moment";
 
 export default function (){
     const [serverUrlLS, setServerUrlLS] = useLocalStorage(
@@ -10,9 +12,14 @@ export default function (){
         "http://localhost:3000"
     );
     const [serverUrl, setServerUrl] = useState("");
+    let { sessionData,sessionInfo } = useContext(sessionContext);
+
+    let isError = sessionInfo.session <= 0;
+    let lastFetch = `${moment(sessionInfo.lastFetch).fromNow()} ${isError?" FAILED":""}`;
 
     return <SettingItem className={"settings-item"}>
-        <div className={"settings-text"}>Server url: {serverUrlLS}</div>
+        <Typography>Server url: {serverUrlLS}</Typography>
+        <Typography>Last fetch: <Typography color={isError?"red":""}>{sessionInfo.lastFetch>0?lastFetch:"Never"}</Typography></Typography>
         <TextField style={{width:"100%"}} label="Enter server url" variant="standard" onChange={(e)=>{
             setServerUrl(e.target.value);
         }} value={serverUrl} />
