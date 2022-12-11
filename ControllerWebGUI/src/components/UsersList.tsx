@@ -76,7 +76,7 @@ export function UserObject({
                     alert(await resp.text())
                 }
             }}>
-                <DeleteIcon sx={{fontSize: 14}}/>
+                <DeleteIcon sx={{fontSize: 20}}/>
             </IconButton>
         </Box>
     </Card>;

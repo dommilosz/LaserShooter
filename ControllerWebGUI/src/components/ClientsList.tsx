@@ -83,7 +83,7 @@ export function ClientObject(
                 </Typography>
             </Stack>
             <IconButton onClick={() => setOpen(true)}>
-                <Edit sx={{fontSize: 14}}/>
+                <Edit sx={{fontSize: 20}}/>
             </IconButton>
         </Box>
     </Card>;

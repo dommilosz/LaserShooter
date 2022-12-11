@@ -94,7 +94,7 @@ export function ShotObject({shot, index}: { shot: ShotData; index: number }) {
                         alert(await resp.text())
                     }
                 }}>
-                    <DeleteIcon sx={{fontSize: 14}}/>
+                    <DeleteIcon sx={{fontSize: 20}}/>
                 </IconButton>
             </div>
 
