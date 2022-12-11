@@ -14,7 +14,7 @@ export const SettingItem = styled(Paper)(({theme}) => ({
     padding: theme.spacing(1),
     textAlign: 'center',
     color: theme.palette.text.secondary,
-    height: 200,
+    height: 250,
 }));
 
 export default function SettingsView() {

@@ -62,5 +62,23 @@ export default function (){
 
 
         }}>Load</Button>
+        <Button variant="contained" onClick={async ()=>{
+            try{
+                let resp = await fetch(url + "session/", {
+                    method: "PUT",
+                    body: JSON.stringify({ session: undefined }),
+                    headers: { "content-type": "application/json" },
+                });
+                if(resp.status !== 200){
+                    alert(await resp.text());
+                    return;
+                }
+                alert("changed")
+            }catch(e){
+                alert(e)
+            }
+
+
+        }}>New Session</Button>
     </SettingItem>
 }
