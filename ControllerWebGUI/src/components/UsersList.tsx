@@ -4,13 +4,14 @@ import { selectedUserContext } from "../views/UsersView";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { url } from "../api/backendApi";
 import {Box, Card, IconButton, Stack, Typography} from "@mui/material";
+import ObjectContainer from "./ObjectContainer";
 
 export default function UsersList({ selectedUser, setSelectedUser }: any) {
     let { users } = useContext(sessionContext);
 
     return (
         <selectedUserContext.Provider value={[selectedUser, setSelectedUser]}>
-            <div className="object-container">
+            <ObjectContainer empty={false}>
                 <Card className={`object-card users`} onClick={async () => {
                     let userName = prompt("Enter username to create");
                     let userId = +new Date();
@@ -40,7 +41,7 @@ export default function UsersList({ selectedUser, setSelectedUser }: any) {
                         ></UserObject>
                     );
                 })}
-            </div>
+            </ObjectContainer>
         </selectedUserContext.Provider>
     );
 }

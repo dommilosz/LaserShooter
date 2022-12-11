@@ -8,6 +8,7 @@ import {url} from "../api/backendApi";
 import {resolveClientUserName} from "../api/resolveClientUser";
 import {Box, Card, Typography, Stack, IconButton} from "@mui/material";
 import Edit from "@mui/icons-material/Edit";
+import ObjectContainer from "./ObjectContainer";
 
 export default function ClientsList(
     {
@@ -20,7 +21,7 @@ export default function ClientsList(
         <selectedClientContext.Provider
             value={[selectedClient, setSelectedClient]}
         >
-            <div className="object-container">
+            <ObjectContainer empty={Object.keys(sessionData.clients).length <= 0}>
                 {Object.keys(sessionData.clients).map((clientKey, i) => {
                     let client =
                         sessionData.clients[clientKey as unknown as number];
@@ -28,7 +29,7 @@ export default function ClientsList(
                         <ClientObject client={client} index={i}></ClientObject>
                     );
                 })}
-            </div>
+            </ObjectContainer>
         </selectedClientContext.Provider>
     );
 }

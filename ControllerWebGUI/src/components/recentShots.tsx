@@ -8,6 +8,7 @@ import {useLocation} from "react-router-dom";
 import {url} from "../api/backendApi";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {Box, Card, IconButton, Stack, Typography} from "@mui/material";
+import ObjectContainer from "./ObjectContainer";
 
 
 moment.updateLocale('en', {
@@ -36,7 +37,7 @@ export default function recentShots({selectedShot, setSelectedShot}: any) {
     let {sessionData} = useContext(sessionContext);
     return (
         <selectedShotContext.Provider value={[selectedShot, setSelectedShot]}>
-            <div className="object-container">
+            <ObjectContainer empty={sessionData.shots.length<=0}>
                 {sessionData.shots
                     .map((shot, i) => {
                         return (
@@ -48,7 +49,7 @@ export default function recentShots({selectedShot, setSelectedShot}: any) {
                         );
                     })
                     .reverse()}
-            </div>
+            </ObjectContainer>
         </selectedShotContext.Provider>
     );
 }
