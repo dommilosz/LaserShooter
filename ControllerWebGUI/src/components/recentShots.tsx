@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useRef} from "react";
 import {ShotData} from "../types";
-import "./recentShots.css";
 import moment from "moment";
 import {sessionContext} from "../App";
 import {selectedShotContext} from "../views/HomeView";
@@ -9,7 +8,6 @@ import {useLocation} from "react-router-dom";
 import {url} from "../api/backendApi";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {Box, Card, IconButton, Stack, Typography} from "@mui/material";
-import Edit from "@mui/icons-material/Edit";
 
 
 moment.updateLocale('en', {

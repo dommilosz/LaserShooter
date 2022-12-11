@@ -3,9 +3,7 @@ import { sessionContext } from "../App";
 import { selectedUserContext } from "../views/UsersView";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { url } from "../api/backendApi";
-import "./UsersList.css"
 import {Box, Card, IconButton, Stack, Typography} from "@mui/material";
-import Edit from "@mui/icons-material/Edit";
 
 export default function UsersList({ selectedUser, setSelectedUser }: any) {
     let { users } = useContext(sessionContext);

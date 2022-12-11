@@ -6,7 +6,6 @@ import {UserAssignModal} from "../customComponents/userAssignModal";
 import {selectedClientContext} from "../views/ClientsView";
 import {url} from "../api/backendApi";
 import {resolveClientUserName} from "../api/resolveClientUser";
-import "./ClientsList.css"
 import {Box, Card, Typography, Stack, IconButton} from "@mui/material";
 import Edit from "@mui/icons-material/Edit";
 

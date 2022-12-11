@@ -35,14 +35,21 @@ export default function HomeView() {
     }, [location.state?.selectShot])
 
     return (
-        <div className="homeView">
+        <div style={{ display: "flex", height: "calc( 100% - 80px )"}}>
             <ObjectView>
                 <RecentShots
                     selectedShot={selectedShot}
                     setSelectedShot={setSelectedShot}
                 />
             </ObjectView>
-            <div className="targetVisualuser">
+            <div
+                style={{
+                    display: "flex",
+                    width: "66%",
+                    height: "calc( 100% - 4px )",
+                    flexDirection: "column",
+                }}
+            >
                 <TargetVisualiser
                     primaryShots={[sessionData.shots[
                     sessionData.shots.length - selectedShot - 1
