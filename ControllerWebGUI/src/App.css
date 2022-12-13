@@ -54,36 +54,37 @@ body {
 }
 
 body {
-    background-color: gray;
+    background-color: rgb(204, 198, 198);
 }
 
-.object-card{
+.object-card {
     width: 100%;
-    margin:5px;
+    margin: 5px;
     cursor: pointer;
 }
 
-.object-card .MuiBox-root{
+.object-card .MuiBox-root {
     box-sizing: border-box;
 }
 
-.object-card .MuiBox-root > div{
+.object-card .MuiBox-root > div {
     width: 100%;
 }
 
-.object-card.active{
+.object-card.active {
     background-color: #cdcdcd;
 }
 
-.object-card.active:hover{
+.object-card.active:hover {
     background-color: #b4b4b4;
 }
 
-.object-card:hover{
+.object-card:hover {
     background-color: #cdcdcd;
 }
 
 .object-container {
+    margin: 20px;
     background-color: #efefef;
     width: 100%;
     display: flex;
