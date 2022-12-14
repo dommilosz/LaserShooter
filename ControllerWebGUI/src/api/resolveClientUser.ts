@@ -8,7 +8,7 @@ export function resolveClientUser(
     if (ts === undefined) {
         return sessionData.clients[clientId].users[
             sessionData.clients[clientId].users.length - 1
-        ].userId;
+        ]?.userId;
     }
 
     let clientUserId = -1;
