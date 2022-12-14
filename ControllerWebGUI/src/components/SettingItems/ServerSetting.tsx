@@ -26,7 +26,7 @@ export default function (){
         }} value={serverUrl} />
         <Button variant="contained" color="success" onClick={async ()=>{
             try{
-                if(await checkServer(surl)){
+                if(await checkServer(serverUrl)){
                     setServerUrlLS(serverUrl);
                     location.reload();
                 }

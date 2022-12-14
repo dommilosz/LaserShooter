@@ -39,7 +39,7 @@ export async function getUsers() {
     return await users.json();
 }
 
-export async function putUser(userId:string,userName:string){
+export async function putUser(userId:number,userName:string){
     return await fetch(url + "users/" + userId, {
         method: "PUT",
         body: JSON.stringify({ name: userName }),
@@ -47,7 +47,7 @@ export async function putUser(userId:string,userName:string){
     });
 }
 
-export async function removeUser(userId:string){
+export async function removeUser(userId:number){
     return  await fetch(url + "users/" + userId, {
         method: "DELETE",
     });

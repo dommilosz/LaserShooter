@@ -18,6 +18,7 @@ export default function UsersList({ selectedUser, setSelectedUser }: any) {
                     onClick={async () => {
                         let userName = prompt("Enter username to create");
                         let userId = +new Date();
+                        if(!userName)return;
                         await putUser(userId,userName);
                     }}
                 >
@@ -107,6 +108,7 @@ export function UserObject({
                 <IconButton
                     onClick={async () => {
                         let userName = prompt("Enter new username");
+                        if(!userName)return;
                         await putUser(user.id,userName);
                     }}
                 >
