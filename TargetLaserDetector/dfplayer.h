@@ -4,7 +4,7 @@
 DFRobotDFPlayerMini myDFPlayer;
 
 void PlayInfoSound(int i) {
-  myDFPlayer.volume(8);
+  myDFPlayer.volume(20);
   myDFPlayer.playFolder(1, i);
   delay(2000);
   myDFPlayer.volume(30);

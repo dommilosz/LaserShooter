@@ -58,8 +58,8 @@ void BroadcastPoint() {
     }
 
     Point p;
-    int w,h;
-    int res = GetPoint(&p,&w,&h);
+    int w, h;
+    int res = GetPoint(&p, &w, &h);
 
     if (p.found) {
       PointPacket pp;
@@ -81,7 +81,7 @@ void BroadcastPoint() {
       Serial.println("Point found");
       lastIDp.clientId = 0;
 
-      while(p.found){
+      while (p.found) {
         int res = GetPoint(&p);
       }
     }
@@ -93,4 +93,15 @@ void SendKA() {
   p.n = KAn;
   KAn++;
   udp.broadcastTo((uint8_t *)&p, sizeof(KeepAlivePacket), 19700);
+}
+
+void StabiliseCamera() {
+  Point p;
+  int w, h;
+  int res = GetPoint(&p, &w, &h);
+  if (p.found) {
+    while (p.found) {
+      int res = GetPoint(&p);
+    }
+  }
 }

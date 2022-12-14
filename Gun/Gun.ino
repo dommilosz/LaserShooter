@@ -6,9 +6,10 @@
 
 DFRobotDFPlayerMini myDFPlayer;
 
-#define FIRE_BUTTON_PIN 27
+#define FIRE_BUTTON_PIN 25
 #define LASER_PIN 13
 #define LASER_ACTIVE_STATE HIGH
+#define FIRE_BUTTON_PIN_STATE LOW
 
 ButtonDebounce button(FIRE_BUTTON_PIN, 100);
 
@@ -108,12 +109,12 @@ void setup() {
     Serial.printf("Found %u files\n", SDFileCount);
   }
 
-  if(!digitalRead(FIRE_BUTTON_PIN)){
+  if (digitalRead(FIRE_BUTTON_PIN) == FIRE_BUTTON_PIN_STATE) {
     digitalWrite(LASER_PIN, LASER_ACTIVE_STATE);
-    while(!digitalRead(FIRE_BUTTON_PIN)){
+    while (digitalRead(FIRE_BUTTON_PIN) == FIRE_BUTTON_PIN_STATE) {
       delay(100);
     }
-    while(digitalRead(FIRE_BUTTON_PIN)){
+    while (digitalRead(FIRE_BUTTON_PIN) == !FIRE_BUTTON_PIN_STATE) {
       delay(100);
     }
     digitalWrite(LASER_PIN, !LASER_ACTIVE_STATE);
@@ -157,7 +158,7 @@ void loop() {
 
 void buttonChanged(const int state) {
   Serial.println("Changed: " + String(state));
-  if (!state) {
+  if (state == FIRE_BUTTON_PIN_STATE) {
     fire();
   }
 }

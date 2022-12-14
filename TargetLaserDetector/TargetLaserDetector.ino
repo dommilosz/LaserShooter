@@ -75,6 +75,7 @@ void setup() {
   s->set_wpc(s, 0);
   s->set_bpc(s, 0);
   s->set_aec_value(s, 450);
+  s->set_hmirror(s, 1);
 
   WiFi.softAP(ssid, password);
 
@@ -83,6 +84,8 @@ void setup() {
   Serial.println(IP);
 
   startCameraServer();
+  StabiliseCamera();
+  
   setupPlayer();
 
   Serial.print("Camera Ready! Use 'http://");
