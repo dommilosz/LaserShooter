@@ -1,4 +1,4 @@
-import {url} from "../../api/backendApi";
+import {getSessions, putSession, url} from "../../api/backendApi";
 import React, {useContext, useEffect, useState} from "react";
 import {SettingItem} from "../../views/SettingsView";
 import {sessionContext} from "../../App";
@@ -15,8 +15,7 @@ export default function (){
     let [sessions, setSessions] = useState<string[]>([]);
     useEffect(()=>{
         (async()=>{
-            let resp = await fetch(url + "sessions/");
-            setSessions(await resp.json())
+            setSessions(await getSessions())
         })()
     },[])
     let [selectedSession, setSelectedSession] = useState(0);
@@ -46,11 +45,7 @@ export default function (){
                 return;
             }
             try{
-                let resp = await fetch(url + "session/", {
-                    method: "PUT",
-                    body: JSON.stringify({ session: selectedSession }),
-                    headers: { "content-type": "application/json" },
-                });
+                let resp = await putSession(selectedSession);
                 if(resp.status !== 200){
                     alert(await resp.text());
                     return;
@@ -64,11 +59,7 @@ export default function (){
         }}>Load</Button>
         <Button variant="contained" onClick={async ()=>{
             try{
-                let resp = await fetch(url + "session/", {
-                    method: "PUT",
-                    body: JSON.stringify({ session: undefined }),
-                    headers: { "content-type": "application/json" },
-                });
+                let resp = await putSession();
                 if(resp.status !== 200){
                     alert(await resp.text());
                     return;

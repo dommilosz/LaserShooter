@@ -39,6 +39,61 @@ export async function getUsers() {
     return await users.json();
 }
 
+export async function putUser(userId:string,userName:string){
+    return await fetch(url + "users/" + userId, {
+        method: "PUT",
+        body: JSON.stringify({ name: userName }),
+        headers: { "content-type": "application/json" },
+    });
+}
+
+export async function removeUser(userId:string){
+    return  await fetch(url + "users/" + userId, {
+        method: "DELETE",
+    });
+}
+
+export async function assignUserToClient(clientId:number,user:string){
+    return await fetch(`${url}client/${clientId}/user`, {
+        method: "PUT",
+        body: JSON.stringify({
+            from: +new Date(),
+            newUser: user,
+        }),
+        headers: {"content-type": "application/json"},
+    });
+}
+
+export async function deleteShot(shotId:number){
+    return await fetch(
+        url + "shot/" + shotId,
+        {
+            method: "DELETE",
+        }
+    );
+}
+
+export async function checkServer(surl:string){
+    if(!surl.endsWith("/"))
+        surl = surl+"/";
+    let resp = await fetch(surl+"session");
+    let json = await resp.json();
+    return !!json.session;
+}
+
+export async function putSession(session?:number){
+    return await fetch(url + "session/", {
+        method: "PUT",
+        body: JSON.stringify({ session: session }),
+        headers: { "content-type": "application/json" },
+    });
+}
+
+export async function getSessions(){
+    let resp = await fetch(url + "sessions/");
+    return await resp.json();
+}
+
 export function useCurrentSession(): Session {
     let [sessionInfo, setSessionInfo] = useState<SessionInfo>({
         session: 0,

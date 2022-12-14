@@ -5,7 +5,7 @@ import { sessionContext } from "../App";
 import { selectedShotContext } from "../views/HomeView";
 import { resolveClientUserName } from "../api/resolveClientUser";
 import { useLocation } from "react-router-dom";
-import { url } from "../api/backendApi";
+import {deleteShot, url} from "../api/backendApi";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, Card, IconButton, Stack, Typography } from "@mui/material";
 import ObjectContainer from "./ObjectContainer";
@@ -119,12 +119,7 @@ export function ShotObject({ shot, index }: { shot: ShotData; index: number }) {
                             ) {
                                 return;
                             }
-                            let resp = await fetch(
-                                url + "shot/" + shot.idPacket.shotId,
-                                {
-                                    method: "DELETE",
-                                }
-                            );
+                            let resp = await deleteShot(shot.idPacket.shotId);
                             if (resp.status !== 200) {
                                 alert(await resp.text());
                             }

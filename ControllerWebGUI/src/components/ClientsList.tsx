@@ -4,7 +4,7 @@ import {ClientData} from "../types";
 import EditIcon from '@mui/icons-material/Edit';
 import {UserAssignModal} from "../customComponents/userAssignModal";
 import {selectedClientContext} from "../views/ClientsView";
-import {url} from "../api/backendApi";
+import {assignUserToClient, url} from "../api/backendApi";
 import {resolveClientUserName} from "../api/resolveClientUser";
 import {Box, Card, Typography, Stack, IconButton} from "@mui/material";
 import Edit from "@mui/icons-material/Edit";
@@ -58,14 +58,7 @@ export function ClientObject(
             };
         })}
         callback={(value) => {
-            fetch(`${url}client/${client.id}/user`, {
-                method: "PUT",
-                body: JSON.stringify({
-                    from: +new Date(),
-                    newUser: value,
-                }),
-                headers: {"content-type": "application/json"},
-            });
+            assignUserToClient(client.id,value);
         }}
         open={open}
         setOpen={setOpen}

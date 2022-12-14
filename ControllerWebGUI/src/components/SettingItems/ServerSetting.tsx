@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import {TextField,Typography} from "@mui/material";
 import {sessionContext} from "../../App";
 import moment from "moment";
+import {checkServer} from "../../api/backendApi";
 
 export default function (){
     const [serverUrlLS, setServerUrlLS] = useLocalStorage(
@@ -25,13 +26,7 @@ export default function (){
         }} value={serverUrl} />
         <Button variant="contained" color="success" onClick={async ()=>{
             try{
-                let surl = serverUrl;
-                if(!surl.endsWith("/"))
-                    surl = serverUrl+"/";
-
-                let resp = await fetch(surl+"session");
-                let json = await resp.json();
-                if(json.session){
+                if(await checkServer(surl)){
                     setServerUrlLS(serverUrl);
                     location.reload();
                 }

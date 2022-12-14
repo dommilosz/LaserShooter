@@ -3,7 +3,7 @@ import { sessionContext } from "../App";
 import { selectedUserContext } from "../views/UsersView";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import { url } from "../api/backendApi";
+import {putUser, removeUser, url} from "../api/backendApi";
 import { Box, Card, IconButton, Stack, Typography } from "@mui/material";
 import ObjectContainer from "./ObjectContainer";
 
@@ -18,11 +18,7 @@ export default function UsersList({ selectedUser, setSelectedUser }: any) {
                     onClick={async () => {
                         let userName = prompt("Enter username to create");
                         let userId = +new Date();
-                        await fetch(url + "users/" + userId, {
-                            method: "PUT",
-                            body: JSON.stringify({ name: userName }),
-                            headers: { "content-type": "application/json" },
-                        });
+                        await putUser(userId,userName);
                     }}
                 >
                     <Box
@@ -100,9 +96,7 @@ export function UserObject({
                         ) {
                             return;
                         }
-                        let resp = await fetch(url + "users/" + user.id, {
-                            method: "DELETE",
-                        });
+                        let resp = await removeUser(user.id)
                         if (resp.status !== 200) {
                             alert(await resp.text());
                         }
@@ -113,11 +107,7 @@ export function UserObject({
                 <IconButton
                     onClick={async () => {
                         let userName = prompt("Enter new username");
-                        await fetch(url + "users/" + user.id, {
-                            method: "PUT",
-                            body: JSON.stringify({ name: userName }),
-                            headers: { "content-type": "application/json" },
-                        });
+                        await putUser(user.id,userName);
                     }}
                 >
                     <EditIcon sx={{ fontSize: 20 }} />
