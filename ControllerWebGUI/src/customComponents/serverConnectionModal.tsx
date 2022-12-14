@@ -16,6 +16,7 @@ const style = {
     display:"flex",
     flexDirection:"column",
     alignItems:"center",
+    minWidth:250,
 };
 
 export default function ({open}: { open: boolean }) {
