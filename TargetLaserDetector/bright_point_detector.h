@@ -7,59 +7,102 @@ struct Point {
   bool found;
 };
 
-const int AVG_TRESHOLD = 150;
-const int MAX_ABOVE_AVG_POINTS = 50;
+const int DIFF_TRESHOLD = 80;
+const int MAX_DIFF_POINTS = 50;
 
-bool checkPointValid(fb_data_t *image_matrix, int avg) {
+uint8_t *background_buf = 0;
+size_t background_buf_len = 0;
+
+bool checkPointValid(fb_data_t *image_matrix, int maxDiff, int *count = NULL) {
   int w = image_matrix->width;
   int h = image_matrix->height;
   int len = w * h * 3;
   uint8_t *buf = image_matrix->data;
 
-  int aboveAvgPoints = 0;
+  int aboveDiffPoints = 0;
 
   uint8_t *data = buf;
+  uint8_t *bgdata = background_buf;
   for (int i = 0; i < h; i++) {
     for (int j = 0; j < w; j++) {
       byte R = data[0];
+      byte bR = bgdata[0];
       byte G = data[1];
+      byte bG = bgdata[1];
       byte B = data[2];
+      byte bB = bgdata[2];
 
-      if ((R + G + B) >= (avg + AVG_TRESHOLD)) {
-        aboveAvgPoints++;
+      int sum = R + G + B;
+      int bgsum = bR + bG + bB;
+      int diff = sum - bgsum;
+
+      if (maxDiff - diff < 20) {
+        aboveDiffPoints++;
       }
       data += 3;
+      bgdata += 3;
     }
   }
 
-  Serial.printf("Above avg points: %u\n",aboveAvgPoints);
-  return aboveAvgPoints <= MAX_ABOVE_AVG_POINTS;
+  if (count)
+    *count = aboveDiffPoints;
+  Serial.printf("Above avg points: %u\n", aboveDiffPoints);
+  return aboveDiffPoints <= MAX_DIFF_POINTS;
 }
 
-Point DetectBrightPoint(fb_data_t *image_matrix) {
+
+void UpdateBackground(fb_data_t *image_matrix) {
   int w = image_matrix->width;
   int h = image_matrix->height;
   int len = w * h * 3;
   uint8_t *buf = image_matrix->data;
 
-  int maxSum = -1;
-  uint32_t maxSumIndex = -1;
+  if (background_buf_len != len && background_buf) {
+    free(background_buf);
+    background_buf = 0;
+  }
+
+  if (!background_buf) {
+    background_buf = new uint8_t[len];
+    background_buf_len = len;
+    memcpy(background_buf, buf, len);
+  }
+
+  for (int i = 0; i < len; i++) {
+    background_buf[i] = (background_buf[i] * 4 + buf[i]) / 5;
+  }
+}
+
+Point DetectBrightPoint(fb_data_t *image_matrix, int *count = NULL) {
+  int w = image_matrix->width;
+  int h = image_matrix->height;
+  int len = w * h * 3;
+  uint8_t *buf = image_matrix->data;
+
+  int maxDiff = -1;
+  uint32_t maxDiffIndex = -1;
 
   Point p;
+  p.found = false;
+  UpdateBackground(image_matrix);
 
-  long totalSum = 0;
   uint8_t *data = buf;
+  uint8_t *bgdata = background_buf;
   for (int i = 0; i < h; i++) {
     for (int j = 0; j < w; j++) {
       byte R = data[0];
+      byte bR = bgdata[0];
       byte G = data[1];
+      byte bG = bgdata[1];
       byte B = data[2];
+      byte bB = bgdata[2];
 
       int sum = R + G + B;
-      totalSum += sum;
-      if (sum > maxSum) {
-        maxSumIndex = data - buf;
-        maxSum = sum;
+      int bgsum = bR + bG + bB;
+      int diff = sum - bgsum;
+      if (diff > maxDiff) {
+        maxDiffIndex = data - buf;
+        maxDiff = diff;
         p.R = R;
         p.G = G;
         p.B = B;
@@ -67,18 +110,16 @@ Point DetectBrightPoint(fb_data_t *image_matrix) {
         p.y = i;
       }
       data += 3;
+      bgdata += 3;
     }
   }
 
-  int avg = totalSum / (w * h);
-  p.found = false;
-  
-  Serial.printf("Point average: %u. Current value: %u\n",avg,(p.R+p.G+p.B));
-  if ((p.R + p.G + p.B) < (avg + AVG_TRESHOLD)) {
+  Serial.printf("Max diff: %u, Sum: %u\n", maxDiff, (p.R + p.G + p.B));
+  if (maxDiff < DIFF_TRESHOLD) {
     return p;
   }
 
-  if (!checkPointValid(image_matrix, avg)) {
+  if (!checkPointValid(image_matrix, maxDiff, count)) {
     return p;
   }
 

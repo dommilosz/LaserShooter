@@ -53,6 +53,8 @@ void setup() {
     config.fb_count = 1;
   }
 
+  config.jpeg_quality = 0;
+
   // camera init
   esp_err_t err = esp_camera_init(&config);
   if (err != ESP_OK) {
@@ -85,7 +87,7 @@ void setup() {
 
   startCameraServer();
   StabiliseCamera();
-  
+
   setupPlayer();
 
   Serial.print("Camera Ready! Use 'http://");
@@ -95,12 +97,17 @@ void setup() {
 }
 
 long nextKA = 5000;
+long nextBG = 500;
 void loop() {
   // put your main code here, to run repeatedly:
   BroadcastPoint();
   if (nextKA < millis()) {
     SendKA();
     nextKA = millis() + 5000;
+  }
+  if (nextBG < millis()) {
+    NextFrame();
+    nextBG = millis() + 250;
   }
   delay(5);
 }

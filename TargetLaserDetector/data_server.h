@@ -96,12 +96,9 @@ void SendKA() {
 }
 
 void StabiliseCamera() {
-  Point p;
-  int w, h;
-  int res = GetPoint(&p, &w, &h);
-  if (p.found) {
-    while (p.found) {
-      int res = GetPoint(&p);
-    }
+  int pointCount;
+  int res = CountPoints(&pointCount);
+  while (pointCount > 0) {
+    int res = CountPoints(&pointCount);
   }
 }

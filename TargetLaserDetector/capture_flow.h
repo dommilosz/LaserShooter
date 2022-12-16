@@ -57,3 +57,21 @@ int GetPoint(Point *p, int *w, int *h) {
   Cleanup(&jpg_buf, &resp);
   return res;
 }
+
+int CountPoints(int *c){
+  RGB888Resp resp;
+  jpg_buffer jpg_buf;
+  int res = GetFrameNoConvert(&resp);
+  DetectBrightPoint(&resp.image_matrix,c);
+  Cleanup(&jpg_buf, &resp);
+  return res;
+}
+
+int NextFrame(){
+  RGB888Resp resp;
+  jpg_buffer jpg_buf;
+  int res = GetFrameNoConvert(&resp);
+  UpdateBackground(&resp.image_matrix);
+  Cleanup(&jpg_buf, &resp);
+  return res;
+}
