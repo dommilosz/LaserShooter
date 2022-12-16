@@ -1,14 +1,16 @@
-import React, { useContext } from "react";
-import { sessionContext } from "../App";
-import { selectedUserContext } from "../views/UsersView";
+import React, {useContext, useState} from "react";
+import {sessionContext} from "../App";
+import {selectedUserContext} from "../views/UsersView";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import {putUser, removeUser, url} from "../api/backendApi";
-import { Box, Card, IconButton, Stack, Typography } from "@mui/material";
+import {Box, Card, IconButton, Stack, Typography} from "@mui/material";
 import ObjectContainer from "./ObjectContainer";
+import StatisticsModal from "../customComponents/statisticsModal";
+import AssessmentIcon from "@mui/icons-material/Assessment"
 
-export default function UsersList({ selectedUser, setSelectedUser }: any) {
-    let { users } = useContext(sessionContext);
+export default function UsersList({selectedUser, setSelectedUser}: any) {
+    let {users} = useContext(sessionContext);
 
     return (
         <selectedUserContext.Provider value={[selectedUser, setSelectedUser]}>
@@ -18,8 +20,8 @@ export default function UsersList({ selectedUser, setSelectedUser }: any) {
                     onClick={async () => {
                         let userName = prompt("Enter username to create");
                         let userId = +new Date();
-                        if(!userName)return;
-                        await putUser(userId,userName);
+                        if (!userName) return;
+                        await putUser(userId, userName);
                     }}
                 >
                     <Box
@@ -47,6 +49,7 @@ export default function UsersList({ selectedUser, setSelectedUser }: any) {
                                 name: user,
                             }}
                             index={i}
+                            key={i}
                         ></UserObject>
                     );
                 })}
@@ -56,13 +59,14 @@ export default function UsersList({ selectedUser, setSelectedUser }: any) {
 }
 
 export function UserObject({
-    user,
-    index,
-}: {
+                               user,
+                               index,
+                           }: {
     user: { id: number; name: string };
     index: number;
 }) {
     let [selectedUser, setSelectedUser] = useContext(selectedUserContext);
+    let [statisticsOpen, setStatisticsOpen] = useState(false);
 
     return (
         <Card
@@ -73,6 +77,7 @@ export function UserObject({
                 if (setSelectedUser) setSelectedUser(index);
             }}
         >
+            <StatisticsModal open={statisticsOpen} close={()=>setStatisticsOpen(false)} userId={user.id}></StatisticsModal>
             <Box
                 sx={{
                     p: 2,
@@ -88,6 +93,9 @@ export function UserObject({
                         {user.id}
                     </Typography>
                 </Stack>
+                <IconButton onClick={()=>setStatisticsOpen(true)}>
+                    <AssessmentIcon sx={{fontSize: 20}}/>
+                </IconButton>
                 <IconButton
                     onClick={async () => {
                         if (
@@ -103,16 +111,16 @@ export function UserObject({
                         }
                     }}
                 >
-                    <DeleteIcon sx={{ fontSize: 20 }} />
+                    <DeleteIcon sx={{fontSize: 20}}/>
                 </IconButton>
                 <IconButton
                     onClick={async () => {
                         let userName = prompt("Enter new username");
-                        if(!userName)return;
-                        await putUser(user.id,userName);
+                        if (!userName) return;
+                        await putUser(user.id, userName);
                     }}
                 >
-                    <EditIcon sx={{ fontSize: 20 }} />
+                    <EditIcon sx={{fontSize: 20}}/>
                 </IconButton>
             </Box>
         </Card>

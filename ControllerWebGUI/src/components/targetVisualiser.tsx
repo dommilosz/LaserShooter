@@ -104,6 +104,7 @@ export default function TargetVisualiser({
                         let minDistance = -1;
                         let minDistanceShot = undefined;
                         for (let _shot of primaryShots) {
+                            if(!_shot || !_shot.p)continue;
                             let sx = _shot.p.x * scale;
                             let sy = _shot.p.y * scale;
                             let distance = Math.sqrt(
@@ -119,6 +120,7 @@ export default function TargetVisualiser({
 
                         if (minDistanceShot === undefined)
                             for (let _shot of secondaryShots) {
+                                if(!_shot || !_shot.p)continue;
                                 let sx = _shot.p.x * scale;
                                 let sy = _shot.p.y * scale;
                                 let distance = Math.sqrt(

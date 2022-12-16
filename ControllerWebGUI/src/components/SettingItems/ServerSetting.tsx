@@ -20,7 +20,7 @@ export default function (){
 
     return <SettingItem className={"settings-item"}>
         <Typography>Server url: {serverUrlLS}</Typography>
-        <Typography>Last fetch: <Typography color={isError?"red":""}>{sessionInfo.lastFetch>0?lastFetch:"Never"}</Typography></Typography>
+        <Typography color={isError?"red":""}>Last fetch: {sessionInfo.lastFetch>0?lastFetch:"Never"}</Typography>
         <TextField style={{width:"100%"}} label="Enter server url" variant="standard" onChange={(e)=>{
             setServerUrl(e.target.value);
         }} value={serverUrl} />

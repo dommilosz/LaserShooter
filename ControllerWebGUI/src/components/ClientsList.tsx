@@ -26,7 +26,7 @@ export default function ClientsList(
                     let client =
                         sessionData.clients[clientKey as unknown as number];
                     return (
-                        <ClientObject client={client} index={i}></ClientObject>
+                        <ClientObject client={client} index={i} key={i}></ClientObject>
                     );
                 })}
             </ObjectContainer>

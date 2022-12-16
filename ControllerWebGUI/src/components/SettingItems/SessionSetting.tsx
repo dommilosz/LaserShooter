@@ -33,9 +33,10 @@ export default function (){
             onChange={(e)=>{{
                 setSelectedSession(Number(e.target.value));
             }}}
+            defaultValue={""}
         >
             {sessions.map(session=>{
-                return <MenuItem value={session}>{session}</MenuItem>
+                return <MenuItem value={session} key={session}>{session}</MenuItem>
             })}
         </Select>
         </FormControl>

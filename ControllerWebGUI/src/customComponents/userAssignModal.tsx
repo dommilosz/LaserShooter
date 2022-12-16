@@ -55,8 +55,8 @@ export function UserAssignModal(
                             }
                         }}
                     >
-                        {elements.map(el => {
-                            return <MenuItem value={el.value}>{el.name}</MenuItem>
+                        {elements.map((el,i) => {
+                            return <MenuItem value={el.value} key={i}>{el.name}</MenuItem>
                         })}
                     </Select>
                 </FormControl>

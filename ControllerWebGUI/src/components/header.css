@@ -1,7 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap");
 
 .header {
-    background-image: linear-gradient(to right, #00a9d3, #135d6f);
+    background-image: linear-gradient(to right, #00a9d3, #086e88);
     width: 100%;
     font-size: 3vw;
     font-family: "Zen Dots", cursive;
@@ -17,8 +17,9 @@
     display: flex;
     letter-spacing: 2px;
     text-shadow: 2px 2px 4px rgba(72, 70, 73, 0.1),
-        3px 4px 4px rgba(86, 85, 87, 0.15), 4px 6px 4px rgba(94, 93, 95, 0.2),
-        5px 8px 4px rgba(73, 72, 75, 0.25);
+    3px 4px 4px rgba(86, 85, 87, 0.15),
+    4px 6px 4px rgba(94, 93, 95, 0.2),
+    5px 8px 4px rgba(73, 72, 75, 0.25);
 }
 
 .menu {
@@ -42,6 +43,7 @@
     font-size: 40%;
     width: 20%;
 }
+
 .sessionNotice.error {
     color: #b90707;
 }
@@ -52,14 +54,12 @@
 
     color: rgba(255, 255, 255, 0);
     padding-block: var(--b);
-    background: linear-gradient(var(--c) 50%, rgb(255, 255, 255) 0) 0%
-            calc(100% - var(--_p, 0%)) / 100% 200%,
-        linear-gradient(var(--c) 0 0) 0% var(--_p, 0%) / var(--_p, 0%) var(--b)
-            no-repeat;
+    background: linear-gradient(var(--c) 50%, rgb(255, 255, 255) 0) 0% calc(100% - var(--_p, 0%)) / 100% 200%,
+    linear-gradient(var(--c) 0 0) 0% var(--_p, 0%) / var(--_p, 0%) var(--b) no-repeat;
     -webkit-background-clip: text, padding-box;
     background-clip: text, padding-box;
     transition: 0.3s var(--_s, 0s) linear,
-        background-size 0.3s calc(0.3s - var(--_s, 0s));
+    background-size 0.3s calc(0.3s - var(--_s, 0s));
     display: flex;
     letter-spacing: 2px;
     /* text-shadow: 2px 2px 4px rgba(72, 70, 73, 0.1),
@@ -67,6 +67,7 @@
         4px 6px 4px rgba(94, 93, 95, 0.2),
         5px 8px 4px rgba(73, 72, 75, 0.25); */
 }
+
 .hover-3:hover,
 .hover-3.active {
     --_p: 100%;
