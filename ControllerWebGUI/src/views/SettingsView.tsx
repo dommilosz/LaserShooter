@@ -22,7 +22,7 @@ export const SettingItem = styled(Paper2)(({theme}) => ({
     color: theme.palette.text.secondary,
     height:250,
     width:"calc(33% - 25px)",
-    minWidth:200,
+    minWidth:210,
     margin:5
 }));
 

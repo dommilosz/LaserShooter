@@ -59,6 +59,7 @@ export async function removeUsers(){
     });
 }
 
+
 export async function assignUserToClient(clientId:number,user:string){
     return await fetch(`${url}client/${clientId}/user`, {
         method: "PUT",
@@ -98,6 +99,18 @@ export async function putSession(session?:number){
 export async function getSessions(){
     let resp = await fetch(url + "sessions/");
     return await resp.json();
+}
+
+export async function removeSessions(){
+    return  await fetch(url + "sessions", {
+        method: "DELETE",
+    });
+}
+
+export async function resetServer(){
+    return  await fetch(url + "server-data", {
+        method: "DELETE",
+    });
 }
 
 export function useCurrentSession(): Session {

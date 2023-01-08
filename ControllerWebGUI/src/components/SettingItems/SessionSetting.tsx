@@ -10,14 +10,8 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 
 export default function () {
-    const {sessionInfo} = useContext(sessionContext);
+    const {sessionInfo, sessions} = useContext(sessionContext);
     let sessionTime = moment(Number(sessionInfo.session));
-    let [sessions, setSessions] = useState<string[]>([]);
-    useEffect(() => {
-        (async () => {
-            setSessions(await getSessions())
-        })()
-    }, [])
     let [selectedSession, setSelectedSession] = useState(0);
 
     return <SettingItem>

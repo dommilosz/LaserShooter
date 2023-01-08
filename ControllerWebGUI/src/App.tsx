@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import "./App.css";
-import {Session} from "./types";
+import {Session, SessionContext} from "./types";
 import Header from "./components/header";
-import {useCurrentSession} from "./api/backendApi";
-import {createContext} from "./api/hooks";
+import {getSessions, useCurrentSession} from "./api/backendApi";
+import {createContext, useUpdate, useUpdateV} from "./api/hooks";
 import {Routes, Route, BrowserRouter} from "react-router-dom";
 import HomeView from "./views/HomeView";
 import ClientsView from "./views/ClientsView";
@@ -12,7 +12,7 @@ import SettingsView from "./views/SettingsView";
 import ServerConnectionModal from "./customComponents/serverConnectionModal";
 import {useTheme} from "@mui/material";
 
-export const sessionContext = createContext<Session>();
+export const sessionContext = createContext<SessionContext>();
 
 function App() {
     const {sessionInfo, sessionData, users} = useCurrentSession();
@@ -24,9 +24,17 @@ function App() {
         selectedShotState[1](0);
     }, [sessionInfo.shots])
 
+    let [sessions, setSessions] = useState<string[]>([]);
+    let [updateSessionsValue,updateSessions] = useUpdateV();
+    useEffect(() => {
+        (async () => {
+            setSessions(await getSessions())
+        })()
+    }, [updateSessionsValue])
+
     return (
         <div className="App" style={{backgroundColor:theme.palette.background.default}}>
-            <sessionContext.Provider value={{sessionInfo, sessionData, users}}>
+            <sessionContext.Provider value={{sessionInfo, sessionData, users, sessions, updateSessions}}>
                 <ServerConnectionModal open={sessionInfo.lastFetch > 0 && sessionInfo.session <= 0}/>
                 <BrowserRouter>
                     <Header/>

@@ -37,5 +37,14 @@ export type Users = {
 export type Session = {
   sessionData:SessionData,
   sessionInfo:SessionInfo,
-  users:Users
+  users:Users,
+}
+
+
+export type SessionContext = {
+  sessionData:SessionData,
+  sessionInfo:SessionInfo,
+  users:Users,
+  sessions:string[],
+  updateSessions:()=>any,
 }

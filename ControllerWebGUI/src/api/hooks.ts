@@ -75,3 +75,17 @@ export function createContext<T>(){
     // @ts-ignore
     return React.createContext<T>(undefined);
 }
+
+export function useUpdate(){
+    let [update,setUpdate] = useState(0);
+    return ()=>{
+        setUpdate(Math.random()*1000000);
+    }
+}
+
+export function useUpdateV():[number, ()=>any]{
+    let [update,setUpdate] = useState(0);
+    return [update,()=>{
+        setUpdate(Math.random()*1000000);
+    }]
+}

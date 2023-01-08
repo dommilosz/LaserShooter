@@ -70,6 +70,19 @@ app.get("/sessions", (req: Request, res: Response) => {
     sendJSON(res, files, 200);
 });
 
+app.delete("/sessions", (req: Request, res: Response) => {
+    fs.readdirSync("data", {withFileTypes: true})
+        .filter((file) => {
+            return file.isFile() && file.name.endsWith(".json.gz");
+        })
+        .forEach((file) => {
+            fs.unlinkSync("data/"+file.name)
+        });
+    stateData.currentSession = +new Date();
+    stateData.sessionData = {shots: [], clients: {}};
+    sendText(res, "Sessions deleted", 200);
+});
+
 app.get("/session", (req: Request, res: Response) => {
     sendJSON(
         res,
@@ -198,6 +211,22 @@ app.delete("/users/:user", async (req: Request, res: Response) => {
         sendText(res, "User not found", 404);
     }
 })
+
+app.delete("/server-data", async (req: Request, res: Response) => {
+    stateData.users = {};
+    await saveData();
+    fs.readdirSync("data", {withFileTypes: true})
+        .filter((file) => {
+            return file.isFile() && file.name.endsWith(".json.gz");
+        })
+        .forEach((file) => {
+            fs.unlinkSync("data/"+file.name)
+        });
+    stateData.currentSession = +new Date();
+    stateData.sessionData = {shots: [], clients: {}};
+    sendText(res, "Server reset", 200);
+});
+
 
 app.listen(port, () => {
     console.log(`Api listening on port ${port}`);
