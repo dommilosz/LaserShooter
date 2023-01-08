@@ -20,7 +20,7 @@ app.get("/target.png", (req: Request, res: Response) => {
         "Content-Type": "image/png",
         "Content-Encoding": "gzip",
     });
-    zlib.gzip(fs.readFileSync("./target-full.png"), function (_, result) {
+    zlib.gzip(fs.readFileSync("./target.png"), function (_, result) {
         // The callback will give you the
         res.end(result); // result, so just send it.
     });
