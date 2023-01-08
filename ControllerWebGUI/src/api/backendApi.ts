@@ -53,6 +53,12 @@ export async function removeUser(userId:number){
     });
 }
 
+export async function removeUsers(){
+    return  await fetch(url + "users", {
+        method: "DELETE",
+    });
+}
+
 export async function assignUserToClient(clientId:number,user:string){
     return await fetch(`${url}client/${clientId}/user`, {
         method: "PUT",

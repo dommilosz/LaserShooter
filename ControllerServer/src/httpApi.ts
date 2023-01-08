@@ -165,6 +165,12 @@ app.get("/users",async (req: Request, res: Response) => {
     sendJSON(res, stateData.users, 200);
 })
 
+app.delete("/users",async (req: Request, res: Response) => {
+    stateData.users = {};
+    await saveData();
+    sendText(res, "Users deleted", 200);
+})
+
 app.put("/users/:user", async (req: Request, res: Response) => {
     let name = req.body.name;
     let user = Number(req.params.user);
