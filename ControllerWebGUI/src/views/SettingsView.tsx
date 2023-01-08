@@ -10,6 +10,7 @@ import ResetClient from "../components/SettingItems/ResetClient";
 import {ThemeSettings} from "../components/SettingItems/ThemeSettings";
 import {PaperTypeMap} from "@mui/material/Paper/Paper";
 import {OverridableComponent} from "@mui/material/OverridableComponent";
+import {CalibrationSettings} from "../components/SettingItems/CalibrationSettings";
 
 // @ts-ignore
 export const Paper2:OverridableComponent<PaperTypeMap> = ({...props}:PaperTypeMap) => <Paper elevation={3} {...props}/>;
@@ -33,5 +34,6 @@ export default function SettingsView() {
         <ShowAllOnTargetSetting/>
         <ResetClient/>
         <ThemeSettings/>
+        <CalibrationSettings/>
     </>
 }

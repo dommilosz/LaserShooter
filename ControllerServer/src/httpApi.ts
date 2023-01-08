@@ -5,6 +5,7 @@ import zlib from "zlib";
 import fs from "fs";
 import {calcPoints} from "./calcPoints";
 import {config, saveData, stateData} from "./index";
+import fetch from 'node-fetch';
 
 const app = express();
 const port = config.port;
@@ -226,6 +227,14 @@ app.delete("/server-data", async (req: Request, res: Response) => {
     stateData.sessionData = {shots: [], clients: {}};
     sendText(res, "Server reset", 200);
 });
+
+app.get("/camera-image", async (req: Request, res: Response) =>{
+    let data = await fetch("http://192.168.4.1/capture");
+    let buffer = await data.arrayBuffer();
+    res.writeHead(200);
+    res.write(Buffer.from(buffer));
+    res.end();
+})
 
 
 app.listen(port, () => {

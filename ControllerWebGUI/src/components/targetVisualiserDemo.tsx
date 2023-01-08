@@ -21,3 +21,8 @@ export default function TargetVisualiserDemo({showAllShots}: { showAllShots: boo
     return <TargetVisualiser primaryShots={[exampleShots[0]]} secondaryShots={showAllShots ? exampleShots : []}
                              interactive={false} dotSizeScale={3}></TargetVisualiser>
 }
+
+export function Target() {
+    return <TargetVisualiser primaryShots={[]} secondaryShots={[]}
+                             interactive={false} dotSizeScale={3}></TargetVisualiser>
+}
