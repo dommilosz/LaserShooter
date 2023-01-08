@@ -5,20 +5,22 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import {putUser, removeUser, url} from "../api/backendApi";
 import {Box, Card, IconButton, Stack, Typography} from "@mui/material";
-import ObjectContainer from "./ObjectContainer";
+import ObjectContainer, {ObjectCard} from "./ObjectContainer";
 import StatisticsModal from "../customComponents/statisticsModal";
 import AssessmentIcon from "@mui/icons-material/Assessment"
+import {useShowConfirmBox, useShowPromptBox} from "./DialogBoxComponents/MessageBoxContext";
 
 export default function UsersList({selectedUser, setSelectedUser}: any) {
     let {users} = useContext(sessionContext);
+    let showPromptBox = useShowPromptBox();
 
     return (
         <selectedUserContext.Provider value={[selectedUser, setSelectedUser]}>
             <ObjectContainer empty={false}>
-                <Card
+                <ObjectCard
                     className={`object-card users`}
                     onClick={async () => {
-                        let userName = prompt("Enter username to create");
+                        let userName = await showPromptBox({content:"Enter username of the new user",title:"Create user", fieldName:"Username"});
                         let userId = +new Date();
                         if (!userName) return;
                         await putUser(userId, userName);
@@ -39,7 +41,7 @@ export default function UsersList({selectedUser, setSelectedUser}: any) {
                             </Typography>
                         </Stack>
                     </Box>
-                </Card>
+                </ObjectCard>
                 {Object.keys(users).map((userKey, i) => {
                     let user = users[userKey as unknown as number];
                     return (
@@ -67,17 +69,18 @@ export function UserObject({
 }) {
     let [selectedUser, setSelectedUser] = useContext(selectedUserContext);
     let [statisticsOpen, setStatisticsOpen] = useState(false);
+    let showConfirmBox = useShowConfirmBox();
+    let showPromptBox = useShowPromptBox();
 
     return (
-        <Card
-            className={`object-card users ${
-                selectedUser == index ? "active" : ""
-            }`}
+        <ObjectCard
+            active={selectedUser == index}
+            className={`object-card shots`}
             onClick={() => {
                 if (setSelectedUser) setSelectedUser(index);
             }}
         >
-            <StatisticsModal open={statisticsOpen} close={()=>setStatisticsOpen(false)} userId={user.id}></StatisticsModal>
+            <StatisticsModal open={statisticsOpen} setOpen={(open)=>setStatisticsOpen(open)} userId={user.id}></StatisticsModal>
             <Box
                 sx={{
                     p: 2,
@@ -99,8 +102,8 @@ export function UserObject({
                 <IconButton
                     onClick={async () => {
                         if (
-                            !confirm(
-                                `Do you want to remove ${user.id} user? Clients and shots with this user will be reverted to their ids`
+                            !await showConfirmBox(
+                                {content:`Remove ${user.name} (${user.id}) user? Clients and shots with this user will be reverted to their ids`,title:`Remove user ${user.name}`, }
                             )
                         ) {
                             return;
@@ -115,7 +118,7 @@ export function UserObject({
                 </IconButton>
                 <IconButton
                     onClick={async () => {
-                        let userName = prompt("Enter new username");
+                        let userName = await showPromptBox({content:`Enter new username for: ${user.name} (${user.id})`,title:`Rename user ${user.name}`, fieldName:"Username"});
                         if (!userName) return;
                         await putUser(user.id, userName);
                     }}
@@ -123,6 +126,6 @@ export function UserObject({
                     <EditIcon sx={{fontSize: 20}}/>
                 </IconButton>
             </Box>
-        </Card>
+        </ObjectCard>
     );
 }

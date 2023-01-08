@@ -20,7 +20,7 @@ export default function (){
     },[])
     let [selectedSession, setSelectedSession] = useState(0);
 
-    return <SettingItem className={"settings-item"}>
+    return <SettingItem >
         <div className={"settings-text"}>Current Session: {sessionInfo.session}</div>
         <div className={"settings-text"}>Session Date: {sessionTime.format("LLL")}</div>
         <div className={"settings-text"}>Load Session: </div>

@@ -6,24 +6,9 @@ import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
-import {Select} from "@mui/material";
+import {Select, Typography} from "@mui/material";
 import MenuItem from "@mui/material/MenuItem";
-
-const style = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '40vw',
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-    display:"flex",
-    flexDirection:"column",
-    alignItems:"center",
-    minWidth:250,
-};
+import ModalBox from "../components/ModalBox";
 
 export function UserAssignModal(
     {
@@ -32,18 +17,16 @@ export function UserAssignModal(
         open,
         setOpen
     }: { elements: { name: string, value: string }[], callback: (value: string) => any, open: boolean, setOpen: any }) {
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
     const [selectedUser, setSelectedUser] = useState("");
 
-    return (<Modal
+    return (<ModalBox
             open={open}
-            onClose={handleClose}
+            setOpen={setOpen}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
         >
-            <Paper sx={style}>
-                <div className={"settings-text2"}>Select user to assign with this client</div>
+            <div>
+                <Typography>Select user to assign with this client</Typography>
                 <FormControl variant="standard" sx={{m: 1, minWidth: "100%"}}>
                     <InputLabel id="user-select-label">User</InputLabel>
                     <Select
@@ -55,7 +38,7 @@ export function UserAssignModal(
                             }
                         }}
                     >
-                        {elements.map((el,i) => {
+                        {elements.map((el, i) => {
                             return <MenuItem value={el.value} key={i}>{el.name}</MenuItem>
                         })}
                     </Select>
@@ -79,7 +62,7 @@ export function UserAssignModal(
                 >
                     Cancel
                 </Button>
-            </Paper>
-        </Modal>
+            </div>
+        </ModalBox>
     );
 }

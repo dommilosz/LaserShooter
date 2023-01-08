@@ -18,7 +18,7 @@ export default function (){
     let isError = sessionInfo.session <= 0;
     let lastFetch = `${moment(sessionInfo.lastFetch).fromNow()} ${isError?" FAILED":""}`;
 
-    return <SettingItem className={"settings-item"}>
+    return <SettingItem >
         <Typography>Server url: {serverUrlLS}</Typography>
         <Typography color={isError?"red":""}>Last fetch: {sessionInfo.lastFetch>0?lastFetch:"Never"}</Typography>
         <TextField style={{width:"100%"}} label="Enter server url" variant="standard" onChange={(e)=>{

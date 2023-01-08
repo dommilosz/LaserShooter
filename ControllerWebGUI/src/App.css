@@ -71,28 +71,13 @@ body {
     width: 100%;
 }
 
-.object-card.active {
-    background-color: #cdcdcd;
-}
-
-.object-card.active:hover {
-    background-color: #b4b4b4;
-}
-
-.object-card:hover {
-    background-color: #cdcdcd;
-}
-
 .object-container {
-    background-color: #efefef;
     width: 100%;
     /* display: flex; */
     /* flex-wrap: wrap; */
     align-items: center;
     justify-content: center;
     border-radius: 10px;
-    border: rgb(138, 138, 138) 4px solid;
-    box-shadow: 10px 10px 20px #b3b3b3;
     overflow-y: auto;
     margin: 20px;
     padding: 20px;

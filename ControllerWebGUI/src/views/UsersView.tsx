@@ -4,6 +4,7 @@ import { createContext, useLocalStorage } from "../api/hooks";
 import TargetVisualiser from "../components/targetVisualiser";
 import UsersList from "../components/UsersList";
 import ObjectView from "../components/ObjectView";
+import Paper from "@mui/material/Paper";
 
 export const selectedUserContext =
     createContext<[number, React.Dispatch<React.SetStateAction<number>>]>();
@@ -17,19 +18,20 @@ export default function UsersView() {
     );
         
     return (
-        <div style={{ display: "flex", height: "calc( 100% - 80px )"}}>
+        <>
             <ObjectView>
                 <UsersList
                     selectedUser={selectedUser}
                     setSelectedUser={setSelectedUser}
                 />
             </ObjectView>
-            <div
+            <Paper
                 style={{
                     display: "flex",
-                    width: "66%",
-                    height: "calc( 100% - 4px )",
+                    width: "calc(66.666% - 10px)",
+                    height: "100%",
                     flexDirection: "column",
+                    marginLeft:10,
                 }}
             >
                 <TargetVisualiser
@@ -65,7 +67,7 @@ export default function UsersView() {
                         showAllShotsOnTarget ? sessionData.shots : []
                     }
                 ></TargetVisualiser>
-            </div>
-        </div>
+            </Paper>
+        </>
     );
 }

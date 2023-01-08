@@ -7,33 +7,31 @@ import ServerSetting from "../components/SettingItems/ServerSetting";
 import SessionSetting from "../components/SettingItems/SessionSetting";
 import ShowAllOnTargetSetting from "../components/SettingItems/ShowAllOnTargetSetting";
 import ResetClient from "../components/SettingItems/ResetClient";
+import {ThemeSettings} from "../components/SettingItems/ThemeSettings";
+import {PaperTypeMap} from "@mui/material/Paper/Paper";
+import {OverridableComponent} from "@mui/material/OverridableComponent";
 
-export const SettingItem = styled(Paper)(({theme}) => ({
-    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+// @ts-ignore
+export const Paper2:OverridableComponent<PaperTypeMap> = ({...props}:PaperTypeMap) => <Paper elevation={3} {...props}/>;
+
+export const SettingItem = styled(Paper2)(({theme}) => ({
+    backgroundColor: theme.palette.background.paper,
     ...theme.typography.body2,
     padding: theme.spacing(1),
     textAlign: 'center',
     color: theme.palette.text.secondary,
-    height: 250,
+    height:250,
+    width:"calc(33% - 25px)",
+    minWidth:200,
+    margin:5
 }));
 
 export default function SettingsView() {
-    return <div style={{overflow:"auto"}}>
-        <div id="settings-view">
-            <Grid container spacing={2} style={{display:"flex",flexDirection:"row",alignItems:"center",justifyContent:"center"}}>
-                <Grid item xs={"auto"}>
-                    <ServerSetting/>
-                </Grid>
-                <Grid item xs={"auto"}>
-                    <SessionSetting/>
-                </Grid>
-                <Grid item xs={"auto"}>
-                    <ShowAllOnTargetSetting/>
-                </Grid>
-                <Grid item xs={"auto"}>
-                    <ResetClient/>
-                </Grid>
-            </Grid>
-        </div>
-    </div>
+    return <>
+        <ServerSetting/>
+        <SessionSetting/>
+        <ShowAllOnTargetSetting/>
+        <ResetClient/>
+        <ThemeSettings/>
+    </>
 }

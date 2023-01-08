@@ -8,7 +8,8 @@ import { useLocation } from "react-router-dom";
 import {deleteShot, url} from "../api/backendApi";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { Box, Card, IconButton, Stack, Typography } from "@mui/material";
-import ObjectContainer from "./ObjectContainer";
+import ObjectContainer, {ObjectCard} from "./ObjectContainer";
+import {useShowConfirmBox} from "./DialogBoxComponents/MessageBoxContext";
 
 moment.updateLocale("en", {
     relativeTime: {
@@ -78,17 +79,18 @@ export function ShotObject({ shot, index }: { shot: ShotData; index: number }) {
         }
     }, [location.state?.selectShot]);
 
+    let showConfirmBox = useShowConfirmBox();
+
     return (
-        <Card
-            ref={objRef}
-            className={`object-card shots ${
-                selectedShot == index ? "active" : ""
-            }`}
+        <ObjectCard
+            active={selectedShot == index}
+            className={`object-card shots`}
             onClick={() => {
                 if (setSelectedShot) setSelectedShot(index);
             }}
         >
             <Box
+                ref={objRef}
                 sx={{
                     p: "8%",
                     display: "flex",
@@ -113,8 +115,8 @@ export function ShotObject({ shot, index }: { shot: ShotData; index: number }) {
                     <IconButton
                         onClick={async () => {
                             if (
-                                !confirm(
-                                    `Do you want to remove ${shot.idPacket.shotId} shot?`
+                                !await showConfirmBox(
+                                    {content:`Remove ${shot.idPacket.shotId} shot?`,title:"Remove shot"}
                                 )
                             ) {
                                 return;
@@ -129,6 +131,6 @@ export function ShotObject({ shot, index }: { shot: ShotData; index: number }) {
                     </IconButton>
                 </div>
             </Box>
-        </Card>
+        </ObjectCard>
     );
 }

@@ -11,7 +11,7 @@ export default function (){
         "false"
     );
 
-    return <SettingItem className={"settings-item"}>
+    return <SettingItem >
         <div style={{height:50}}>
             <FormControlLabel control={<Checkbox color="success" onChange={(e)=>{
                 setShowAllShotsOnTarget(e.target.checked);

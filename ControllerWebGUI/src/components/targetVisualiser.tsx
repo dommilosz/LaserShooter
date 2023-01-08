@@ -1,24 +1,28 @@
-import React, { useRef, useState } from "react";
-import { ShotData } from "../types";
-import { url } from "../api/backendApi";
+import React, {useRef, useState} from "react";
+import {ShotData} from "../types";
+import {url} from "../api/backendApi";
 import Tooltip from "@mui/material/Tooltip";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
-export default function TargetVisualiser({
-    primaryShots,
-    primaryColor,
-    secondaryShots,
-    secondaryColor,
-    interactive,
-    dotSizeScale,
-}: {
-    primaryShots: ShotData[];
-    primaryColor?: string;
-    secondaryShots: ShotData[];
-    secondaryColor?: string;
-    interactive?: boolean;
-    dotSizeScale?: number;
-}) {
+let target_image: HTMLImageElement | undefined = undefined;
+let target_image_loaded = false;
+
+export default function TargetVisualiser(
+    {
+        primaryShots,
+        primaryColor,
+        secondaryShots,
+        secondaryColor,
+        interactive,
+        dotSizeScale,
+    }: {
+        primaryShots: ShotData[];
+        primaryColor?: string;
+        secondaryShots: ShotData[];
+        secondaryColor?: string;
+        interactive?: boolean;
+        dotSizeScale?: number;
+    }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [highlightedShot, setHighlightedShot] = useState<
         ShotData | undefined
@@ -39,21 +43,27 @@ export default function TargetVisualiser({
         if (_ctx !== null) {
             let ctx: CanvasRenderingContext2D = _ctx;
             ctx.imageSmoothingEnabled = false;
-            let img = new Image(w, h);
-            img.src = url + "target.png";
-            img.onload = function () {
+            if (!target_image || target_image.width !== w || target_image.height !== h) {
+                target_image = new Image(w, h);
+                target_image.src = url + "target.png";
+                target_image_loaded = false;
+                target_image.onload = () => target_image_loaded = true;
+            }
+
+            if (target_image_loaded) {
                 ctx.clearRect(0, 0, w, h);
-                ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
-                ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
-                ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
-                ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
-                ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
-                ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
-                ctx.drawImage(img, 0, 0, w, h); // Or at whatever offset you like
+                ctx.drawImage(target_image, 0, 0, w, h);
+                ctx.drawImage(target_image, 0, 0, w, h);
+                ctx.drawImage(target_image, 0, 0, w, h);
+                ctx.drawImage(target_image, 0, 0, w, h);
+                ctx.drawImage(target_image, 0, 0, w, h);
+                ctx.drawImage(target_image, 0, 0, w, h);
+                ctx.drawImage(target_image, 0, 0, w, h);
 
                 let dotSize = scale * dotSizeScale!;
                 ctx.fillStyle = secondaryColor!;
                 for (let _shot of secondaryShots) {
+                    if(!_shot)continue;
                     ctx.beginPath();
                     ctx.arc(
                         _shot.p.x * scale,
@@ -68,6 +78,7 @@ export default function TargetVisualiser({
                 dotSize = scale * 2 * dotSizeScale!;
                 ctx.fillStyle = primaryColor!;
                 for (let _shot of primaryShots) {
+                    if(!_shot)continue;
                     ctx.beginPath();
                     ctx.arc(
                         _shot.p.x * scale,
@@ -78,18 +89,18 @@ export default function TargetVisualiser({
                     );
                     ctx.fill();
                 }
-            };
+            }
         }
     }
 
     return (
-        <div style={{ width: "100%", height: "100%" }}>
+        <div style={{width: "100%", height: "100%"}}>
             <ShotTooltip
                 highlightedShot={highlightedShot}
                 interactive={interactive !== false}
             >
                 <canvas
-                    style={{ maxWidth: "100%", maxHeight: "100%" }}
+                    style={{maxWidth: "100%", maxHeight: "100%"}}
                     ref={canvasRef}
                     width={w}
                     height={h}
@@ -104,7 +115,7 @@ export default function TargetVisualiser({
                         let minDistance = -1;
                         let minDistanceShot = undefined;
                         for (let _shot of primaryShots) {
-                            if(!_shot || !_shot.p)continue;
+                            if (!_shot || !_shot.p) continue;
                             let sx = _shot.p.x * scale;
                             let sy = _shot.p.y * scale;
                             let distance = Math.sqrt(
@@ -120,7 +131,7 @@ export default function TargetVisualiser({
 
                         if (minDistanceShot === undefined)
                             for (let _shot of secondaryShots) {
-                                if(!_shot || !_shot.p)continue;
+                                if (!_shot || !_shot.p) continue;
                                 let sx = _shot.p.x * scale;
                                 let sy = _shot.p.y * scale;
                                 let distance = Math.sqrt(
@@ -145,10 +156,10 @@ export default function TargetVisualiser({
 }
 
 export function ShotTooltip({
-    highlightedShot,
-    children,
-    interactive,
-}: {
+                                highlightedShot,
+                                children,
+                                interactive,
+                            }: {
     highlightedShot: ShotData | undefined;
     children: any;
     interactive: boolean;
@@ -173,10 +184,11 @@ export function ShotTooltip({
                 display: "flex",
                 height: "100%",
                 alignItems: "center",
+                justifyContent:"center"
             }}
             onClick={() => {
                 if (highlightedShot !== undefined)
-                    navigate("/", { state: { selectShot: highlightedShot } });
+                    navigate("/", {state: {selectShot: highlightedShot}});
             }}
         >
             <Tooltip

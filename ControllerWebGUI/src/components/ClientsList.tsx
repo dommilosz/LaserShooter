@@ -8,7 +8,7 @@ import {assignUserToClient, url} from "../api/backendApi";
 import {resolveClientUserName} from "../api/resolveClientUser";
 import {Box, Card, Typography, Stack, IconButton} from "@mui/material";
 import Edit from "@mui/icons-material/Edit";
-import ObjectContainer from "./ObjectContainer";
+import ObjectContainer, {ObjectCard} from "./ObjectContainer";
 
 export default function ClientsList(
     {
@@ -64,7 +64,8 @@ export function ClientObject(
         setOpen={setOpen}
     ></UserAssignModal>
 
-    return <Card className={`object-card clients ${selectedClient == index?"active":""}`} onClick={() => {
+    return <ObjectCard
+        active={selectedClient == index} className={`object-card clients`} onClick={() => {
         if (setSelectedClient) setSelectedClient(index);
     }}>
         {Modal}
@@ -79,5 +80,5 @@ export function ClientObject(
                 <Edit sx={{fontSize: 20}}/>
             </IconButton>
         </Box>
-    </Card>;
+    </ObjectCard>;
 }

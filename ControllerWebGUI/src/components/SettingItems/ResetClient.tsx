@@ -11,7 +11,7 @@ export default function (){
     );
     const [serverUrl, setServerUrl] = useState("");
 
-    return <SettingItem className={"settings-item"}>
+    return <SettingItem >
         <Typography fontWeight={900}>
             Reset client to it's defaults
         </Typography>

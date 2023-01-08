@@ -6,6 +6,7 @@ import {createContext, useLocalStorage} from "../api/hooks";
 import "./homeview.css";
 import {useLocation} from "react-router-dom";
 import ObjectView from "../components/ObjectView";
+import { Paper } from "@mui/material";
 
 export const selectedShotContext =
     createContext<[number, React.Dispatch<React.SetStateAction<number>>]>();
@@ -35,19 +36,20 @@ export default function HomeView() {
     }, [location.state?.selectShot])
 
     return (
-        <div style={{ display: "flex", height: "calc( 100% - 80px )"}}>
+        <>
             <ObjectView>
                 <RecentShots
                     selectedShot={selectedShot}
                     setSelectedShot={setSelectedShot}
                 />
             </ObjectView>
-            <div
+            <Paper
                 style={{
                     display: "flex",
-                    width: "66%",
-                    height: "calc( 100% - 4px )",
+                    width: "calc(66.666% - 10px)",
+                    height: "100%",
                     flexDirection: "column",
+                    marginLeft:10,
                 }}
             >
                 <TargetVisualiser
@@ -60,7 +62,7 @@ export default function HomeView() {
                     primaryColor={"red"}
                     secondaryColor={"black"}
                 ></TargetVisualiser>
-            </div>
-        </div>
+            </Paper>
+        </>
     );
 }
