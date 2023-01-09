@@ -26,7 +26,7 @@ export function CalibrationUI(
     });
 
     useEffect(()=>{
-        setCalibration(initialCalibration);
+        setCalibration({...initialCalibration});
     },[initialCalibration, open])
 
     let [update, setUpdate] = useUpdateV();
@@ -114,14 +114,11 @@ export function CalibrationSettings() {
     const {localCalibration, setLocalCalibration} = useContext(sessionContext);
     let [calibrationUIOpen, setCalibrationUIOpen] = useState(false);
 
-    useEffect(() => {
-        (async () => {
-            await setCalibration(localCalibration);
-        })();
-    }, [JSON.stringify(localCalibration)])
-
     return <SettingItem>
-        <CalibrationUI open={calibrationUIOpen} setOpen={setCalibrationUIOpen} initialCalibration={localCalibration} saveCalibration={setLocalCalibration}/>
+        <CalibrationUI open={calibrationUIOpen} setOpen={setCalibrationUIOpen} initialCalibration={localCalibration} saveCalibration={async (calibration)=>{
+            setLocalCalibration(calibration);
+            await setCalibration(localCalibration);
+        }}/>
         <Typography fontSize={18}>Calibration</Typography>
         <Typography>Target offset: X: {localCalibration.offsetX}px Y: {localCalibration.offsetY}px
             Scale: {localCalibration.scale}%</Typography>
