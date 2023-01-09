@@ -2,8 +2,11 @@ import {PNG} from "pngjs";
 import * as fs from "fs";
 import {config} from "./index";
 import {CalibrationType} from "./types";
+import {ReadableStream, WritableStream} from "stream/web";
+import {PassThrough} from "stream";
 
 let parsedBitmap: PNG | undefined = undefined;
+export let solidBitmap: Buffer | undefined = undefined;
 
 fs.createReadStream("./target.png")
     .pipe(
@@ -11,9 +14,8 @@ fs.createReadStream("./target.png")
             filterType: 4,
         })
     )
-    .on("parsed", function () {
+    .on("parsed", async function () {
         let png = this;
-        console.log("Bitmap parsed!");
         if (png.width !== config.target.width || png.height !== config.target.height) {
             console.log(`Warning: target.png wrong size (should be: ${config.target.width}x${config.target.height}). Found ${png.width}x${png.height} instead`)
         } else {
@@ -30,6 +32,25 @@ fs.createReadStream("./target.png")
         } else {
             console.error("Bitmap cannot be resized to fit");
         }
+
+        let solidPng = new PNG({width:png.width, height:png.height, inputHasAlpha:true});
+        solidPng.data = Buffer.from(png.data.map((d,i)=>{
+            if(i%4 === 3 && d > 0){
+                return 255;
+            }
+            return d;
+        }));
+
+        let stream = new PassThrough();
+        solidPng.pack().pipe<any>(stream);
+        const chunks = []
+        for await (let chunk of stream) {
+            chunks.push(chunk)
+        }
+        solidBitmap = (Buffer.concat(chunks))
+
+
+        console.log("Bitmap parsed!");
     });
 
 export function scalePoint(point: [number, number], scaleFactor: number, canvasSize: [number, number]) {

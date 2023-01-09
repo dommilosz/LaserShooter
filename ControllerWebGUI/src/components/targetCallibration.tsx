@@ -35,7 +35,7 @@ export default function CalibrationTarget(
             let camera_image = new Image(w, h);
             camera_image.src = url + "camera-image?key=" + imageKey;
             let target_image = new Image(w, h);
-            target_image.src = url + "target.png";
+            target_image.src = url + "target-solid.png";
 
             const redraw = () => {
                 ctx.clearRect(0, 0, w, h);

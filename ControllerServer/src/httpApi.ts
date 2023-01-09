@@ -3,7 +3,7 @@ import cors from "cors";
 import {sendFile, sendJSON, sendText} from "express-wsutils";
 import zlib from "zlib";
 import fs from "fs";
-import {calcPoints} from "./calcPoints";
+import {calcPoints, solidBitmap} from "./calcPoints";
 import {config, saveData, stateData} from "./index";
 import fetch from 'node-fetch';
 import {SessionData} from "./types";
@@ -23,6 +23,21 @@ app.get("/target.png", (req: Request, res: Response) => {
         "Content-Encoding": "gzip",
     });
     zlib.gzip(fs.readFileSync("./target.png"), function (_, result) {
+        // The callback will give you the
+        res.end(result); // result, so just send it.
+    });
+});
+
+app.get("/target-solid.png", (req: Request, res: Response) => {
+    if(!solidBitmap){
+        sendText(res, "Not loaded yet", 500);
+        return;
+    }
+    res.writeHead(200, {
+        "Content-Type": "image/png",
+        "Content-Encoding": "gzip",
+    });
+    zlib.gzip(solidBitmap, function (_, result) {
         // The callback will give you the
         res.end(result); // result, so just send it.
     });

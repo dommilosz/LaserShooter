@@ -8,7 +8,7 @@ import {sessionContext} from "../App";
 let target_image: HTMLImageElement | undefined = undefined;
 let target_image_loaded = false;
 
-export function scalePoint(point:[number,number], scaleFactor:number, canvasSize:[number,number]) {
+export function scalePoint(point: [number, number], scaleFactor: number, canvasSize: [number, number]) {
     const centerX = canvasSize[0] / 2;
     const centerY = canvasSize[1] / 2;
 
@@ -48,7 +48,7 @@ export default function TargetVisualiser(
     const {localCalibration} = useContext(sessionContext);
 
     let scale = 10;
-    let pscale = localCalibration.scale/100 * scale;
+    let pscale = localCalibration.scale / 100 * scale;
     const canvas = canvasRef.current;
 
     let w = 160 * scale;
@@ -68,21 +68,20 @@ export default function TargetVisualiser(
             ctx.imageSmoothingEnabled = false;
             if (!target_image || target_image.width !== w || target_image.height !== h) {
                 target_image = new Image(w, h);
-                target_image.src = url + "target.png";
+                target_image.src = url + "target-solid.png";
                 target_image_loaded = false;
                 target_image.onload = () => target_image_loaded = true;
             }
 
             if (target_image_loaded) {
                 ctx.clearRect(0, 0, w, h);
-                for (let i = 0; i < 50; i++)
-                    ctx.drawImage(target_image, 0, 0, w, h);
+                ctx.drawImage(target_image, 0, 0, w, h);
 
                 let dotSize = scale * dotSizeScale!;
                 ctx.fillStyle = secondaryColor!;
                 for (let _shot of secondaryShots) {
                     if (!_shot) continue;
-                    let [sX, sY] = scalePoint([_shot.p.x*scale, _shot.p.y*scale],pscale/10,[w,h]);
+                    let [sX, sY] = scalePoint([_shot.p.x * scale, _shot.p.y * scale], pscale / 10, [w, h]);
                     sX += localCalibration.offsetX;
                     sY += localCalibration.offsetY;
 
@@ -100,7 +99,7 @@ export default function TargetVisualiser(
                 ctx.fillStyle = primaryColor!;
                 for (let _shot of primaryShots) {
                     if (!_shot) continue;
-                    let [sX, sY] = scalePoint([_shot.p.x*scale, _shot.p.y*scale],pscale/10,[w,h]);
+                    let [sX, sY] = scalePoint([_shot.p.x * scale, _shot.p.y * scale], pscale / 10, [w, h]);
                     sX += localCalibration.offsetX;
                     sY += localCalibration.offsetY;
 
@@ -140,7 +139,7 @@ export default function TargetVisualiser(
                         let minDistanceShot = undefined;
                         for (let _shot of primaryShots) {
                             if (!_shot || !_shot.p) continue;
-                            let [sX, sY] = scalePoint([_shot.p.x*scale, _shot.p.y*scale],pscale/10,[w,h]);
+                            let [sX, sY] = scalePoint([_shot.p.x * scale, _shot.p.y * scale], pscale / 10, [w, h]);
                             sX += localCalibration.offsetX;
                             sY += localCalibration.offsetY;
                             let distance = Math.sqrt(
@@ -157,7 +156,7 @@ export default function TargetVisualiser(
                         if (minDistanceShot === undefined)
                             for (let _shot of secondaryShots) {
                                 if (!_shot || !_shot.p) continue;
-                                let [sX, sY] = scalePoint([_shot.p.x*scale, _shot.p.y*scale],pscale/10,[w,h]);
+                                let [sX, sY] = scalePoint([_shot.p.x * scale, _shot.p.y * scale], pscale / 10, [w, h]);
                                 sX += localCalibration.offsetX;
                                 sY += localCalibration.offsetY;
                                 let distance = Math.sqrt(
