@@ -1,4 +1,4 @@
-import { SessionData, Users } from "../types";
+import {SessionData, Users} from "../types";
 
 export function resolveClientUser(
     sessionData: SessionData,
@@ -6,9 +6,7 @@ export function resolveClientUser(
     ts?: number
 ) {
     if (ts === undefined) {
-        return sessionData.clients[clientId].users[
-            sessionData.clients[clientId].users.length - 1
-        ]?.userId;
+        return sessionData.clients[clientId].users[sessionData.clients[clientId].users.length - 1]?.userId;
     }
 
     let clientUserId = -1;

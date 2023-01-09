@@ -19,6 +19,7 @@ const exampleShots: ShotData[] = _exampleShots;
 
 export default function TargetVisualiserDemo({showAllShots}: { showAllShots: boolean }) {
     return <TargetVisualiser primaryShots={[exampleShots[0]]} secondaryShots={showAllShots ? exampleShots : []}
+                             calibrationDisabled
                              interactive={false} dotSizeScale={3}></TargetVisualiser>
 }
 

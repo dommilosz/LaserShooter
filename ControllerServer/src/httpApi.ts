@@ -256,11 +256,16 @@ app.delete("/server-data", async (req: Request, res: Response) => {
 });
 
 app.get("/camera-image", async (req: Request, res: Response) =>{
-    let data = await fetch("http://192.168.4.1/capture");
-    let buffer = await data.arrayBuffer();
-    res.writeHead(200);
-    res.write(Buffer.from(buffer));
-    res.end();
+    try{
+        let data = await fetch("http://192.168.4.1/capture");
+        let buffer = await data.arrayBuffer();
+        res.writeHead(200);
+        res.write(Buffer.from(buffer));
+        res.end();
+    }catch {
+        sendText(res, "Error", 500);
+    }
+
 })
 
 app.get("/calibration", async (req: Request, res: Response) => {

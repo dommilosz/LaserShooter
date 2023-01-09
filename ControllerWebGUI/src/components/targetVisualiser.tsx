@@ -33,6 +33,7 @@ export default function TargetVisualiser(
         secondaryColor,
         interactive,
         dotSizeScale,
+        calibrationDisabled
     }: {
         primaryShots: ShotData[];
         primaryColor?: string;
@@ -40,12 +41,16 @@ export default function TargetVisualiser(
         secondaryColor?: string;
         interactive?: boolean;
         dotSizeScale?: number;
+        calibrationDisabled?: boolean;
     }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [highlightedShot, setHighlightedShot] = useState<
         ShotData | undefined
     >(undefined);
-    const {localCalibration} = useContext(sessionContext);
+    let {localCalibration} = useContext(sessionContext);
+    if(calibrationDisabled){
+        localCalibration = {offsetX:0,scale:100,offsetY:0};
+    }
 
     let scale = 10;
     let pscale = localCalibration.scale / 100 * scale;
@@ -53,9 +58,6 @@ export default function TargetVisualiser(
 
     let w = 160 * scale;
     let h = 120 * scale;
-
-    let pW = 160 * pscale;
-    let pH = 120 * pscale;
 
     if (!dotSizeScale) dotSizeScale = 1;
     if (!primaryColor) primaryColor = "red";
@@ -73,6 +75,22 @@ export default function TargetVisualiser(
                 target_image.onload = () => target_image_loaded = true;
             }
 
+            const drawShot = (_shot:ShotData, dotSize:number) => {
+                if (!_shot) return;
+                let [sX, sY] = scalePoint([_shot.p.x * scale, _shot.p.y * scale], pscale / 10, [w, h]);
+                sX += localCalibration.offsetX;
+                sY += localCalibration.offsetY;
+
+                ctx.beginPath();
+                ctx.arc(
+                    sX, sY,
+                    dotSize / 2,
+                    0,
+                    2 * Math.PI
+                );
+                ctx.fill();
+            };
+
             if (target_image_loaded) {
                 ctx.clearRect(0, 0, w, h);
                 ctx.drawImage(target_image, 0, 0, w, h);
@@ -80,37 +98,13 @@ export default function TargetVisualiser(
                 let dotSize = scale * dotSizeScale!;
                 ctx.fillStyle = secondaryColor!;
                 for (let _shot of secondaryShots) {
-                    if (!_shot) continue;
-                    let [sX, sY] = scalePoint([_shot.p.x * scale, _shot.p.y * scale], pscale / 10, [w, h]);
-                    sX += localCalibration.offsetX;
-                    sY += localCalibration.offsetY;
-
-                    ctx.beginPath();
-                    ctx.arc(
-                        sX, sY,
-                        dotSize / 2,
-                        0,
-                        2 * Math.PI
-                    );
-                    ctx.fill();
+                    drawShot(_shot,dotSize);
                 }
 
                 dotSize = scale * 2 * dotSizeScale!;
                 ctx.fillStyle = primaryColor!;
                 for (let _shot of primaryShots) {
-                    if (!_shot) continue;
-                    let [sX, sY] = scalePoint([_shot.p.x * scale, _shot.p.y * scale], pscale / 10, [w, h]);
-                    sX += localCalibration.offsetX;
-                    sY += localCalibration.offsetY;
-
-                    ctx.beginPath();
-                    ctx.arc(
-                        sX, sY,
-                        dotSize / 2,
-                        0,
-                        2 * Math.PI
-                    );
-                    ctx.fill();
+                    drawShot(_shot,dotSize);
                 }
             }
         }
@@ -137,8 +131,8 @@ export default function TargetVisualiser(
 
                         let minDistance = -1;
                         let minDistanceShot = undefined;
-                        for (let _shot of primaryShots) {
-                            if (!_shot || !_shot.p) continue;
+                        const checkShot = (_shot:ShotData) => {
+                            if (!_shot || !_shot.p) return;
                             let [sX, sY] = scalePoint([_shot.p.x * scale, _shot.p.y * scale], pscale / 10, [w, h]);
                             sX += localCalibration.offsetX;
                             sY += localCalibration.offsetY;
@@ -150,23 +144,17 @@ export default function TargetVisualiser(
                                 minDistance = distance;
                                 minDistanceShot = _shot;
                             }
+                        };
+
+
+                        for (let _shot of primaryShots) {
+                            checkShot(_shot);
                         }
                         if (minDistance > 10) minDistanceShot = undefined;
 
                         if (minDistanceShot === undefined)
                             for (let _shot of secondaryShots) {
-                                if (!_shot || !_shot.p) continue;
-                                let [sX, sY] = scalePoint([_shot.p.x * scale, _shot.p.y * scale], pscale / 10, [w, h]);
-                                sX += localCalibration.offsetX;
-                                sY += localCalibration.offsetY;
-                                let distance = Math.sqrt(
-                                    (x - sX) ** 2 + (y - sY) ** 2
-                                );
-
-                                if (minDistance < 0 || minDistance > distance) {
-                                    minDistance = distance;
-                                    minDistanceShot = _shot;
-                                }
+                                checkShot(_shot);
                             }
 
                         if (minDistance > 10) minDistanceShot = undefined;

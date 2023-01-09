@@ -32,9 +32,9 @@ export function CalibrationUI(
     let [update, setUpdate] = useUpdateV();
     let [opacity, setOpacity] = useState(90);
     return <ModalBox open={open} setOpen={setOpen} style={{height: "100%", overflowY: "auto"}}>
-        <Paper style={{display: "flex", flexDirection: "column"}}>
-            <Typography>Move sliders until the centers of the target matches</Typography>
-            <Paper style={{width: 600, height: 450, position: "relative"}}>
+        <Paper style={{display: "flex", flexDirection: "column", width:600, padding:15}}>
+            <Typography>Move sliders until the centers of the targets matches</Typography>
+            <Paper elevation={3} style={{width: 600, height: 450, position: "relative", marginBottom:15}}>
                 <CalibrationTarget calibration={{...calibration, scale: calibration.scale / 100}}
                                    imageKey={String(update)} opacity={opacity / 100}/>
             </Paper>
