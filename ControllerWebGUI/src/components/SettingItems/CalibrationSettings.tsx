@@ -1,29 +1,42 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {FormControl, Grid, InputLabel, MenuItem, Select, Slider, Typography} from "@mui/material";
 import {SettingItem} from "../../views/SettingsView";
 import {ThemeContext} from "../../api/Theme";
 import ModalBox from "../ModalBox";
-import {url} from "../../api/backendApi";
+import {getCalibration, setCalibration, url, useCurrentSession} from "../../api/backendApi";
 import Button from "@mui/material/Button";
 import {useUpdateV} from "../../api/hooks";
 import Paper from "@mui/material/Paper";
 import {Target} from "../targetVisualiserDemo";
 import CalibrationTarget from "../targetCallibration";
+import {CalibrationType} from "../../types";
+import {sessionContext} from "../../App";
 
 export function CalibrationUI(
     {
         open,
         setOpen,
-        offset,
-        setOffset
-    }: { open: boolean, setOpen: (v: boolean) => any, offset: [number, number, number], setOffset: (v: [number, number, number]) => any }) {
+        initialCalibration,
+        saveCalibration,
+    }: { open: boolean, setOpen: (v: boolean) => any, initialCalibration:CalibrationType, saveCalibration: (v: CalibrationType) => any }) {
+    let [calibration, setCalibration] = useState<CalibrationType>({
+        offsetX: 0,
+        offsetY: 0,
+        scale: 100
+    });
+
+    useEffect(()=>{
+        setCalibration(initialCalibration);
+    },[initialCalibration, open])
+
     let [update, setUpdate] = useUpdateV();
     let [opacity, setOpacity] = useState(90);
-    return <ModalBox open={open} setOpen={setOpen} style={{height:"100%", overflowY:"auto"}}>
+    return <ModalBox open={open} setOpen={setOpen} style={{height: "100%", overflowY: "auto"}}>
         <Paper style={{display: "flex", flexDirection: "column"}}>
             <Typography>Move sliders until the centers of the target matches</Typography>
             <Paper style={{width: 600, height: 450, position: "relative"}}>
-                <CalibrationTarget offset={offset} imageKey={String(update)} opacity={opacity/100}/>
+                <CalibrationTarget calibration={{...calibration, scale: calibration.scale / 100}}
+                                   imageKey={String(update)} opacity={opacity / 100}/>
             </Paper>
             <Typography>Opacity</Typography>
             <Slider
@@ -43,24 +56,30 @@ export function CalibrationUI(
                 size="small"
                 aria-label="Small"
                 valueLabelDisplay="auto"
-                value={offset[0]}
-                min={-100}
+                value={calibration.offsetX}
+                max={150}
+                min={-150}
                 onChange={(e, value) => {
-                    if (typeof value === "number")
-                        setOffset([value, offset[1], offset[2]])
+                    if (typeof value === "number") {
+                        calibration.offsetX = value;
+                        setCalibration({...calibration, offsetX: value});
+                    }
                 }}
             />
             <Typography>Y</Typography>
             <Slider
                 size="small"
                 defaultValue={0}
-                min={-100}
+                max={150}
+                min={-150}
                 aria-label="Small"
                 valueLabelDisplay="auto"
-                value={offset[1]}
+                value={calibration.offsetY}
                 onChange={(e, value) => {
-                    if (typeof value === "number")
-                        setOffset([offset[0], value, offset[2]])
+                    if (typeof value === "number") {
+                        calibration.offsetY = value;
+                        setCalibration({...calibration, offsetY: value});
+                    }
                 }}
             />
             <Typography>Scale</Typography>
@@ -71,25 +90,41 @@ export function CalibrationUI(
                 max={200}
                 aria-label="Small"
                 valueLabelDisplay="auto"
-                value={offset[2]}
+                value={calibration.scale}
                 onChange={(e, value) => {
-                    if (typeof value === "number")
-                        setOffset([offset[0], offset[1], value])
+                    if (typeof value === "number") {
+                        setCalibration({...calibration, scale: value});
+                    }
                 }}
             />
-            <Button onClick={() => setOpen(false)}>OK</Button>
+            <div>
+                <Button style={{width:"50%"}} color={"error"} onClick={() => {
+                    setOpen(false);
+                }}>Cancel</Button>
+                <Button style={{width:"50%"}} onClick={() => {
+                    setOpen(false);
+                    saveCalibration(calibration)
+                }}>Save</Button>
+            </div>
         </Paper>
     </ModalBox>
 }
 
 export function CalibrationSettings() {
-    let [offset, setOffset] = useState<[number, number, number]>([0, 0, 100]);
+    const {localCalibration, setLocalCalibration} = useContext(sessionContext);
     let [calibrationUIOpen, setCalibrationUIOpen] = useState(false);
 
+    useEffect(() => {
+        (async () => {
+            await setCalibration(localCalibration);
+        })();
+    }, [JSON.stringify(localCalibration)])
+
     return <SettingItem>
-        <CalibrationUI open={calibrationUIOpen} setOpen={setCalibrationUIOpen} offset={offset} setOffset={setOffset}/>
+        <CalibrationUI open={calibrationUIOpen} setOpen={setCalibrationUIOpen} initialCalibration={localCalibration} saveCalibration={setLocalCalibration}/>
         <Typography fontSize={18}>Calibration</Typography>
-        <Typography>Target offset: X: {offset[0]} Y: {offset[1]} Scale: {offset[2]}</Typography>
+        <Typography>Target offset: X: {localCalibration.offsetX}px Y: {localCalibration.offsetY}px
+            Scale: {localCalibration.scale}%</Typography>
         <Button onClick={() => setCalibrationUIOpen(true)}>Open calibration ui</Button>
     </SettingItem>
 }

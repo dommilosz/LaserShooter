@@ -1,11 +1,29 @@
-import React, {useRef, useState} from "react";
+import React, {useContext, useRef, useState} from "react";
 import {ShotData} from "../types";
 import {url} from "../api/backendApi";
 import Tooltip from "@mui/material/Tooltip";
 import {useNavigate} from "react-router-dom";
+import {sessionContext} from "../App";
 
 let target_image: HTMLImageElement | undefined = undefined;
 let target_image_loaded = false;
+
+export function scalePoint(point:[number,number], scaleFactor:number, canvasSize:[number,number]) {
+    const centerX = canvasSize[0] / 2;
+    const centerY = canvasSize[1] / 2;
+
+    // Translate point by negative of center
+    const translatedX = point[0] - centerX;
+    const translatedY = point[1] - centerY;
+
+    // Scale point
+    const scaledX = translatedX * scaleFactor;
+    const scaledY = translatedY * scaleFactor;
+
+    // Translate point back by center
+    return [scaledX + centerX, scaledY + centerY];
+}
+
 
 export default function TargetVisualiser(
     {
@@ -27,12 +45,17 @@ export default function TargetVisualiser(
     const [highlightedShot, setHighlightedShot] = useState<
         ShotData | undefined
     >(undefined);
+    const {localCalibration} = useContext(sessionContext);
 
     let scale = 10;
+    let pscale = localCalibration.scale/100 * scale;
     const canvas = canvasRef.current;
 
     let w = 160 * scale;
     let h = 120 * scale;
+
+    let pW = 160 * pscale;
+    let pH = 120 * pscale;
 
     if (!dotSizeScale) dotSizeScale = 1;
     if (!primaryColor) primaryColor = "red";
@@ -52,22 +75,20 @@ export default function TargetVisualiser(
 
             if (target_image_loaded) {
                 ctx.clearRect(0, 0, w, h);
-                ctx.drawImage(target_image, 0, 0, w, h);
-                ctx.drawImage(target_image, 0, 0, w, h);
-                ctx.drawImage(target_image, 0, 0, w, h);
-                ctx.drawImage(target_image, 0, 0, w, h);
-                ctx.drawImage(target_image, 0, 0, w, h);
-                ctx.drawImage(target_image, 0, 0, w, h);
-                ctx.drawImage(target_image, 0, 0, w, h);
+                for (let i = 0; i < 50; i++)
+                    ctx.drawImage(target_image, 0, 0, w, h);
 
                 let dotSize = scale * dotSizeScale!;
                 ctx.fillStyle = secondaryColor!;
                 for (let _shot of secondaryShots) {
-                    if(!_shot)continue;
+                    if (!_shot) continue;
+                    let [sX, sY] = scalePoint([_shot.p.x*scale, _shot.p.y*scale],pscale/10,[w,h]);
+                    sX += localCalibration.offsetX;
+                    sY += localCalibration.offsetY;
+
                     ctx.beginPath();
                     ctx.arc(
-                        _shot.p.x * scale,
-                        _shot.p.y * scale,
+                        sX, sY,
                         dotSize / 2,
                         0,
                         2 * Math.PI
@@ -78,11 +99,14 @@ export default function TargetVisualiser(
                 dotSize = scale * 2 * dotSizeScale!;
                 ctx.fillStyle = primaryColor!;
                 for (let _shot of primaryShots) {
-                    if(!_shot)continue;
+                    if (!_shot) continue;
+                    let [sX, sY] = scalePoint([_shot.p.x*scale, _shot.p.y*scale],pscale/10,[w,h]);
+                    sX += localCalibration.offsetX;
+                    sY += localCalibration.offsetY;
+
                     ctx.beginPath();
                     ctx.arc(
-                        _shot.p.x * scale,
-                        _shot.p.y * scale,
+                        sX, sY,
                         dotSize / 2,
                         0,
                         2 * Math.PI
@@ -116,10 +140,11 @@ export default function TargetVisualiser(
                         let minDistanceShot = undefined;
                         for (let _shot of primaryShots) {
                             if (!_shot || !_shot.p) continue;
-                            let sx = _shot.p.x * scale;
-                            let sy = _shot.p.y * scale;
+                            let [sX, sY] = scalePoint([_shot.p.x*scale, _shot.p.y*scale],pscale/10,[w,h]);
+                            sX += localCalibration.offsetX;
+                            sY += localCalibration.offsetY;
                             let distance = Math.sqrt(
-                                (x - sx) ** 2 + (y - sy) ** 2
+                                (x - sX) ** 2 + (y - sY) ** 2
                             );
 
                             if (minDistance < 0 || minDistance > distance) {
@@ -132,10 +157,11 @@ export default function TargetVisualiser(
                         if (minDistanceShot === undefined)
                             for (let _shot of secondaryShots) {
                                 if (!_shot || !_shot.p) continue;
-                                let sx = _shot.p.x * scale;
-                                let sy = _shot.p.y * scale;
+                                let [sX, sY] = scalePoint([_shot.p.x*scale, _shot.p.y*scale],pscale/10,[w,h]);
+                                sX += localCalibration.offsetX;
+                                sY += localCalibration.offsetY;
                                 let distance = Math.sqrt(
-                                    (x - sx) ** 2 + (y - sy) ** 2
+                                    (x - sX) ** 2 + (y - sY) ** 2
                                 );
 
                                 if (minDistance < 0 || minDistance > distance) {
@@ -184,7 +210,7 @@ export function ShotTooltip({
                 display: "flex",
                 height: "100%",
                 alignItems: "center",
-                justifyContent:"center"
+                justifyContent: "center"
             }}
             onClick={() => {
                 if (highlightedShot !== undefined)

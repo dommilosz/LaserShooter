@@ -40,11 +40,13 @@ export type Session = {
   users:Users,
 }
 
-
+export type CalibrationType = { offsetX: number; offsetY: number; scale: number }
 export type SessionContext = {
   sessionData:SessionData,
   sessionInfo:SessionInfo,
   users:Users,
-  sessions:string[],
+  sessions:{name:string, shots:number}[],
   updateSessions:()=>any,
+  localCalibration:CalibrationType,
+  setLocalCalibration:(v:CalibrationType)=>any
 }

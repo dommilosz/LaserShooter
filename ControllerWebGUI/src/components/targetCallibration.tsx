@@ -6,10 +6,10 @@ import {useNavigate} from "react-router-dom";
 
 export default function CalibrationTarget(
     {
-        offset, imageKey, opacity
+        calibration, imageKey, opacity
     }: {
-        offset: [number, number, number]
-        imageKey: string, opacity:number
+        calibration: { offsetX: number; offsetY: number; scale: number }
+        imageKey: string, opacity: number
     }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [highlightedShot, setHighlightedShot] = useState<
@@ -17,7 +17,7 @@ export default function CalibrationTarget(
     >(undefined);
 
     let scale = 10;
-    let imgScale = offset[2] * (scale/100);
+    let imgScale = calibration.scale * scale;
 
     const canvas = canvasRef.current;
 
@@ -37,24 +37,18 @@ export default function CalibrationTarget(
             let target_image = new Image(w, h);
             target_image.src = url + "target.png";
 
-            const redraw = ()=>{
+            const redraw = () => {
                 ctx.clearRect(0, 0, w, h);
 
                 ctx.globalAlpha = 1;
-                ctx.drawImage(target_image, 0, 0, w, h);
-                ctx.drawImage(target_image, 0, 0, w, h);
-                ctx.drawImage(target_image, 0, 0, w, h);
-                ctx.drawImage(target_image, 0, 0, w, h);
-                ctx.drawImage(target_image, 0, 0, w, h);
-                ctx.drawImage(target_image, 0, 0, w, h);
-                ctx.drawImage(target_image, 0, 0, w, h);
+                for (let i = 0; i < 50; i++)
+                    ctx.drawImage(target_image, 0, 0, w, h);
 
                 ctx.globalAlpha = opacity;
-                ctx.drawImage(camera_image, offset[0]+(canvas.width/2-imgW/2), offset[1]+(canvas.height/2-imgH/2), imgW, imgH);
+                ctx.drawImage(camera_image, calibration.offsetX + (canvas.width / 2 - imgW / 2), calibration.offsetY + (canvas.height / 2 - imgH / 2), imgW, imgH);
             }
 
             camera_image.onload = redraw;
-
             target_image.onload = redraw;
         }
     }
@@ -67,56 +61,6 @@ export default function CalibrationTarget(
                 width={w}
                 height={h}
             />
-        </div>
-    );
-}
-
-export function ShotTooltip({
-                                highlightedShot,
-                                children,
-                                interactive,
-                            }: {
-    highlightedShot: ShotData | undefined;
-    children: any;
-    interactive: boolean;
-}) {
-    const navigate = useNavigate();
-
-    if (!interactive) return <>{children}</>;
-
-    const content = (
-        <div>
-            <div>Score: {highlightedShot?.score}</div>
-            <div>
-                X: {highlightedShot?.p.x} Y: {highlightedShot?.p.x}
-            </div>
-        </div>
-    );
-
-    return (
-        <div
-            style={{
-                cursor: highlightedShot !== undefined ? "pointer" : "crosshair",
-                display: "flex",
-                height: "100%",
-                alignItems: "center",
-                justifyContent: "center"
-            }}
-            onClick={() => {
-                if (highlightedShot !== undefined)
-                    navigate("/", {state: {selectShot: highlightedShot}});
-            }}
-        >
-            <Tooltip
-                open={highlightedShot !== undefined}
-                title={highlightedShot !== undefined ? content : <></>}
-                followCursor
-                disableFocusListener={highlightedShot === undefined}
-                disableHoverListener={highlightedShot === undefined}
-                disableTouchListener={highlightedShot === undefined}
-            >
-                {children}
-            </Tooltip>
         </div>
     );
 }

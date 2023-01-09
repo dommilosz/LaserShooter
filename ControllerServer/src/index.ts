@@ -1,7 +1,7 @@
 import configured from "configuredjs";
 import * as fs from "fs";
 import zlib from "zlib";
-import {SessionData} from "./types";
+import {CalibrationType, SessionData} from "./types";
 
 export let config = configured({
     path: "./config.json",
@@ -14,7 +14,10 @@ export let config = configured({
     },
 });
 
-export let stateData: { currentSession: number, sessionData: SessionData, lastKA: number, users: { [key: number]: string }, changeIndex: number } = {
+export let stateData: {
+    calibration: CalibrationType;
+    currentSession: number, sessionData: SessionData, lastKA: number, users: { [key: number]: string }, changeIndex: number
+} = {
     currentSession: +new Date(),
     sessionData: {
         shots: [],
@@ -23,6 +26,7 @@ export let stateData: { currentSession: number, sessionData: SessionData, lastKA
     lastKA: 0,
     users: {},
     changeIndex: 0,
+    calibration: {offsetX: 0, offsetY: 0, scale: 100}
 }
 
 if (!fs.existsSync("data")) {
@@ -31,15 +35,21 @@ if (!fs.existsSync("data")) {
 if (fs.existsSync(`data/users.json`)) {
     stateData.users = JSON.parse(fs.readFileSync(`data/users.json`, {encoding: "utf-8"}))
 }
+if (fs.existsSync(`data/calibration.json`)) {
+    stateData.calibration = JSON.parse(fs.readFileSync(`data/calibration.json`, {encoding: "utf-8"}))
+}
 
 export async function saveData() {
-    let str = JSON.stringify(stateData.sessionData);
-    let buf = zlib.gzipSync(Buffer.from(str));
+    if (stateData.sessionData.shots.length > 0) {
+        let str = JSON.stringify(stateData.sessionData);
+        let buf = zlib.gzipSync(Buffer.from(str));
 
-    fs.writeFileSync(`data/${stateData.currentSession}.json.gz`, buf, {
-        encoding: "utf-8",
-    });
+        fs.writeFileSync(`data/${stateData.currentSession}.json.gz`, buf, {
+            encoding: "utf-8",
+        });
+    }
     fs.writeFileSync(`data/users.json`, JSON.stringify(stateData.users), {encoding: "utf-8"});
+    fs.writeFileSync("data/calibration.json", JSON.stringify(stateData.calibration));
     stateData.changeIndex++
 }
 

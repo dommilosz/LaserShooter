@@ -49,3 +49,4 @@ export type ClientData = {
 }
 
 export type SessionData = { shots: ShotData[]; clients: { [key: number]: ClientData } }
+export type CalibrationType = { offsetX: number; offsetY: number; scale: number }

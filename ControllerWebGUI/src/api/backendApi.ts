@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import {SessionInfo, SessionData, Users, Session} from "../types";
+import {SessionInfo, SessionData, Users, Session, CalibrationType} from "../types";
 
 export let url = "http://localhost:3000"
 try{
@@ -96,7 +96,7 @@ export async function putSession(session?:number){
     });
 }
 
-export async function getSessions(){
+export async function getSessions():Promise<{name:string, shots:number}[]>{
     let resp = await fetch(url + "sessions/");
     return await resp.json();
 }
@@ -112,6 +112,21 @@ export async function resetServer(){
         method: "DELETE",
     });
 }
+
+export async function setCalibration(data:CalibrationType){
+    return  await fetch(url + "calibration", {
+        method: "POST",
+        body:JSON.stringify(data),
+        headers:{"Content-Type":"Application/json"},
+    });
+}
+
+export async function getCalibration(){
+    let resp = await fetch(url + "calibration/");
+    return await resp.json();
+}
+
+
 
 export function useCurrentSession(): Session {
     let [sessionInfo, setSessionInfo] = useState<SessionInfo>({

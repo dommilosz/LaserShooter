@@ -6,6 +6,7 @@ import fs from "fs";
 import {calcPoints} from "./calcPoints";
 import {config, saveData, stateData} from "./index";
 import fetch from 'node-fetch';
+import {SessionData} from "./types";
 
 const app = express();
 const port = config.port;
@@ -43,6 +44,10 @@ app.get("/sessions/current", (req: Request, res: Response) => {
         "Content-Type": "application/json",
         "Content-Encoding": "gzip",
     });
+    stateData.sessionData.shots = stateData.sessionData.shots.map((shot)=>{
+        shot.score = calcPoints(shot.p.x,shot.p.y, stateData.calibration);
+        return shot;
+    })
     const text = JSON.stringify(stateData.sessionData);
     zlib.gzip(text, function (_, result) {
         res.end(result);
@@ -66,7 +71,14 @@ app.get("/sessions", (req: Request, res: Response) => {
             return file.isFile() && file.name.endsWith(".json.gz");
         })
         .map((file) => {
-            return file.name.split(".")[0];
+            try{
+                let buf = fs.readFileSync("data/" + file.name);
+                let unzip = zlib.gunzipSync(buf);
+                let sessionData:SessionData = JSON.parse(unzip.toString());
+                return {name:file.name.split(".")[0], shots:sessionData.shots.length}
+            }catch {
+                return {name:file.name.split(".")[0], shots:-1}
+            }
         });
     sendJSON(res, files, 200);
 });
@@ -145,7 +157,7 @@ app.get("/shot/:shot/recalculate",async (req: Request, res: Response) => {
     let _shot = req.params.shot;
     for (const shot of stateData.sessionData.shots) {
         if(String(shot.idPacket.shotId) === _shot){
-            shot.score = calcPoints(shot.p.x,shot.p.y);
+            shot.score = calcPoints(shot.p.x,shot.p.y, stateData.calibration);
             await saveData();
             sendJSON(res, shot, 200);
             return;
@@ -234,6 +246,24 @@ app.get("/camera-image", async (req: Request, res: Response) =>{
     res.writeHead(200);
     res.write(Buffer.from(buffer));
     res.end();
+})
+
+app.get("/calibration", async (req: Request, res: Response) => {
+    sendJSON(res,stateData.calibration, 200);
+})
+
+app.post("/calibration", async (req: Request, res: Response) => {
+    let offsetX = Number(req.body.offsetX);
+    let offsetY = Number(req.body.offsetY);
+    let scale = Number(req.body.scale);
+
+    if(!isFinite(offsetX) || !isFinite(offsetY) || !isFinite(scale)){
+        sendText(res, "Invalid values", 400);
+        return;
+    }
+    stateData.calibration = {offsetX,offsetY,scale};
+    await saveData();
+    sendText(res, "Calibration updated", 200);
 })
 
 

@@ -32,7 +32,7 @@ export default function () {
                 defaultValue={""}
             >
                 {sessions.map(session => {
-                    return <MenuItem value={session} key={session}>{session}</MenuItem>
+                    return <MenuItem value={session.name} key={session.name}>{session.name} ({session.shots})</MenuItem>
                 })}
             </Select>
         </FormControl>
