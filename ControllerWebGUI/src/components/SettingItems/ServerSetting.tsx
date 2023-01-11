@@ -8,7 +8,7 @@ import moment from "moment";
 import {checkServer} from "../../api/backendApi";
 import FormControl from "@mui/material/FormControl";
 
-export default function () {
+export default function ({style}:{style?:React.CSSProperties}) {
     const [serverUrlLS, setServerUrlLS] = useLocalStorage(
         "server-url",
         "http://localhost:3000"
@@ -19,7 +19,7 @@ export default function () {
     let isError = sessionInfo.session <= 0;
     let lastFetch = `${moment(sessionInfo.lastFetch).fromNow()} ${isError ? " FAILED" : ""}`;
 
-    return <SettingItem>
+    return <SettingItem style={style}>
         <Typography>Server url: {serverUrlLS}</Typography>
         <Typography color={isError ? "red" : ""}>Last
             fetch: {sessionInfo.lastFetch > 0 ? lastFetch : "Never"}</Typography>

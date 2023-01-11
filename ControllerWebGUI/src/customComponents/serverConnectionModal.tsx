@@ -27,7 +27,7 @@ export default function ({open}: { open: boolean }) {
     >
         <Paper sx={style}>
             <div className={"settings-text2"}>Please connect to server to continue</div>
-            <ServerSetting></ServerSetting>
+            <ServerSetting style={{width:"100%"}}></ServerSetting>
         </Paper>
     </Modal>
 }
