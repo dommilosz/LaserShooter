@@ -38,23 +38,24 @@ int GetFrameNoConvert(RGB888Resp *resp) {
   return ESP_OK;
 }
 
-int GetPoint(Point *p) {
-  RGB888Resp resp;
-  jpg_buffer jpg_buf;
-  int res = GetFrameNoConvert(&resp);
-  *p = DetectBrightPoint(&resp.image_matrix);
-  Cleanup(&jpg_buf, &resp);
-  return res;
-}
+int GetPoint(Point *p, int *w=NULL, int *h=NULL) {
+  int64_t point_0 = millis();
 
-int GetPoint(Point *p, int *w, int *h) {
   RGB888Resp resp;
   jpg_buffer jpg_buf;
   int res = GetFrameNoConvert(&resp);
   *p = DetectBrightPoint(&resp.image_matrix);
-  *w = resp.fb->width;
-  *h = resp.fb->height;
+  if(w!=NULL && h!=NULL){
+    *w = resp.fb->width;
+    *h = resp.fb->height;
+  }
   Cleanup(&jpg_buf, &resp);
+
+  int64_t point_5 = millis();
+  int64_t full = point_5-point_0;
+
+  Serial.printf("Point: %ums\n", full);
+
   return res;
 }
 
@@ -71,7 +72,7 @@ int NextFrame(){
   RGB888Resp resp;
   jpg_buffer jpg_buf;
   int res = GetFrameNoConvert(&resp);
-  UpdateBackground(&resp.image_matrix);
+  UpdateBackgroundForce(&resp.image_matrix);
   Cleanup(&jpg_buf, &resp);
   return res;
 }
