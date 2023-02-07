@@ -40,7 +40,8 @@ export type Session = {
   users:Users,
 }
 
-export type CalibrationType = { offsetX: number; offsetY: number; scale: number }
+export type CalibrationType = { offsetX: number; offsetY: number; scale: number, scoreMultiplier:number, scorePostMultiplier:number }
+
 export type SessionContext = {
   sessionData:SessionData,
   sessionInfo:SessionInfo,

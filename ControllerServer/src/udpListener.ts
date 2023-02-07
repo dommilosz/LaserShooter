@@ -1,5 +1,5 @@
 import {EmptyPacket, PointPacket, ShotData} from "./types";
-import {calcPoints} from "./calcPoints";
+import {calcScore} from "./bitmapParser";
 import {config, saveData, stateData} from "./index";
 import dgram from "dgram";
 
@@ -25,7 +25,7 @@ client.on("message", async function (message, rinfo) {
         if (!added.includes(p.idPacket.shotId)) {
             let data: ShotData = JSON.parse(JSON.stringify(p));
             data.ts = +new Date();
-            data.score = calcPoints(data.p.x, data.p.y, stateData.calibration);
+            data.score = calcScore(data.p.x, data.p.y, stateData.calibration);
             added.push(p.idPacket.shotId);
             stateData.sessionData.shots.push(data);
 

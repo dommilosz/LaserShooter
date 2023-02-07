@@ -3,7 +3,7 @@ import cors from "cors";
 import {sendFile, sendJSON, sendText} from "express-wsutils";
 import zlib from "zlib";
 import fs from "fs";
-import {calcPoints, solidBitmap} from "./calcPoints";
+import {calcScore, originalBitmap, solidBitmap} from "./bitmapParser";
 import {config, saveData, stateData} from "./index";
 import fetch from 'node-fetch';
 import {SessionData} from "./types";
@@ -37,21 +37,19 @@ app.get("/target-solid.png", (req: Request, res: Response) => {
         "Content-Type": "image/png",
         "Content-Encoding": "gzip",
     });
-    zlib.gzip(solidBitmap, function (_, result) {
-        // The callback will give you the
-        res.end(result); // result, so just send it.
-    });
+    res.end(solidBitmap.gz);
 });
 
 app.get("/target.png", (req: Request, res: Response) => {
+    if(!originalBitmap){
+        sendText(res, "Not loaded yet", 500);
+        return;
+    }
     res.writeHead(200, {
         "Content-Type": "image/png",
         "Content-Encoding": "gzip",
     });
-    zlib.gzip(fs.readFileSync("./target.png"), function (_, result) {
-        // The callback will give you the
-        res.end(result); // result, so just send it.
-    });
+    res.end(originalBitmap.gz);
 });
 
 app.get("/sessions/current", (req: Request, res: Response) => {
@@ -60,7 +58,7 @@ app.get("/sessions/current", (req: Request, res: Response) => {
         "Content-Encoding": "gzip",
     });
     stateData.sessionData.shots = stateData.sessionData.shots.map((shot)=>{
-        shot.score = calcPoints(shot.p.x,shot.p.y, stateData.calibration);
+        shot.score = calcScore(shot.p.x,shot.p.y, stateData.calibration);
         return shot;
     })
     const text = JSON.stringify(stateData.sessionData);
@@ -94,6 +92,8 @@ app.get("/sessions", (req: Request, res: Response) => {
             }catch {
                 return {name:file.name.split(".")[0], shots:-1}
             }
+        }).filter((file)=>{
+            return file.shots > 0;
         });
     sendJSON(res, files, 200);
 });
@@ -172,7 +172,7 @@ app.get("/shot/:shot/recalculate",async (req: Request, res: Response) => {
     let _shot = req.params.shot;
     for (const shot of stateData.sessionData.shots) {
         if(String(shot.idPacket.shotId) === _shot){
-            shot.score = calcPoints(shot.p.x,shot.p.y, stateData.calibration);
+            shot.score = calcScore(shot.p.x,shot.p.y, stateData.calibration);
             await saveData();
             sendJSON(res, shot, 200);
             return;
@@ -276,16 +276,17 @@ app.post("/calibration", async (req: Request, res: Response) => {
     let offsetX = Number(req.body.offsetX);
     let offsetY = Number(req.body.offsetY);
     let scale = Number(req.body.scale);
+    let scoreMultiplier = Number(req.body.scoreMultiplier);
+    let scorePostMultiplier = Number(req.body.scorePostMultiplier);
 
-    if(!isFinite(offsetX) || !isFinite(offsetY) || !isFinite(scale)){
+    if(!isFinite(offsetX) || !isFinite(offsetY) || !isFinite(scale) || !isFinite(scoreMultiplier) || !isFinite(scorePostMultiplier)){
         sendText(res, "Invalid values", 400);
         return;
     }
-    stateData.calibration = {offsetX,offsetY,scale};
+    stateData.calibration = {...stateData.calibration,offsetX,offsetY,scale, scorePostMultiplier, scoreMultiplier};
     await saveData();
     sendText(res, "Calibration updated", 200);
 })
-
 
 app.listen(port, () => {
     console.log(`Api listening on port ${port}`);

@@ -12,7 +12,7 @@ import CalibrationTarget from "../targetCallibration";
 import {CalibrationType} from "../../types";
 import {sessionContext} from "../../App";
 
-export function CalibrationUI(
+export function TargetCalibrationUI(
     {
         open,
         setOpen,
@@ -22,7 +22,9 @@ export function CalibrationUI(
     let [calibration, setCalibration] = useState<CalibrationType>({
         offsetX: 0,
         offsetY: 0,
-        scale: 100
+        scale: 100,
+        scorePostMultiplier:10,
+        scoreMultiplier:10,
     });
 
     useEffect(()=>{
@@ -110,14 +112,14 @@ export function CalibrationUI(
     </ModalBox>
 }
 
-export function CalibrationSettings() {
+export function TargetCalibrationSettings() {
     const {localCalibration, setLocalCalibration} = useContext(sessionContext);
     let [calibrationUIOpen, setCalibrationUIOpen] = useState(false);
 
     return <SettingItem>
-        <CalibrationUI open={calibrationUIOpen} setOpen={setCalibrationUIOpen} initialCalibration={localCalibration} saveCalibration={async (calibration)=>{
+        <TargetCalibrationUI open={calibrationUIOpen} setOpen={setCalibrationUIOpen} initialCalibration={localCalibration} saveCalibration={async (calibration)=>{
             setLocalCalibration(calibration);
-            await setCalibration(localCalibration);
+            await setCalibration(calibration);
         }}/>
         <Typography fontSize={18}>Calibration</Typography>
         <Typography>Target offset: X: {localCalibration.offsetX}px Y: {localCalibration.offsetY}px

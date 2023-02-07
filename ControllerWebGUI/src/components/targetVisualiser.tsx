@@ -49,7 +49,7 @@ export default function TargetVisualiser(
     >(undefined);
     let {localCalibration} = useContext(sessionContext);
     if(calibrationDisabled){
-        localCalibration = {offsetX:0,scale:100,offsetY:0};
+        localCalibration = {offsetX:0,scale:100,offsetY:0, scoreMultiplier:10, scorePostMultiplier:10};
     }
 
     let scale = 10;

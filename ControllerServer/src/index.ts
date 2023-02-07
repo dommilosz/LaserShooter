@@ -26,7 +26,7 @@ export let stateData: {
     lastKA: 0,
     users: {},
     changeIndex: 0,
-    calibration: {offsetX: 0, offsetY: 0, scale: 100}
+    calibration: {offsetX: 0, offsetY: 0, scale: 100, scoreMultiplier:10, scorePostMultiplier:10}
 }
 
 if (!fs.existsSync("data")) {

@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import "./App.css";
-import {Session, SessionContext} from "./types";
+import {CalibrationType, Session, SessionContext} from "./types";
 import Header from "./components/header";
 import {getCalibration, getSessions, useCurrentSession} from "./api/backendApi";
 import {createContext, useUpdate, useUpdateV} from "./api/hooks";
@@ -18,10 +18,12 @@ function App() {
     const {sessionInfo, sessionData, users} = useCurrentSession();
     const selectedShotState = useState(0);
 
-    const [localCalibration, setLocalCalibration] = useState({
+    const [localCalibration, setLocalCalibration] = useState<CalibrationType>({
         offsetX: 0,
         offsetY: 0,
-        scale: 100
+        scale: 100,
+        scoreMultiplier:10,
+        scorePostMultiplier:10
     })
 
     useState(0);

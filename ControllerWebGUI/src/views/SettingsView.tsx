@@ -10,7 +10,8 @@ import ResetClient from "../components/SettingItems/ResetClient";
 import {ThemeSettings} from "../components/SettingItems/ThemeSettings";
 import {PaperTypeMap} from "@mui/material/Paper/Paper";
 import {OverridableComponent} from "@mui/material/OverridableComponent";
-import {CalibrationSettings} from "../components/SettingItems/CalibrationSettings";
+import {TargetCalibrationSettings} from "../components/SettingItems/TargetCalibrationSettings";
+import {ScoreCalibrationSettings} from "../components/SettingItems/ScoreCalibrationSettings";
 
 // @ts-ignore
 export const Paper2:OverridableComponent<PaperTypeMap> = ({...props}:PaperTypeMap) => <Paper elevation={3} {...props}/>;
@@ -24,7 +25,8 @@ export const SettingItem = styled(Paper2)(({theme}) => ({
     height:250,
     width:"calc(33% - 25px)",
     minWidth:210,
-    margin:5
+    margin:5,
+    overflowY:"auto"
 }));
 
 export default function SettingsView() {
@@ -34,6 +36,7 @@ export default function SettingsView() {
         <ShowAllOnTargetSetting/>
         <ResetClient/>
         <ThemeSettings/>
-        <CalibrationSettings/>
+        <TargetCalibrationSettings/>
+        <ScoreCalibrationSettings/>
     </>
 }

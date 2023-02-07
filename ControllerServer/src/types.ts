@@ -1,4 +1,5 @@
 import Struct from "struct";
+import {PNG} from "pngjs";
 
 export const IDPacket = Struct()
     .word32Ule("clientId")
@@ -49,4 +50,6 @@ export type ClientData = {
 }
 
 export type SessionData = { shots: ShotData[]; clients: { [key: number]: ClientData } }
-export type CalibrationType = { offsetX: number; offsetY: number; scale: number }
+export type CalibrationType = { offsetX: number; offsetY: number; scale: number, scoreMultiplier:number, scorePostMultiplier:number }
+
+export type BitmapData = PNG & Partial<{buffer:Buffer, gz:Buffer}>
