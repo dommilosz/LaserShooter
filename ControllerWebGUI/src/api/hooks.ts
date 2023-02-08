@@ -92,6 +92,9 @@ export function useUpdateV(): [number, () => any] {
 }
 
 export function useWaitForCanvas(ctx: CanvasRenderingContext2D | undefined | null, cb: (ctx: CanvasRenderingContext2D) => any, continuous?: boolean) {
+    let update = useUpdate();
+    useEffect(update, []);
+
     if (continuous) {
         if (ctx)
             cb(ctx)
@@ -104,20 +107,18 @@ export function useWaitForCanvas(ctx: CanvasRenderingContext2D | undefined | nul
     }, [ctx])
 }
 
-export function useDrawImageOnCanvas(ctx: CanvasRenderingContext2D | undefined | null, src: string) {
-    const [loaded, setLoaded] = useState(false);
-    useWaitForCanvas(ctx, (ctx) => {
+export async function drawImageOnCanvas(ctx: CanvasRenderingContext2D, src: string) {
+    return await new Promise<void>((r,j)=>{
         let w = ctx.canvas.width;
         let h = ctx.canvas.height;
-
         ctx.imageSmoothingEnabled = false;
-        let image = new Image(w, h);
+
+        let image = new Image();
         image.src = src;
         image.onload = () => {
-            setLoaded(true);
             ctx.clearRect(0, 0, w, h);
             ctx.drawImage(image, 0, 0, w, h);
+            r();
         }
     })
-    return loaded;
 }

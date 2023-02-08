@@ -4,11 +4,7 @@ import {url} from "../api/backendApi";
 import Tooltip from "@mui/material/Tooltip";
 import {useNavigate} from "react-router-dom";
 import {sessionContext} from "../App";
-import {useDrawImageOnCanvas, useWaitForCanvas} from "../api/hooks";
-import {CircularProgress} from "@mui/material";
-
-let target_image: HTMLImageElement | undefined = undefined;
-let target_image_loaded = false;
+import {drawImageOnCanvas, useWaitForCanvas} from "../api/hooks";
 
 export function scalePoint(point: [number, number], scaleFactor: number, canvasSize: [number, number]) {
     const centerX = canvasSize[0] / 2;
@@ -64,7 +60,6 @@ export default function TargetVisualiser(
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
 
-    let loaded = useDrawImageOnCanvas(ctx, url + "target-solid.png");
     useWaitForCanvas(ctx, drawCanvas, true);
 
     function drawShot(ctx: CanvasRenderingContext2D, _shot: ShotData, dotSize: number) {
@@ -126,7 +121,9 @@ export default function TargetVisualiser(
         setHighlightedShot(minDistanceShot);
     }
 
-    function drawCanvas(ctx: CanvasRenderingContext2D) {
+    async function drawCanvas(ctx: CanvasRenderingContext2D) {
+        await drawImageOnCanvas(ctx, url + "target-solid.png");
+
         let dotSize = scale * dotSizeScale;
         ctx.fillStyle = secondaryColor;
         for (let _shot of secondaryShots) {
@@ -148,13 +145,12 @@ export default function TargetVisualiser(
             >
                 <div style={{width: "100%", height: "100%", display:"flex", justifyContent:"center", alignItems:"center"}}>
                     <canvas
-                        style={{maxWidth: loaded?"100%":0, maxHeight: loaded?"100%":0}}
+                        style={{maxWidth: "100%", maxHeight: "100%"}}
                         ref={canvasRef}
                         width={w}
                         height={h}
                         onMouseMove={handleMouseMove}
                     />
-                    {!loaded?<CircularProgress/>:<></>}
                 </div>
             </ShotTooltip>
         </div>
