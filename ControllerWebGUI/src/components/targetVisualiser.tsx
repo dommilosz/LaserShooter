@@ -176,11 +176,11 @@ export function ShotTooltip(
     }: {
         highlightedShot: ShotData | undefined;
         children: any;
-        interactive?: boolean;
+        interactive?: boolean|undefined;
     }) {
     const navigate = useNavigate();
 
-    if (!interactive) return <>{children}</>;
+    if (interactive===false) return <>{children}</>;
 
     const content = (
         <div>
