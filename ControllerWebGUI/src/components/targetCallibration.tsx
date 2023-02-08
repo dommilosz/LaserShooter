@@ -1,6 +1,8 @@
 import React, {useRef, useState} from "react";
 import {ShotData} from "../types";
 import {url} from "../api/backendApi";
+import {drawImageOnCanvas, useWaitForCanvas} from "../api/hooks";
+import {CircularProgress, LinearProgress, Typography} from "@mui/material";
 
 export default function CalibrationTarget(
     {
@@ -18,6 +20,7 @@ export default function CalibrationTarget(
     let imgScale = calibration.scale * scale;
 
     const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
 
     let w = 160 * scale;
     let h = 120 * scale;
@@ -25,40 +28,31 @@ export default function CalibrationTarget(
     let imgW = 160 * imgScale;
     let imgH = 120 * imgScale;
 
-    if (canvas !== null) {
-        let _ctx = canvas.getContext("2d");
-        if (_ctx !== null) {
-            let ctx: CanvasRenderingContext2D = _ctx;
-            ctx.imageSmoothingEnabled = false;
-            let camera_image = new Image(w, h);
-            camera_image.src = url + "camera-image?key=" + imageKey;
-            let target_image = new Image(w, h);
-            target_image.src = url + "target-solid.png";
+    let [loaded, setLoaded] = useState(0);
 
-            const redraw = () => {
-                ctx.clearRect(0, 0, w, h);
+    useWaitForCanvas(ctx, async (ctx) => {
+        ctx.globalAlpha = 1;
+        await drawImageOnCanvas(ctx, url+"target-solid.png");
 
-                ctx.globalAlpha = 1;
-                for (let i = 0; i < 50; i++)
-                    ctx.drawImage(target_image, 0, 0, w, h);
+        if (loaded < 1)
+            setLoaded(1);
 
-                ctx.globalAlpha = opacity;
-                ctx.drawImage(camera_image, calibration.offsetX + (canvas.width / 2 - imgW / 2), calibration.offsetY + (canvas.height / 2 - imgH / 2), imgW, imgH);
-            }
+        ctx.globalAlpha = opacity;
+        await drawImageOnCanvas(ctx, url+"camera-image?key=" + imageKey);
 
-            camera_image.onload = redraw;
-            target_image.onload = redraw;
-        }
-    }
+        if (loaded < 2)
+            setLoaded(2);
+    })
 
     return (
-        <div style={{width: "100%", height: "100%"}}>
+        <div style={{width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center"}}>
             <canvas
-                style={{maxWidth: "100%", maxHeight: "100%"}}
+                style={{maxWidth: "100%", maxHeight: "100%", display:loaded<2?"none":""}}
                 ref={canvasRef}
                 width={w}
                 height={h}
             />
+            {loaded<2 ? <div style={{display:"flex", flexDirection:"column", alignItems:"center"}}><CircularProgress/><Typography>Not loading? Check connection with {loaded == 0?"server":"target"}</Typography></div> : <></>}
         </div>
     );
 }

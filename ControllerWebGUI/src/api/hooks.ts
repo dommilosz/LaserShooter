@@ -91,20 +91,12 @@ export function useUpdateV(): [number, () => any] {
     }]
 }
 
-export function useWaitForCanvas(ctx: CanvasRenderingContext2D | undefined | null, cb: (ctx: CanvasRenderingContext2D) => any, continuous?: boolean) {
+export function useWaitForCanvas(ctx: CanvasRenderingContext2D | undefined | null, cb: (ctx: CanvasRenderingContext2D) => any) {
     let update = useUpdate();
     useEffect(update, []);
 
-    if (continuous) {
-        if (ctx)
-            cb(ctx)
-        return;
-    }
-
-    useEffect(() => {
-        if (ctx)
-            cb(ctx);
-    }, [ctx])
+    if (ctx)
+        cb(ctx)
 }
 
 export async function drawImageOnCanvas(ctx: CanvasRenderingContext2D, src: string) {

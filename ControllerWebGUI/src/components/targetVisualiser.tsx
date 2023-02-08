@@ -60,7 +60,7 @@ export default function TargetVisualiser(
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
 
-    useWaitForCanvas(ctx, drawCanvas, true);
+    useWaitForCanvas(ctx, drawCanvas);
 
     function drawShot(ctx: CanvasRenderingContext2D, _shot: ShotData, dotSize: number) {
         if (!_shot) return;
