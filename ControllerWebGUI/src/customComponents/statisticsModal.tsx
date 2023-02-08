@@ -1,6 +1,4 @@
 import React, {useContext} from 'react';
-import Modal from "@mui/material/Modal";
-import Paper from "@mui/material/Paper";
 import {Card, Typography} from "@mui/material";
 import {sessionContext} from "../App";
 import {calcUserPlace, userStats} from "../api/calculateStatistics";

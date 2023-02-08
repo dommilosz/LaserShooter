@@ -1,5 +1,5 @@
-import {getSessions, putSession, url} from "../../api/backendApi";
-import React, {useContext, useEffect, useState} from "react";
+import {putSession} from "../../api/backendApi";
+import React, {useContext, useState} from "react";
 import {SettingItem} from "../../views/SettingsView";
 import {sessionContext} from "../../App";
 import moment from "moment/moment";

@@ -1,6 +1,5 @@
-import React, {useContext, useState} from "react";
+import React, {useContext} from "react";
 import {SettingItem} from "../../views/SettingsView";
-import {useLocalStorage} from "../../api/hooks";
 import Button from '@mui/material/Button';
 import {Typography} from "@mui/material";
 import FormControl from "@mui/material/FormControl";

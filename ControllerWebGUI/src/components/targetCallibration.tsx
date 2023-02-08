@@ -1,8 +1,6 @@
 import React, {useRef, useState} from "react";
 import {ShotData} from "../types";
 import {url} from "../api/backendApi";
-import Tooltip from "@mui/material/Tooltip";
-import {useNavigate} from "react-router-dom";
 
 export default function CalibrationTarget(
     {

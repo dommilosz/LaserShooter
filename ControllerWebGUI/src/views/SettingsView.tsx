@@ -2,7 +2,6 @@ import React from "react"
 import "./SettingsView.css"
 import {styled} from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
-import Grid from '@mui/material/Grid';
 import ServerSetting from "../components/SettingItems/ServerSetting";
 import SessionSetting from "../components/SettingItems/SessionSetting";
 import ShowAllOnTargetSetting from "../components/SettingItems/ShowAllOnTargetSetting";

@@ -5,9 +5,9 @@ import { sessionContext } from "../App";
 import { selectedShotContext } from "../views/HomeView";
 import { resolveClientUserName } from "../api/resolveClientUser";
 import { useLocation } from "react-router-dom";
-import {deleteShot, url} from "../api/backendApi";
+import {deleteShot} from "../api/backendApi";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Box, Card, IconButton, Stack, Typography } from "@mui/material";
+import { Box, IconButton, Stack, Typography } from "@mui/material";
 import ObjectContainer, {ObjectCard} from "./ObjectContainer";
 import {useShowConfirmBox} from "./DialogBoxComponents/MessageBoxContext";
 

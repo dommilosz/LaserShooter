@@ -1,8 +1,7 @@
 import React, {useState} from "react";
-import SessionSetting from "./SettingItems/SessionSetting";
 import Button from "@mui/material/Button";
 import {useNavigate} from "react-router-dom";
-import {Card, ListItemButton, Paper} from "@mui/material";
+import {Card, Paper} from "@mui/material";
 
 export default function ({
                              children,

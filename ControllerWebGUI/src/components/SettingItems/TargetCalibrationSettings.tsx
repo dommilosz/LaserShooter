@@ -1,13 +1,11 @@
 import React, {useContext, useEffect, useState} from "react";
-import {FormControl, Grid, InputLabel, MenuItem, Select, Slider, Typography} from "@mui/material";
+import {Slider, Typography} from "@mui/material";
 import {SettingItem} from "../../views/SettingsView";
-import {ThemeContext} from "../../api/Theme";
 import ModalBox from "../ModalBox";
-import {getCalibration, setCalibration, url, useCurrentSession} from "../../api/backendApi";
+import {setCalibration} from "../../api/backendApi";
 import Button from "@mui/material/Button";
 import {useUpdateV} from "../../api/hooks";
 import Paper from "@mui/material/Paper";
-import {Target} from "../targetVisualiserDemo";
 import CalibrationTarget from "../targetCallibration";
 import {CalibrationType} from "../../types";
 import {sessionContext} from "../../App";

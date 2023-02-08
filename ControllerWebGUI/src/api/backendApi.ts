@@ -80,10 +80,10 @@ export async function deleteShot(shotId:number){
     );
 }
 
-export async function checkServer(surl:string){
-    if(!surl.endsWith("/"))
-        surl = surl+"/";
-    let resp = await fetch(surl+"session");
+export async function checkServer(serverUrl:string){
+    if(!serverUrl.endsWith("/"))
+        serverUrl = serverUrl+"/";
+    let resp = await fetch(serverUrl+"session");
     let json = await resp.json();
     return !!json.session;
 }

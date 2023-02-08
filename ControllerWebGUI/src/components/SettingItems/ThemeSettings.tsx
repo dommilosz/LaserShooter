@@ -1,5 +1,5 @@
 import React, {useContext} from "react";
-import {FormControl, Grid, InputLabel, MenuItem, Select, Typography} from "@mui/material";
+import {FormControl, InputLabel, MenuItem, Select, Typography} from "@mui/material";
 import {SettingItem} from "../../views/SettingsView";
 import {ThemeContext} from "../../api/Theme";
 

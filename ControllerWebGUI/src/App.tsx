@@ -1,9 +1,9 @@
 import React, {useEffect, useState} from "react";
 import "./App.css";
-import {CalibrationType, Session, SessionContext} from "./types";
+import {CalibrationType, SessionContext} from "./types";
 import Header from "./components/header";
 import {getCalibration, getSessions, useCurrentSession} from "./api/backendApi";
-import {createContext, useUpdate, useUpdateV} from "./api/hooks";
+import {createContext, useUpdateV} from "./api/hooks";
 import {Routes, Route, BrowserRouter} from "react-router-dom";
 import HomeView from "./views/HomeView";
 import ClientsView from "./views/ClientsView";

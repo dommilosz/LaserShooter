@@ -1,12 +1,11 @@
 import React, {useContext} from "react";
 import {sessionContext} from "../App";
 import {ClientData} from "../types";
-import EditIcon from '@mui/icons-material/Edit';
 import {UserAssignModal} from "../customComponents/userAssignModal";
 import {selectedClientContext} from "../views/ClientsView";
-import {assignUserToClient, url} from "../api/backendApi";
+import {assignUserToClient} from "../api/backendApi";
 import {resolveClientUserName} from "../api/resolveClientUser";
-import {Box, Card, Typography, Stack, IconButton} from "@mui/material";
+import {Box, Typography, Stack, IconButton} from "@mui/material";
 import Edit from "@mui/icons-material/Edit";
 import ObjectContainer, {ObjectCard} from "./ObjectContainer";
 

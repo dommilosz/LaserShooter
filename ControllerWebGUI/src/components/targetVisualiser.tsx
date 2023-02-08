@@ -48,8 +48,8 @@ export default function TargetVisualiser(
         ShotData | undefined
     >(undefined);
     let {localCalibration} = useContext(sessionContext);
-    if(calibrationDisabled){
-        localCalibration = {offsetX:0,scale:100,offsetY:0, scoreMultiplier:10, scorePostMultiplier:10};
+    if (calibrationDisabled) {
+        localCalibration = {offsetX: 0, scale: 100, offsetY: 0, scoreMultiplier: 10, scorePostMultiplier: 10};
     }
 
     let scale = 10;
@@ -75,7 +75,7 @@ export default function TargetVisualiser(
                 target_image.onload = () => target_image_loaded = true;
             }
 
-            const drawShot = (_shot:ShotData, dotSize:number) => {
+            const drawShot = (_shot: ShotData, dotSize: number) => {
                 if (!_shot) return;
                 let [sX, sY] = scalePoint([_shot.p.x * scale, _shot.p.y * scale], pscale / 10, [w, h]);
                 sX += localCalibration.offsetX;
@@ -98,13 +98,13 @@ export default function TargetVisualiser(
                 let dotSize = scale * dotSizeScale!;
                 ctx.fillStyle = secondaryColor!;
                 for (let _shot of secondaryShots) {
-                    drawShot(_shot,dotSize);
+                    drawShot(_shot, dotSize);
                 }
 
                 dotSize = scale * 2 * dotSizeScale!;
                 ctx.fillStyle = primaryColor!;
                 for (let _shot of primaryShots) {
-                    drawShot(_shot,dotSize);
+                    drawShot(_shot, dotSize);
                 }
             }
         }
@@ -114,7 +114,7 @@ export default function TargetVisualiser(
         <div style={{width: "100%", height: "100%"}}>
             <ShotTooltip
                 highlightedShot={highlightedShot}
-                interactive={interactive !== false}
+                interactive={interactive}
             >
                 <canvas
                     style={{maxWidth: "100%", maxHeight: "100%"}}
@@ -131,7 +131,7 @@ export default function TargetVisualiser(
 
                         let minDistance = -1;
                         let minDistanceShot = undefined;
-                        const checkShot = (_shot:ShotData) => {
+                        const checkShot = (_shot: ShotData) => {
                             if (!_shot || !_shot.p) return;
                             let [sX, sY] = scalePoint([_shot.p.x * scale, _shot.p.y * scale], pscale / 10, [w, h]);
                             sX += localCalibration.offsetX;
@@ -168,15 +168,16 @@ export default function TargetVisualiser(
     );
 }
 
-export function ShotTooltip({
-                                highlightedShot,
-                                children,
-                                interactive,
-                            }: {
-    highlightedShot: ShotData | undefined;
-    children: any;
-    interactive: boolean;
-}) {
+export function ShotTooltip(
+    {
+        highlightedShot,
+        children,
+        interactive,
+    }: {
+        highlightedShot: ShotData | undefined;
+        children: any;
+        interactive?: boolean;
+    }) {
     const navigate = useNavigate();
 
     if (!interactive) return <>{children}</>;

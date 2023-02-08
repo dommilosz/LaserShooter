@@ -3,8 +3,8 @@ import {sessionContext} from "../App";
 import {selectedUserContext} from "../views/UsersView";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
-import {putUser, removeUser, url} from "../api/backendApi";
-import {Box, Card, IconButton, Stack, Typography} from "@mui/material";
+import {putUser, removeUser} from "../api/backendApi";
+import {Box, IconButton, Stack, Typography} from "@mui/material";
 import ObjectContainer, {ObjectCard} from "./ObjectContainer";
 import StatisticsModal from "../customComponents/statisticsModal";
 import AssessmentIcon from "@mui/icons-material/Assessment"
