@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import {url} from "./backendApi";
 
 export function useAppSize() {
     const [windowSize, setWindowSize] = useState<{ width: number, height: number }>({
@@ -100,7 +99,7 @@ export function useWaitForCanvas(ctx: CanvasRenderingContext2D | undefined | nul
 }
 
 export async function drawImageOnCanvas(ctx: CanvasRenderingContext2D, src: string) {
-    return await new Promise<void>((r,j)=>{
+    return await new Promise<void>((r)=>{
         let w = ctx.canvas.width;
         let h = ctx.canvas.height;
         ctx.imageSmoothingEnabled = false;

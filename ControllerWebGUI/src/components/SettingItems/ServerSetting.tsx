@@ -14,7 +14,7 @@ export default function ({style}:{style?:React.CSSProperties}) {
         "http://localhost:3000"
     );
     const [serverUrl, setServerUrl] = useState("");
-    let {sessionData, sessionInfo} = useContext(sessionContext);
+    let {sessionInfo} = useContext(sessionContext);
 
     let isError = sessionInfo.session <= 0;
     let lastFetch = `${moment(sessionInfo.lastFetch).fromNow()} ${isError ? " FAILED" : ""}`;

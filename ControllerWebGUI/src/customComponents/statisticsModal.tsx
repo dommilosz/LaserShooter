@@ -6,7 +6,7 @@ import "./statisticsModal.css"
 import ModalBox from "../components/ModalBox";
 
 export default function ({open, userId,setOpen}: { open: boolean, userId: number,setOpen:(v:boolean)=>any }) {
-    let {sessionData, users, sessionInfo} = useContext(sessionContext);
+    let {sessionData, users} = useContext(sessionContext);
     let stats = userStats(userId,sessionData);
     let places = calcUserPlace(userId,sessionData,users);
 

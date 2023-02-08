@@ -35,8 +35,7 @@ export function TargetCalibrationUI(
         <Paper style={{display: "flex", flexDirection: "column", width:600, padding:15}}>
             <Typography>Move sliders until the centers of the targets matches</Typography>
             <Paper elevation={3} style={{width: 600, height: 450, position: "relative", marginBottom:15}}>
-                <CalibrationTarget calibration={{...calibration, scale: calibration.scale / 100}}
-                                   imageKey={String(update)} opacity={opacity / 100}/>
+                <CalibrationTarget imageKey={String(update)} opacity={opacity / 100}/>
             </Paper>
             <Typography>Opacity</Typography>
             <Slider

@@ -1,32 +1,22 @@
 import React, {useRef, useState} from "react";
-import {ShotData} from "../types";
 import {url} from "../api/backendApi";
 import {drawImageOnCanvas, useWaitForCanvas} from "../api/hooks";
-import {CircularProgress, LinearProgress, Typography} from "@mui/material";
+import {CircularProgress, Typography} from "@mui/material";
 
 export default function CalibrationTarget(
     {
-        calibration, imageKey, opacity
+        imageKey, opacity
     }: {
-        calibration: { offsetX: number; offsetY: number; scale: number }
         imageKey: string, opacity: number
     }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [highlightedShot, setHighlightedShot] = useState<
-        ShotData | undefined
-    >(undefined);
 
     let scale = 10;
-    let imgScale = calibration.scale * scale;
-
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
 
     let w = 160 * scale;
     let h = 120 * scale;
-
-    let imgW = 160 * imgScale;
-    let imgH = 120 * imgScale;
 
     let [loaded, setLoaded] = useState(0);
 

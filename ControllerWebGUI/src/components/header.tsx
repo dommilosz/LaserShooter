@@ -28,7 +28,7 @@ export function LinkButton({
 }
 
 export default function header() {
-    let { sessionInfo, sessionData } = useContext(sessionContext);
+    let { sessionInfo } = useContext(sessionContext);
     let sessionTime = moment(Number(sessionInfo.session));
     let sessionValid = sessionInfo.session > 0;
 
