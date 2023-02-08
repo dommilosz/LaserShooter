@@ -265,7 +265,6 @@ app.get("/camera-image", async (req: Request, res: Response) =>{
     }catch {
         sendText(res, "Error", 500);
     }
-
 })
 
 app.get("/calibration", async (req: Request, res: Response) => {

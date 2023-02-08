@@ -1,7 +1,7 @@
 import {ShotData} from "../types";
 import TargetVisualiser from "./targetVisualiser";
 
-const _exampleShots = [
+const exampleShots = [
     {"p": {"x": 78, "y": 47}},
     {"p": {"x": 90, "y": 62}},
     {"p": {"x": 110, "y": 34}},
@@ -12,10 +12,7 @@ const _exampleShots = [
     {"p": {"x": 125, "y": 53}},
     {"p": {"x": 53, "y": 86}},
     {"p": {"x": 87, "y": 45}}
-];
-
-// @ts-ignore
-const exampleShots: ShotData[] = _exampleShots;
+] as ShotData[];
 
 export default function TargetVisualiserDemo({showAllShots}: { showAllShots: boolean }) {
     return <TargetVisualiser primaryShots={[exampleShots[0]]} secondaryShots={showAllShots ? exampleShots : []}

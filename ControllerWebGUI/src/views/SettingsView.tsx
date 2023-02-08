@@ -14,7 +14,7 @@ import {TargetCalibrationSettings} from "../components/SettingItems/TargetCalibr
 import {ScoreCalibrationSettings} from "../components/SettingItems/ScoreCalibrationSettings";
 
 // @ts-ignore
-export const Paper2:OverridableComponent<PaperTypeMap> = ({...props}:PaperTypeMap) => <Paper elevation={3} {...props}/>;
+export const Paper2:OverridableComponent<PaperTypeMap<{}, "div">> = ({...props}:PaperTypeMap) => <Paper elevation={3} {...props}/>;
 
 export const SettingItem = styled(Paper2)(({theme}) => ({
     backgroundColor: theme.palette.background.paper,

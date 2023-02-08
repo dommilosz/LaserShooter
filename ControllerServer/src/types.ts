@@ -1,11 +1,19 @@
 import Struct from "struct";
 import {PNG} from "pngjs";
 
-export const IDPacket = Struct()
+export type IDPacketType = {
+    cliendId:number,
+    shotId:number,
+}
+
+export const IDPacket = Struct<IDPacketType>()
     .word32Ule("clientId")
     .word32Ule("shotId")
 
-export const Point = Struct()
+export type PointStructType = {
+    x:number, y:number, R:number, G: number, B:number, found:boolean,
+}
+export const PointStruct = Struct<PointStructType>()
     .word32Ule("x")
     .word32Ule("y")
     .word8("R")
@@ -13,15 +21,15 @@ export const Point = Struct()
     .word8("B")
     .word8("found")
 
-export const PointPacket = Struct()
+export const PointPacket = Struct<{pktype:number, idPacket:IDPacketType, w:number, h:number, score:number, p:PointStructType}>()
     .word32Ule("pktype")
     .struct("idPacket", IDPacket)
     .word32Ule("w")
     .word32Ule("h")
     .word32Sle("score")
-    .struct("p", Point)
+    .struct("p", PointStruct)
 
-export const EmptyPacket = Struct()
+export const EmptyPacket = Struct<{pktype:number}>()
     .word32Ule("pktype")
 
 export type ShotData = {

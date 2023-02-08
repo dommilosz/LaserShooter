@@ -15,12 +15,9 @@ client.on("listening", function () {
 
 let added: number[] = []
 client.on("message", async function (message, rinfo) {
-    // @ts-ignore
-    EmptyPacket._setBuff(message);
-    // @ts-ignore
+    EmptyPacket.setBuffer(message);
     if (EmptyPacket.fields.pktype == 0) {
-        // @ts-ignore
-        PointPacket._setBuff(message);
+        PointPacket.setBuffer(message);
         let p: any = PointPacket.fields;
         if (!added.includes(p.idPacket.shotId)) {
             let data: ShotData = JSON.parse(JSON.stringify(p));
@@ -39,7 +36,7 @@ client.on("message", async function (message, rinfo) {
             );
         }
     }
-    // @ts-ignore
+
     if (EmptyPacket.fields.pktype === 1) {
         stateData.lastKA = +new Date();
     }
