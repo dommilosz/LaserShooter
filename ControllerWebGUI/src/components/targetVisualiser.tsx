@@ -4,6 +4,8 @@ import {url} from "../api/backendApi";
 import Tooltip from "@mui/material/Tooltip";
 import {useNavigate} from "react-router-dom";
 import {sessionContext} from "../App";
+import {useDrawImageOnCanvas, useWaitForCanvas} from "../api/hooks";
+import {CircularProgress} from "@mui/material";
 
 let target_image: HTMLImageElement | undefined = undefined;
 let target_image_loaded = false;
@@ -28,85 +30,113 @@ export function scalePoint(point: [number, number], scaleFactor: number, canvasS
 export default function TargetVisualiser(
     {
         primaryShots,
-        primaryColor,
-        secondaryShots,
-        secondaryColor,
-        interactive,
-        dotSizeScale,
-        calibrationDisabled
+        primaryColor = "red",
+        secondaryShots = [],
+        secondaryColor = "black",
+        interactive = true,
+        dotSizeScale = 1,
+        calibrationDisabled = false
     }: {
         primaryShots: ShotData[];
         primaryColor?: string;
-        secondaryShots: ShotData[];
+        secondaryShots?: ShotData[];
         secondaryColor?: string;
         interactive?: boolean;
         dotSizeScale?: number;
         calibrationDisabled?: boolean;
     }) {
+
+    dotSizeScale = dotSizeScale ?? 1;
+
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [highlightedShot, setHighlightedShot] = useState<
-        ShotData | undefined
-    >(undefined);
+    const [highlightedShot, setHighlightedShot] = useState<ShotData | undefined>(undefined);
+
     let {localCalibration} = useContext(sessionContext);
     if (calibrationDisabled) {
         localCalibration = {offsetX: 0, scale: 100, offsetY: 0, scoreMultiplier: 10, scorePostMultiplier: 10};
     }
 
-    let scale = 10;
-    let pscale = localCalibration.scale / 100 * scale;
+    const scale = 10;
+    const w = 160 * scale;
+    const h = 120 * scale;
+    const pointScale = localCalibration.scale / 100 * scale;
+
     const canvas = canvasRef.current;
+    const ctx = canvas?.getContext("2d");
 
-    let w = 160 * scale;
-    let h = 120 * scale;
+    let loaded = useDrawImageOnCanvas(ctx, url + "target-solid.png");
+    useWaitForCanvas(ctx, drawCanvas, true);
 
-    if (!dotSizeScale) dotSizeScale = 1;
-    if (!primaryColor) primaryColor = "red";
-    if (!secondaryColor) secondaryColor = "black";
+    function drawShot(ctx: CanvasRenderingContext2D, _shot: ShotData, dotSize: number) {
+        if (!_shot) return;
+        let [sX, sY] = scalePoint([_shot.p.x * scale, _shot.p.y * scale], pointScale / 10, [w, h]);
+        sX += localCalibration.offsetX;
+        sY += localCalibration.offsetY;
 
-    if (canvas !== null) {
-        let _ctx = canvas.getContext("2d");
-        if (_ctx !== null) {
-            let ctx: CanvasRenderingContext2D = _ctx;
-            ctx.imageSmoothingEnabled = false;
-            if (!target_image || target_image.width !== w || target_image.height !== h) {
-                target_image = new Image(w, h);
-                target_image.src = url + "target-solid.png";
-                target_image_loaded = false;
-                target_image.onload = () => target_image_loaded = true;
+        ctx.beginPath();
+        ctx.arc(
+            sX, sY,
+            dotSize / 2,
+            0,
+            2 * Math.PI
+        );
+        ctx.fill();
+    }
+
+    function handleMouseMove(event: React.MouseEvent<HTMLCanvasElement>) {
+        if (!canvas) return;
+
+        let rect = canvas.getBoundingClientRect(), // abs. size of element
+            scaleX = canvas.width / rect.width, // relationship bitmap vs. element for x
+            scaleY = canvas.height / rect.height; // relationship bitmap vs. element for y
+        let x = (event.clientX - rect.left) * scaleX;
+        let y = (event.clientY - rect.top) * scaleY;
+
+        let minDistance = -1;
+        let minDistanceShot = undefined;
+        const checkShot = (_shot: ShotData) => {
+            if (!_shot || !_shot.p) return;
+            let [sX, sY] = scalePoint([_shot.p.x * scale, _shot.p.y * scale], pointScale / 10, [w, h]);
+            sX += localCalibration.offsetX;
+            sY += localCalibration.offsetY;
+            let distance = Math.sqrt(
+                (x - sX) ** 2 + (y - sY) ** 2
+            );
+
+            if (minDistance < 0 || minDistance > distance) {
+                minDistance = distance;
+                minDistanceShot = _shot;
+            }
+        };
+
+
+        for (let _shot of primaryShots) {
+            checkShot(_shot);
+        }
+        if (minDistance > 10) minDistanceShot = undefined;
+
+        if (minDistanceShot === undefined)
+            for (let _shot of secondaryShots) {
+                checkShot(_shot);
             }
 
-            const drawShot = (_shot: ShotData, dotSize: number) => {
-                if (!_shot) return;
-                let [sX, sY] = scalePoint([_shot.p.x * scale, _shot.p.y * scale], pscale / 10, [w, h]);
-                sX += localCalibration.offsetX;
-                sY += localCalibration.offsetY;
+        if (minDistance > 10) minDistanceShot = undefined;
+        if (highlightedShot === minDistanceShot) return;
 
-                ctx.beginPath();
-                ctx.arc(
-                    sX, sY,
-                    dotSize / 2,
-                    0,
-                    2 * Math.PI
-                );
-                ctx.fill();
-            };
+        setHighlightedShot(minDistanceShot);
+    }
 
-            if (target_image_loaded) {
-                ctx.clearRect(0, 0, w, h);
-                ctx.drawImage(target_image, 0, 0, w, h);
+    function drawCanvas(ctx: CanvasRenderingContext2D) {
+        let dotSize = scale * dotSizeScale;
+        ctx.fillStyle = secondaryColor;
+        for (let _shot of secondaryShots) {
+            drawShot(ctx, _shot, dotSize);
+        }
 
-                let dotSize = scale * dotSizeScale!;
-                ctx.fillStyle = secondaryColor!;
-                for (let _shot of secondaryShots) {
-                    drawShot(_shot, dotSize);
-                }
-
-                dotSize = scale * 2 * dotSizeScale!;
-                ctx.fillStyle = primaryColor!;
-                for (let _shot of primaryShots) {
-                    drawShot(_shot, dotSize);
-                }
-            }
+        dotSize = scale * 2 * dotSizeScale;
+        ctx.fillStyle = primaryColor;
+        for (let _shot of primaryShots) {
+            drawShot(ctx, _shot, dotSize);
         }
     }
 
@@ -116,53 +146,16 @@ export default function TargetVisualiser(
                 highlightedShot={highlightedShot}
                 interactive={interactive}
             >
-                <canvas
-                    style={{maxWidth: "100%", maxHeight: "100%"}}
-                    ref={canvasRef}
-                    width={w}
-                    height={h}
-                    onMouseMove={(event) => {
-                        if (!canvas) return;
-                        let rect = canvas!.getBoundingClientRect(), // abs. size of element
-                            scaleX = canvas!.width / rect.width, // relationship bitmap vs. element for x
-                            scaleY = canvas!.height / rect.height; // relationship bitmap vs. element for y
-                        let x = (event.clientX - rect.left) * scaleX;
-                        let y = (event.clientY - rect.top) * scaleY;
-
-                        let minDistance = -1;
-                        let minDistanceShot = undefined;
-                        const checkShot = (_shot: ShotData) => {
-                            if (!_shot || !_shot.p) return;
-                            let [sX, sY] = scalePoint([_shot.p.x * scale, _shot.p.y * scale], pscale / 10, [w, h]);
-                            sX += localCalibration.offsetX;
-                            sY += localCalibration.offsetY;
-                            let distance = Math.sqrt(
-                                (x - sX) ** 2 + (y - sY) ** 2
-                            );
-
-                            if (minDistance < 0 || minDistance > distance) {
-                                minDistance = distance;
-                                minDistanceShot = _shot;
-                            }
-                        };
-
-
-                        for (let _shot of primaryShots) {
-                            checkShot(_shot);
-                        }
-                        if (minDistance > 10) minDistanceShot = undefined;
-
-                        if (minDistanceShot === undefined)
-                            for (let _shot of secondaryShots) {
-                                checkShot(_shot);
-                            }
-
-                        if (minDistance > 10) minDistanceShot = undefined;
-                        if (highlightedShot === minDistanceShot) return;
-
-                        setHighlightedShot(minDistanceShot);
-                    }}
-                />
+                <div style={{width: "100%", height: "100%", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                    <canvas
+                        style={{maxWidth: loaded?"100%":0, maxHeight: loaded?"100%":0}}
+                        ref={canvasRef}
+                        width={w}
+                        height={h}
+                        onMouseMove={handleMouseMove}
+                    />
+                    {!loaded?<CircularProgress/>:<></>}
+                </div>
             </ShotTooltip>
         </div>
     );
@@ -176,11 +169,11 @@ export function ShotTooltip(
     }: {
         highlightedShot: ShotData | undefined;
         children: any;
-        interactive?: boolean|undefined;
+        interactive?: boolean | undefined;
     }) {
     const navigate = useNavigate();
 
-    if (interactive===false) return <>{children}</>;
+    if (interactive === false) return <>{children}</>;
 
     const content = (
         <div>

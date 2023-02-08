@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from "react";
+import {url} from "./backendApi";
 
-export function useAppSize(){
-    const [windowSize, setWindowSize] = useState<{width:number,height:number}>({
+export function useAppSize() {
+    const [windowSize, setWindowSize] = useState<{ width: number, height: number }>({
         width: 0,
         height: 0,
     });
@@ -11,8 +12,8 @@ export function useAppSize(){
         function handleResize() {
             // Set window width/height to state
             setWindowSize({
-                width: document.querySelector("body")?.clientWidth??0,
-                height: document.querySelector("body")?.clientHeight??0,
+                width: document.querySelector("body")?.clientWidth ?? 0,
+                height: document.querySelector("body")?.clientHeight ?? 0,
             });
         }
 
@@ -29,7 +30,7 @@ export function useAppSize(){
     return windowSize;
 }
 
-export function useLocalStorage(key:string, initialValue:string) {
+export function useLocalStorage(key: string, initialValue: string) {
     // State to store our value
     // Pass initial state function to useState so logic is only executed once
     const [storedValue, setStoredValue] = useState(() => {
@@ -51,7 +52,7 @@ export function useLocalStorage(key:string, initialValue:string) {
 
     // Return a wrapped version of useState's setter function that ...
     // ... persists the new value to localStorage.
-    const setValue = (value:any) => {
+    const setValue = (value: any) => {
         try {
             // Allow value to be a function so we have same API as useState
             const valueToStore =
@@ -71,21 +72,52 @@ export function useLocalStorage(key:string, initialValue:string) {
     return [storedValue, setValue];
 }
 
-export function createContext<T>(){
+export function createContext<T>() {
     // @ts-ignore
     return React.createContext<T>(undefined);
 }
 
-export function useUpdate(){
-    let [update,setUpdate] = useState(0);
-    return ()=>{
-        setUpdate(Math.random()*1000000);
+export function useUpdate() {
+    let [update, setUpdate] = useState(0);
+    return () => {
+        setUpdate(Math.random() * 1000000);
     }
 }
 
-export function useUpdateV():[number, ()=>any]{
-    let [update,setUpdate] = useState(0);
-    return [update,()=>{
-        setUpdate(Math.random()*1000000);
+export function useUpdateV(): [number, () => any] {
+    let [update, setUpdate] = useState(0);
+    return [update, () => {
+        setUpdate(Math.random() * 1000000);
     }]
+}
+
+export function useWaitForCanvas(ctx: CanvasRenderingContext2D | undefined | null, cb: (ctx: CanvasRenderingContext2D) => any, continuous?: boolean) {
+    if (continuous) {
+        if (ctx)
+            cb(ctx)
+        return;
+    }
+
+    useEffect(() => {
+        if (ctx)
+            cb(ctx);
+    }, [ctx])
+}
+
+export function useDrawImageOnCanvas(ctx: CanvasRenderingContext2D | undefined | null, src: string) {
+    const [loaded, setLoaded] = useState(false);
+    useWaitForCanvas(ctx, (ctx) => {
+        let w = ctx.canvas.width;
+        let h = ctx.canvas.height;
+
+        ctx.imageSmoothingEnabled = false;
+        let image = new Image(w, h);
+        image.src = src;
+        image.onload = () => {
+            setLoaded(true);
+            ctx.clearRect(0, 0, w, h);
+            ctx.drawImage(image, 0, 0, w, h);
+        }
+    })
+    return loaded;
 }
