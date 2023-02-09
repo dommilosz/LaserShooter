@@ -19,10 +19,7 @@ export let stateData: {
     currentSession: number, sessionData: SessionData, lastKA: number, users: { [key: number]: string }, changeIndex: number
 } = {
     currentSession: +new Date(),
-    sessionData: {
-        shots: [],
-        clients: {},
-    },
+    sessionData: {shots:[], header:{ts:+new Date()}, clients:[]},
     lastKA: 0,
     users: {},
     changeIndex: 0,
@@ -40,7 +37,7 @@ if (fs.existsSync(`data/calibration.json`)) {
 }
 
 export async function saveData() {
-    if (stateData.sessionData.shots.length > 0) {
+    if (stateData.sessionData && stateData.sessionData.shots.length > 0) {
         let str = JSON.stringify(stateData.sessionData);
         let buf = zlib.gzipSync(Buffer.from(str));
 

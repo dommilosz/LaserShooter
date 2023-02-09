@@ -16,7 +16,7 @@ export default function ({style}:{style?:React.CSSProperties}) {
     const [serverUrl, setServerUrl] = useState("");
     let {sessionInfo} = useContext(sessionContext);
 
-    let isError = sessionInfo.session <= 0;
+    let isError = !sessionInfo.session;
     let lastFetch = `${moment(sessionInfo.lastFetch).fromNow()} ${isError ? " FAILED" : ""}`;
 
     return <SettingItem style={style}>

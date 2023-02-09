@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import "./App.css";
-import {CalibrationType, SessionContext} from "./types";
+import {CalibrationType, SessionContext, SessionEntry} from "./types";
 import Header from "./components/header";
 import {getCalibration, getSessions, useCurrentSession} from "./api/backendApi";
 import {createContext, useUpdateV} from "./api/hooks";
@@ -31,9 +31,9 @@ function App() {
 
     useEffect(() => {
         selectedShotState[1](0);
-    }, [sessionInfo.shots])
+    }, [sessionInfo.session?.ts, sessionInfo.session?.shots, sessionInfo.session?.name])
 
-    let [sessions, setSessions] = useState<{name:string, shots:number}[]>([]);
+    let [sessions, setSessions] = useState<SessionEntry[]>([]);
     let [updateSessionsValue,updateSessions] = useUpdateV();
     useEffect(() => {
         (async () => {
@@ -50,7 +50,7 @@ function App() {
     return (
         <div className="App" style={{backgroundColor:theme.palette.background.default}}>
             <sessionContext.Provider value={{sessionInfo, sessionData, users, sessions, updateSessions, localCalibration, setLocalCalibration}}>
-                <ServerConnectionModal open={sessionInfo.lastFetch > 0 && sessionInfo.session <= 0}/>
+                <ServerConnectionModal open={sessionInfo.lastFetch > 0 && !sessionInfo.session}/>
                 <BrowserRouter>
                     <Header/>
                     <div style={{height:"calc(100vh - 105px)",padding:10, overflow:"auto", display:"flex", flexDirection:"row", flexWrap:"wrap"}}>

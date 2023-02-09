@@ -67,6 +67,30 @@ app.get("/sessions/current", (req: Request, res: Response) => {
     });
 });
 
+app.patch("/sessions/current", async (req: Request, res: Response) => {
+    let newName = req.body.name;
+    if(!newName){
+        sendText(res,"Invalid name", 400);
+        return;
+    }
+
+    stateData.sessionData.header.name = newName;
+    await saveData();
+
+    res.writeHead(200, {
+        "Content-Type": "application/json",
+        "Content-Encoding": "gzip",
+    });
+    stateData.sessionData.shots = stateData.sessionData.shots.map((shot)=>{
+        shot.score = calcScore(shot.p.x,shot.p.y, stateData.calibration);
+        return shot;
+    })
+    const text = JSON.stringify(stateData.sessionData);
+    zlib.gzip(text, function (_, result) {
+        res.end(result);
+    });
+});
+
 app.get("/sessions/:session", (req: Request, res: Response) => {
     let buf = fs.readFileSync("data/" + req.params.session + ".json.gz");
     res.writeHead(200, {
@@ -88,12 +112,13 @@ app.get("/sessions", (req: Request, res: Response) => {
                 let buf = fs.readFileSync("data/" + file.name);
                 let unzip = zlib.gunzipSync(buf);
                 let sessionData:SessionData = JSON.parse(unzip.toString());
-                return {name:file.name.split(".")[0], shots:sessionData.shots.length}
+                if(!sessionData.header)sessionData.header={ts:Number(file.name.split(".")[0])}
+                return {shots:sessionData.shots.length, ...sessionData.header};
             }catch {
-                return {name:file.name.split(".")[0], shots:-1}
+                return undefined;
             }
-        }).filter((file)=>{
-            return file.shots > 0;
+        }).filter((session)=>{
+            return session && session.ts > 0;
         });
     sendJSON(res, files, 200);
 });
@@ -107,14 +132,14 @@ app.delete("/sessions", (req: Request, res: Response) => {
             fs.unlinkSync("data/"+file.name)
         });
     stateData.currentSession = +new Date();
-    stateData.sessionData = {shots: [], clients: {}};
+    stateData.sessionData = {shots: [], clients: {}, header:{ts:stateData.currentSession}};
     sendText(res, "Sessions deleted", 200);
 });
 
 app.get("/session", (req: Request, res: Response) => {
     sendJSON(
         res,
-        {session: stateData.currentSession, shots: stateData.sessionData.shots.length, lastKA:stateData.lastKA, changeIndex:stateData.changeIndex},
+        {session: {shots:stateData.sessionData.shots.length, name:stateData.sessionData.header?.name, ts:stateData.sessionData.header?.ts}, lastKA:stateData.lastKA, changeIndex:stateData.changeIndex},
         200
     );
 });
@@ -129,6 +154,7 @@ app.put("/session", (req: Request, res: Response) => {
             let unzip = zlib.gunzipSync(buf);
             stateData.sessionData = JSON.parse(unzip.toString());
             stateData.currentSession = session;
+            if(!stateData.sessionData.header)stateData.sessionData.header = {ts:stateData.currentSession}
             sendJSON(res, {session: stateData.currentSession}, 200);
             return;
         } else {
@@ -138,7 +164,7 @@ app.put("/session", (req: Request, res: Response) => {
     }
 
     stateData.currentSession = +new Date();
-    stateData.sessionData = {shots: [], clients: {}};
+    stateData.sessionData = {shots: [], clients: {}, header:{ts:stateData.currentSession}};
     sendJSON(res, {session: stateData.currentSession}, 200);
 
 });
@@ -251,7 +277,7 @@ app.delete("/server-data", async (req: Request, res: Response) => {
             fs.unlinkSync("data/"+file.name)
         });
     stateData.currentSession = +new Date();
-    stateData.sessionData = {shots: [], clients: {}};
+    stateData.sessionData = {shots: [], clients: {}, header:{ts:stateData.currentSession}};
     sendText(res, "Server reset", 200);
 });
 

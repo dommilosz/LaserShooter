@@ -33,7 +33,9 @@ export type SessionData = {
     clients: { [key: number]: ClientData };
 };
 
-export type SessionInfo = { lastKA: number; session: number; shots: number, changeIndex: number, lastFetch: number }
+export type SessionEntry = { name?: string, ts: number, shots: number }
+
+export type SessionInfo = { lastKA: number; session?: SessionEntry, changeIndex: number, lastFetch: number }
 
 export type Users = {
     [key: number]: string
@@ -51,7 +53,7 @@ export type SessionContext = {
     sessionData: SessionData,
     sessionInfo: SessionInfo,
     users: Users,
-    sessions: { name: string, shots: number }[],
+    sessions: SessionEntry[],
     updateSessions: () => any,
     localCalibration: CalibrationType,
     setLocalCalibration: (v: CalibrationType) => any

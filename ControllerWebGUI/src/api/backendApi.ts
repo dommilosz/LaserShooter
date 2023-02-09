@@ -1,18 +1,18 @@
-import { useEffect, useState } from "react";
-import {SessionInfo, SessionData, Users, Session, CalibrationType} from "../types";
+import {useEffect, useState} from "react";
+import {SessionInfo, SessionData, Users, Session, CalibrationType, SessionEntry} from "../types";
 
 export let url = "http://localhost:3000"
-try{
-    url = JSON.parse(localStorage.getItem("server-url")??url)
-}catch{
+try {
+    url = JSON.parse(localStorage.getItem("server-url") ?? url)
+} catch {
 
 }
-if(!url.endsWith("/")){
+if (!url.endsWith("/")) {
     url = url + "/"
 }
 
-async function fetchWithTimeout(resource:string, options:any = {}) {
-    const { timeout = 5000 } = options;
+async function fetchWithTimeout(resource: string, options: any = {}) {
+    const {timeout = 5000} = options;
 
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeout);
@@ -29,6 +29,14 @@ export async function getSession(session: number | "current") {
     return await sessionData.json();
 }
 
+export async function renameSession(newName: string) {
+    return await (await fetch(url + "sessions/current", {
+        method: "PATCH",
+        body: JSON.stringify({name: newName}),
+        headers: {"content-type": "application/json"},
+    })).json();
+}
+
 export async function getSessionInfo() {
     let sessionInfo = await fetchWithTimeout(url + "session");
     return await sessionInfo.json();
@@ -39,28 +47,28 @@ export async function getUsers() {
     return await users.json();
 }
 
-export async function putUser(userId:number,userName:string){
+export async function putUser(userId: number, userName: string) {
     return await fetch(url + "users/" + userId, {
         method: "PUT",
-        body: JSON.stringify({ name: userName }),
-        headers: { "content-type": "application/json" },
+        body: JSON.stringify({name: userName}),
+        headers: {"content-type": "application/json"},
     });
 }
 
-export async function removeUser(userId:number){
-    return  await fetch(url + "users/" + userId, {
+export async function removeUser(userId: number) {
+    return await fetch(url + "users/" + userId, {
         method: "DELETE",
     });
 }
 
-export async function removeUsers(){
-    return  await fetch(url + "users", {
+export async function removeUsers() {
+    return await fetch(url + "users", {
         method: "DELETE",
     });
 }
 
 
-export async function assignUserToClient(clientId:number,user:string){
+export async function assignUserToClient(clientId: number, user: string) {
     return await fetch(`${url}client/${clientId}/user`, {
         method: "PUT",
         body: JSON.stringify({
@@ -71,7 +79,7 @@ export async function assignUserToClient(clientId:number,user:string){
     });
 }
 
-export async function deleteShot(shotId:number){
+export async function deleteShot(shotId: number) {
     return await fetch(
         url + "shot/" + shotId,
         {
@@ -80,61 +88,59 @@ export async function deleteShot(shotId:number){
     );
 }
 
-export async function checkServer(serverUrl:string){
-    if(!serverUrl.endsWith("/"))
-        serverUrl = serverUrl+"/";
-    let resp = await fetch(serverUrl+"session");
+export async function checkServer(serverUrl: string) {
+    if (!serverUrl.endsWith("/"))
+        serverUrl = serverUrl + "/";
+    let resp = await fetch(serverUrl + "session");
     let json = await resp.json();
     return !!json.session;
 }
 
-export async function putSession(session?:number){
+export async function putSession(session?: number) {
     return await fetch(url + "session/", {
         method: "PUT",
-        body: JSON.stringify({ session: session }),
-        headers: { "content-type": "application/json" },
+        body: JSON.stringify({session: session}),
+        headers: {"content-type": "application/json"},
     });
 }
 
-export async function getSessions():Promise<{name:string, shots:number}[]>{
+export async function getSessions(): Promise<SessionEntry[]> {
     let resp = await fetch(url + "sessions/");
     return await resp.json();
 }
 
-export async function removeSessions(){
-    return  await fetch(url + "sessions", {
+export async function removeSessions() {
+    return await fetch(url + "sessions", {
         method: "DELETE",
     });
 }
 
-export async function resetServer(){
-    return  await fetch(url + "server-data", {
+export async function resetServer() {
+    return await fetch(url + "server-data", {
         method: "DELETE",
     });
 }
 
-export async function setCalibration(data:CalibrationType){
-    return  await fetch(url + "calibration", {
+export async function setCalibration(data: CalibrationType) {
+    return await fetch(url + "calibration", {
         method: "POST",
-        body:JSON.stringify(data),
-        headers:{"Content-Type":"Application/json"},
+        body: JSON.stringify(data),
+        headers: {"Content-Type": "Application/json"},
     });
 }
 
-export async function getCalibration(){
+export async function getCalibration() {
     let resp = await fetch(url + "calibration/");
     return await resp.json();
 }
 
 
-
 export function useCurrentSession(): Session {
     let [sessionInfo, setSessionInfo] = useState<SessionInfo>({
-        session: 0,
-        shots: 0,
+        session: undefined,
         lastKA: 0,
         changeIndex: 0,
-        lastFetch:0,
+        lastFetch: 0,
     });
     let [sessionData, setSessionData] = useState<SessionData>({
         shots: [],
@@ -147,11 +153,11 @@ export function useCurrentSession(): Session {
 
     useEffect(() => {
         const intervalCall = setInterval(async () => {
-            try{
+            try {
                 setSessionInfo(await getSessionInfo());
-            }catch(e) {
+            } catch (e) {
                 console.error(e);
-                setSessionInfo({session:0,lastKA:0,shots:0,changeIndex:0,lastFetch});
+                setSessionInfo({session: undefined, lastKA: 0, changeIndex: 0, lastFetch});
             }
             setLastFetch(+new Date());
         }, 1500);
@@ -163,21 +169,21 @@ export function useCurrentSession(): Session {
 
     useEffect(() => {
         setTimeout(async () => {
-            if (sessionInfo.session === 0) {
-                try{
+            if (!sessionInfo.session) {
+                try {
                     setSessionInfo(await getSessionInfo());
-                }catch(e) {
+                } catch (e) {
                     console.error(e);
-                    setSessionInfo({session:0,lastKA:0,shots:0,changeIndex:0,lastFetch});
+                    setSessionInfo({session: undefined, lastKA: 0, changeIndex: 0, lastFetch});
                 }
                 setLastFetch(+new Date());
             }
             setUsers(await getUsers());
             setSessionData(await getSession("current"));
         });
-    }, [sessionInfo.changeIndex,sessionInfo.session]);
+    }, [sessionInfo.changeIndex, sessionInfo.session?.ts, sessionInfo.session?.name]);
 
     sessionInfo.lastFetch = lastFetch;
 
-    return { sessionInfo, sessionData, users };
+    return {sessionInfo, sessionData, users};
 }

@@ -24,6 +24,7 @@ client.on("message", async function (message, rinfo) {
             data.ts = +new Date();
             data.score = calcScore(data.p.x, data.p.y, stateData.calibration);
             added.push(p.idPacket.shotId);
+
             stateData.sessionData.shots.push(data);
 
             if (!stateData.sessionData.clients[data.idPacket.clientId])

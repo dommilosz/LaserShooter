@@ -30,7 +30,7 @@ export function LinkButton({
 export default function header() {
     let { sessionInfo } = useContext(sessionContext);
     let sessionTime = moment(Number(sessionInfo.session));
-    let sessionValid = sessionInfo.session > 0;
+    let sessionValid = !!sessionInfo.session;
 
     return (
         <div className="header">

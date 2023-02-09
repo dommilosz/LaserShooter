@@ -57,7 +57,7 @@ export type ClientData = {
     users:{from:number,userId:number}[]
 }
 
-export type SessionData = { shots: ShotData[]; clients: { [key: number]: ClientData } }
+export type SessionData = { header:{ name?: string, ts: number } ,shots: ShotData[], clients: { [key: number]: ClientData } }
 export type CalibrationType = { offsetX: number; offsetY: number; scale: number, scoreMultiplier:number, scorePostMultiplier:number }
 
 export type BitmapData = PNG & Partial<{buffer:Buffer, gz:Buffer}>
