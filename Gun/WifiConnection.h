@@ -1,3 +1,5 @@
+#include <WiFi.h>
+
 void ConnectToWiFi() {
   WiFi.begin("ESP32", "123456789");
   delay(200);
@@ -26,4 +28,12 @@ void ConnectToWiFi() {
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
   PlayInfoSound(1);
+}
+
+void CheckWifiConnection(){
+  if ((millis() - lastKA) > KA_TIMEOUT || WiFi.status() != WL_CONNECTED) {
+    PlayInfoSound(3);
+    WiFi.disconnect();
+    ConnectToWiFi();
+  }
 }
