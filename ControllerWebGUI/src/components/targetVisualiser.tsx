@@ -143,15 +143,13 @@ export default function TargetVisualiser(
                 highlightedShot={highlightedShot}
                 interactive={interactive}
             >
-                <div style={{width: "100%", height: "100%", display:"flex", justifyContent:"center", alignItems:"center"}}>
-                    <canvas
-                        style={{maxWidth: "100%", maxHeight: "100%"}}
-                        ref={canvasRef}
-                        width={w}
-                        height={h}
-                        onMouseMove={handleMouseMove}
-                    />
-                </div>
+                <canvas
+                    style={{maxWidth: "100%", maxHeight: "100%"}}
+                    ref={canvasRef}
+                    width={w}
+                    height={h}
+                    onMouseMove={handleMouseMove}
+                />
             </ShotTooltip>
         </div>
     );
