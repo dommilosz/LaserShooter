@@ -145,7 +145,6 @@ app.get("/session", (req: Request, res: Response) => {
 });
 
 app.put("/session", (req: Request, res: Response) => {
-    let body = req.body;
     let session = req.body.session;
 
     if (session) {
@@ -251,7 +250,6 @@ app.put("/users/:user", async (req: Request, res: Response) => {
 })
 
 app.delete("/users/:user", async (req: Request, res: Response) => {
-    let name = req.body.name;
     let user = Number(req.params.user);
     if(!isFinite(user)){
         sendText(res, "Invalid values", 400);
