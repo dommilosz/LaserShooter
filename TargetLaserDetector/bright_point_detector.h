@@ -1,11 +1,5 @@
 #pragma once
-
-struct Point {
-  int x;
-  int y;
-  byte R, G, B;
-  bool found;
-};
+#include "NetworkStructs.h"
 
 const int DIFF_TRESHOLD = 120;
 const int MAX_DIFF_POINTS = 50;

@@ -2,59 +2,50 @@
 
 #include "capture_flow.h"
 #include "AsyncUDP.h"
-
-struct IDPacket {
-  int clientId;
-  int shotId;
-};
-
-struct PointPacket {
-  int pktype = 0;
-  IDPacket idPacket;
-  int w, h;
-  int score;
-  Point p;
-};
-
-struct KeepAlivePacket {
-  int pktype = 1;
-  int n;
-};
+#include "NetworkStructs.h"
 
 AsyncUDP udp;
-int lastIDpTime = 0;
-IDPacket lastIDp;
+int lastShotPacketTime = 0;
+IDShotPacket lastShotPacket;
 int KAn = 0;
+
+void OnPacket(AsyncUDPPacket packet) {
+  uint8_t *data = packet.data();
+  int packetId = *((int *)data);
+
+  size_t len = packet.length();
+
+  Serial.print("From: ");
+  Serial.print(packet.remoteIP());
+  Serial.print(" Length: ");
+  Serial.print(packet.length());
+
+  if (packetId == IDShotPacket_ID) {
+    IDShotPacket p = *(IDShotPacket *)data;
+
+    if (lastShotPacket.clientId == 0) {
+      lastShotPacket = p;
+      lastShotPacketTime = millis();
+      Serial.printf(", ClientID: %u, ShotID: %u\n", lastShotPacket.clientId, lastShotPacket.shotId);
+    } else {
+      Serial.print(", Ignored\n");
+    }
+  }
+}
 
 void SetupUDPServer() {
   udp.connect(IPAddress(192, 168, 4, 255), 19700);
-  if (udp.listen(19701)) {
+  if (udp.listen(19700)) {
     Serial.print("UDP Listening on IP: ");
     Serial.println(WiFi.localIP());
-    udp.onPacket([](AsyncUDPPacket packet) {
-      Serial.print("From: ");
-      Serial.print(packet.remoteIP());
-      Serial.print(" Length: ");
-      Serial.print(packet.length());
-
-      uint8_t *data = packet.data();
-      size_t len = packet.length();
-
-      if (lastIDp.clientId == 0) {
-        lastIDp = *(IDPacket *)data;
-        lastIDpTime = millis();
-        Serial.printf(", ClientID: %u, ShotID: %u\n", lastIDp.clientId, lastIDp.shotId);
-      } else {
-        Serial.print(", Ignored\n");
-      }
-    });
+    udp.onPacket(OnPacket);
   }
 }
 
 void BroadcastPoint() {
-  if (lastIDp.clientId != 0) {
-    if ((millis() - lastIDpTime) > 500) {
-      lastIDp.clientId = 0;
+  if (lastShotPacket.clientId != 0) {
+    if ((millis() - lastShotPacketTime) > 500) {
+      lastShotPacket.clientId = 0;
     }
 
     Point p;
@@ -63,7 +54,7 @@ void BroadcastPoint() {
 
     if (p.found) {
       PointPacket pp;
-      pp.idPacket = lastIDp;
+      pp.idPacket = lastShotPacket;
       pp.p = p;
       pp.w = w;
       pp.h = h;
@@ -79,7 +70,7 @@ void BroadcastPoint() {
       delay(5);
       udp.broadcastTo((uint8_t *)&pp, sizeof(PointPacket), 19700);
       Serial.println("Point found");
-      lastIDp.clientId = 0;
+      lastShotPacket.clientId = 0;
 
       while (p.found) {
         int res = GetPoint(&p);
