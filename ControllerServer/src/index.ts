@@ -16,14 +16,16 @@ export let config = configured({
 
 export let stateData: {
     calibration: CalibrationType;
-    currentSession: number, sessionData: SessionData, lastKA: number, users: { [key: number]: string }, changeIndex: number
+    currentSession: number, sessionData: SessionData, lastKA: number, users: { [key: number]: string }, changeIndex: number,
+    clients: {[key:string]:{lastPacket: number,}}
 } = {
     currentSession: +new Date(),
-    sessionData: {shots:[], header:{ts:+new Date()}, clients:[]},
+    sessionData: {shots:[], header:{ts:+new Date()}, clients:{}},
     lastKA: 0,
     users: {},
     changeIndex: 0,
-    calibration: {offsetX: 0, offsetY: 0, scale: 100, scoreMultiplier:10, scorePostMultiplier:10}
+    calibration: {offsetX: 0, offsetY: 0, scale: 100, scoreMultiplier:10, scorePostMultiplier:10},
+    clients:{}
 }
 
 if (!fs.existsSync("data")) {

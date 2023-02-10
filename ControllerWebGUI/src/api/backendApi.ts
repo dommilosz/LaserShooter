@@ -24,6 +24,11 @@ async function fetchWithTimeout(resource: string, options: any = {}) {
     return response;
 }
 
+export async function getActiveClients() {
+    let sessionData = await fetch(url + "clients/active");
+    return await sessionData.json();
+}
+
 export async function getSession(session: number | "current") {
     let sessionData = await fetch(url + "sessions/" + session);
     return await sessionData.json();
@@ -76,6 +81,18 @@ export async function assignUserToClient(clientId: number, user: string) {
             newUser: user,
         }),
         headers: {"content-type": "application/json"},
+    });
+}
+
+export async function addClient(clientId: number) {
+    return await fetch(`${url}client/${clientId}`, {
+        method: "PUT",
+    });
+}
+
+export async function deleteClient(clientId: number) {
+    return await fetch(`${url}client/${clientId}`, {
+        method: "DELETE",
     });
 }
 

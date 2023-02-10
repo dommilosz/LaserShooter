@@ -1,7 +1,8 @@
-import {EmptyPacket, PointPacket, ShotData} from "./types";
+import {ShotData} from "./types";
 import {calcScore} from "./bitmapParser";
 import {config, saveData, stateData} from "./index";
 import dgram from "dgram";
+import {EmptyPacket, IDPacket, IDPacket_ID, KeepAlivePacket_ID, PointPacket, PointPacket_ID} from "./networkStructs";
 
 const client = dgram.createSocket("udp4");
 
@@ -16,7 +17,9 @@ client.on("listening", function () {
 let added: number[] = []
 client.on("message", async function (message, rinfo) {
     EmptyPacket.setBuffer(message);
-    if (EmptyPacket.fields.pktype == 0) {
+    const packetId = EmptyPacket.fields.pktype;
+
+    if (packetId == PointPacket_ID) {
         PointPacket.setBuffer(message);
         let p: any = PointPacket.fields;
         if (!added.includes(p.idPacket.shotId)) {
@@ -38,8 +41,13 @@ client.on("message", async function (message, rinfo) {
         }
     }
 
-    if (EmptyPacket.fields.pktype === 1) {
+    if (packetId === KeepAlivePacket_ID) {
         stateData.lastKA = +new Date();
+    }
+
+    if(packetId === IDPacket_ID){
+        IDPacket.setBuffer(message);
+        stateData.clients[IDPacket.fields.cliendId] = {lastPacket:+new Date()};
     }
 });
 

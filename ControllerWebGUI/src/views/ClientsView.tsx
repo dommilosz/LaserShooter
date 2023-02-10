@@ -45,7 +45,7 @@ export default function ClientsView() {
                     })}
                     secondaryShots={showAllShotsOnTarget?sessionData.shots:[]}
                     primaryColor={"red"}
-                    secondaryColor={"red"}
+                    secondaryColor={"black"}
                 ></TargetVisualiser>
             </Paper>
         </>

@@ -212,19 +212,20 @@ app.put("/client/:client/user", async (req: Request, res: Response) => {
     let newUserId = body.newUser;
     let from = body.from;
 
-    if (isFinite(Number(from)) && isFinite(Number(newUserId))) {
-        let clientData = stateData.sessionData.clients[Number(client)];
-        if(clientData){
-            clientData.users.push({from:Number(from),userId:Number(newUserId)});
-            await saveData();
-            sendJSON(res, clientData, 200);
-        }else{
-            sendText(res, "Client Not found", 404);
-            return;
-        }
+    if (!isFinite(Number(from)) || !isFinite(Number(newUserId))) {
+        sendText(res, "Invalid values", 400);
+        return;
     }
-    sendText(res, "Invalid values", 400);
-    return;
+
+    let clientData = stateData.sessionData.clients[Number(client)];
+    if (clientData) {
+        clientData.users.push({from: Number(from), userId: Number(newUserId)});
+        await saveData();
+        sendJSON(res, clientData, 200);
+    } else {
+        sendText(res, "Client Not found", 404);
+        return;
+    }
 });
 
 app.get("/users",async (req: Request, res: Response) => {
@@ -314,3 +315,54 @@ app.post("/calibration", async (req: Request, res: Response) => {
 app.listen(port, () => {
     console.log(`Api listening on port ${port}`);
 });
+
+app.get("/clients/active", async (req: Request, res: Response) => {
+    Object.keys(stateData.clients).forEach(client=>{
+        let clientData = stateData.clients[client];
+        let ts = +new Date();
+        if(ts-clientData.lastPacket > 30*1000){
+            delete stateData.clients[client];
+        }
+    })
+    stateData.clients[123] = {lastPacket:+new Date()}
+    sendJSON(res,stateData.clients, 200);
+})
+
+app.put("/client/:client", async (req: Request, res: Response) => {
+    let client = req.params.client;
+
+    if (!isFinite(Number(client))) {
+        sendText(res, "Invalid client", 400);
+        return;
+    }
+
+    let clientData = stateData.sessionData.clients[Number(client)];
+    if(!clientData){
+        stateData.sessionData.clients[Number(client)] = {users:[], id:Number(client)}
+        await saveData();
+        sendJSON(res, clientData, 200);
+    }else{
+        sendText(res, "Client already added", 400);
+        return;
+    }
+})
+
+app.delete("/client/:client", async (req: Request, res: Response) => {
+    let client = req.params.client;
+
+    if (!isFinite(Number(client))) {
+        sendText(res, "Invalid client", 400);
+        return;
+    }
+
+    delete stateData.sessionData.clients[Number(client)];
+    for (let shotKey in stateData.sessionData.shots){
+        let shot = stateData.sessionData.shots[shotKey];
+        if(shot.idPacket.clientId === Number(client)){
+            delete stateData.sessionData.shots[shotKey];
+        }
+    }
+
+    await saveData();
+    sendText(res, "Client deleted", 200);
+})
