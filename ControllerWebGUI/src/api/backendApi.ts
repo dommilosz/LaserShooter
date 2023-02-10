@@ -158,6 +158,7 @@ export function useCurrentSession(): Session {
         lastKA: 0,
         changeIndex: 0,
         lastFetch: 0,
+        startTime:0
     });
     let [sessionData, setSessionData] = useState<SessionData>({
         shots: [],
@@ -174,7 +175,7 @@ export function useCurrentSession(): Session {
                 setSessionInfo(await getSessionInfo());
             } catch (e) {
                 console.error(e);
-                setSessionInfo({session: undefined, lastKA: 0, changeIndex: 0, lastFetch});
+                setSessionInfo({session: undefined, lastKA: 0, changeIndex: 0, lastFetch,startTime:0});
             }
             setLastFetch(+new Date());
         }, 1500);
@@ -191,7 +192,7 @@ export function useCurrentSession(): Session {
                     setSessionInfo(await getSessionInfo());
                 } catch (e) {
                     console.error(e);
-                    setSessionInfo({session: undefined, lastKA: 0, changeIndex: 0, lastFetch});
+                    setSessionInfo({session: undefined, lastKA: 0, changeIndex: 0, lastFetch, startTime:0});
                 }
                 setLastFetch(+new Date());
             }

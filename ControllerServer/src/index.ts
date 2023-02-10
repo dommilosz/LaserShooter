@@ -14,6 +14,7 @@ export let config = configured({
     },
 });
 
+export let startTime = +new Date();
 export let stateData: {
     calibration: CalibrationType;
     currentSession: number, sessionData: SessionData, lastKA: number, users: { [key: number]: string }, changeIndex: number,

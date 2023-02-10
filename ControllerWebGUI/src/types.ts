@@ -35,7 +35,7 @@ export type SessionData = {
 
 export type SessionEntry = { name?: string, ts: number, shots: number }
 
-export type SessionInfo = { lastKA: number; session?: SessionEntry, changeIndex: number, lastFetch: number }
+export type SessionInfo = { lastKA: number; session?: SessionEntry, changeIndex: number, lastFetch: number, startTime:number }
 
 export type Users = {
     [key: number]: string

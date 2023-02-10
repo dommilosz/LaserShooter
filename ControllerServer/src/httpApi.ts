@@ -4,7 +4,7 @@ import {sendFile, sendJSON, sendText} from "express-wsutils";
 import zlib from "zlib";
 import fs from "fs";
 import {calcScore, originalBitmap, solidBitmap} from "./bitmapParser";
-import {config, saveData, stateData} from "./index";
+import {config, saveData, startTime, stateData} from "./index";
 import fetch from 'node-fetch';
 import {SessionData} from "./types";
 
@@ -139,7 +139,7 @@ app.delete("/sessions", (req: Request, res: Response) => {
 app.get("/session", (req: Request, res: Response) => {
     sendJSON(
         res,
-        {session: {shots:stateData.sessionData.shots.length, name:stateData.sessionData.header?.name, ts:stateData.sessionData.header?.ts}, lastKA:stateData.lastKA, changeIndex:stateData.changeIndex},
+        {session: {shots:stateData.sessionData.shots.length, name:stateData.sessionData.header?.name, ts:stateData.sessionData.header?.ts}, lastKA:stateData.lastKA, changeIndex:stateData.changeIndex, startTime},
         200
     );
 });

@@ -31,32 +31,36 @@ export function LinkButton({
     );
 }
 
-export function StatusIcon({status}:{status:"pending" | "error" | "ok"}){
-    if(status === "ok") return <CheckCircleIcon color={"success"}/>
-    if(status === "error") return <ErrorIcon color={"error"}/>
-    return <CircularProgress style={{width:20, height:"auto", margin:2}} color={"warning"}/>
+export function StatusIcon({status}: { status: "pending" | "error" | "ok" }) {
+    if (status === "ok") return <CheckCircleIcon color={"success"}/>
+    if (status === "error") return <ErrorIcon color={"error"}/>
+    return <CircularProgress style={{width: 20, height: "auto", margin: 2}} color={"warning"}/>
 }
 
 export function ConnectionStatus() {
     let {sessionInfo} = useContext(sessionContext);
     let serverStatus: "pending" | "error" | "ok" = "pending";
-    let targetStatus: "pending" | "error" | "ok" = "pending";
+    let targetStatus: "pending" | "error" | "ok" = "error";
 
     let ts = +new Date();
 
-    if (sessionInfo.session) serverStatus = "ok"
+    if (sessionInfo.session) {
+        serverStatus = "ok";
+        if (ts - sessionInfo.lastKA <= 15000) {
+            targetStatus = "ok";
+        }
+        if (sessionInfo.lastKA <= 0 && +new Date() - sessionInfo.startTime < 10000 ) targetStatus = "pending";
+    }
     if (sessionInfo.lastFetch > 0 && !sessionInfo.session) serverStatus = "error";
+    if(serverStatus === "error")targetStatus = "error";
+    if(serverStatus === "pending")targetStatus = "pending";
 
-    if (ts - sessionInfo.lastKA > 5000) targetStatus = "error";
-    else targetStatus = "ok";
-    if (sessionInfo.lastKA <= 0) targetStatus = "pending";
-
-    return <div style={{display:"flex"}} className={"header-status"}>
-        <div style={{margin:10}}>
+    return <div style={{display: "flex"}} className={"header-status"}>
+        <div style={{margin: 10}}>
             <StatusIcon status={serverStatus}/>
             <Typography>Server</Typography>
         </div>
-        <div style={{margin:10}}>
+        <div style={{margin: 10}}>
             <StatusIcon status={targetStatus}/>
             <Typography>Target</Typography>
         </div>
