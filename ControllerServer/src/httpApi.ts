@@ -324,7 +324,6 @@ app.get("/clients/active", async (req: Request, res: Response) => {
             delete stateData.clients[client];
         }
     })
-    stateData.clients[123] = {lastPacket:+new Date()}
     sendJSON(res,stateData.clients, 200);
 })
 
@@ -356,12 +355,9 @@ app.delete("/client/:client", async (req: Request, res: Response) => {
     }
 
     delete stateData.sessionData.clients[Number(client)];
-    for (let shotKey in stateData.sessionData.shots){
-        let shot = stateData.sessionData.shots[shotKey];
-        if(shot.idPacket.clientId === Number(client)){
-            delete stateData.sessionData.shots[shotKey];
-        }
-    }
+    stateData.sessionData.shots = stateData.sessionData.shots.filter(shot=>{
+        return shot.idPacket.clientId !== Number(client);
+    })
 
     await saveData();
     sendText(res, "Client deleted", 200);

@@ -4,7 +4,7 @@ DFRobotDFPlayerMini myDFPlayer;
 
 void InitPlayer(){
   Serial1.begin(9600, SERIAL_8N1, -1, DRPLAYER_TX);
-  myDFPlayer.begin(Serial1);
+  myDFPlayer.begin(Serial1, false);
   Serial.printf("Audio began\n");
 }
 

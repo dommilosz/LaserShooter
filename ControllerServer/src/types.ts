@@ -3,12 +3,12 @@ import {PNG} from "pngjs";
 
 export type IDPacketType = {
     pktype: 0,
-    cliendId:number,
+    clientId:number,
 }
 
 export type IDShotPacketType = {
     pktype: 0,
-    cliendId:number,
+    clientId:number,
     shotId:number,
 }
 

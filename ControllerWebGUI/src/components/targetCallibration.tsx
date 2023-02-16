@@ -2,12 +2,13 @@ import React, {useRef, useState} from "react";
 import {url} from "../api/backendApi";
 import {drawImageOnCanvas, useWaitForCanvas} from "../api/hooks";
 import {CircularProgress, Typography} from "@mui/material";
+import {CalibrationType} from "../types";
 
 export default function CalibrationTarget(
     {
-        imageKey, opacity
+        imageKey, opacity, calibration
     }: {
-        imageKey: string, opacity: number
+        imageKey: string, opacity: number, calibration:CalibrationType
     }) {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -17,18 +18,25 @@ export default function CalibrationTarget(
 
     let w = 160 * scale;
     let h = 120 * scale;
+    let imgScale = calibration.scale * scale /100;
+    let imgW = 160 * imgScale;
+    let imgH = 120 * imgScale;
 
     let [loaded, setLoaded] = useState(0);
 
     useWaitForCanvas(ctx, async (ctx) => {
         ctx.globalAlpha = 1;
-        await drawImageOnCanvas(ctx, url+"target-solid.png");
+        await drawImageOnCanvas(ctx, url+"target-solid.png",false);
 
         if (loaded < 1)
             setLoaded(1);
 
         ctx.globalAlpha = opacity;
-        await drawImageOnCanvas(ctx, url+"camera-image?key=" + imageKey);
+
+        let camX = calibration.offsetX + (ctx.canvas.width / 2 - imgW / 2);
+        let camY = calibration.offsetY + (ctx.canvas.height / 2 - imgH / 2)
+
+        await drawImageOnCanvas(ctx, url+"camera-image?key=" + imageKey, false, camX, camY, imgW, imgH);
 
         if (loaded < 2)
             setLoaded(2);

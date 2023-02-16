@@ -17,6 +17,7 @@ ButtonDebounce button(FIRE_BUTTON_PIN, 100);
 
 void setup() {
   Serial.begin(115200);
+  InitPlayer();
 
   pinMode(FIRE_BUTTON_PIN, INPUT_PULLUP);
   pinMode(LASER_PIN, OUTPUT);
@@ -56,16 +57,16 @@ void buttonChanged(const int state) {
 }
 
 void fire() {
-  inFireMode = true;
   Serial.println("FIRE!");
 
+  inFireMode = true;
   SendShotPacket();
 
   playRandomFromFolder(2, 2);
   digitalWrite(LASER_PIN, LASER_ACTIVE_STATE);
 
   int start = millis();
-  while ((millis() - start) > MAX_LASER_ACTIVE_TIME) {
+  while ((millis() - start) < MAX_LASER_ACTIVE_TIME) {
     delay(10);
     if (!inFireMode) break;
   }

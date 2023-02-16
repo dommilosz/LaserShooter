@@ -19,6 +19,9 @@ void OnPacket(AsyncUDPPacket packet) {
   Serial.print(packet.remoteIP());
   Serial.print(" Length: ");
   Serial.print(packet.length());
+  Serial.print(" ID: ");
+  Serial.print(packetId);
+
 
   if (packetId == IDShotPacket_ID) {
     IDShotPacket p = *(IDShotPacket *)data;
@@ -31,6 +34,8 @@ void OnPacket(AsyncUDPPacket packet) {
       Serial.print(", Ignored\n");
     }
   }
+
+  Serial.println();
 }
 
 void SetupUDPServer() {
@@ -69,7 +74,7 @@ void BroadcastPoint() {
       udp.broadcastTo((uint8_t *)&pp, sizeof(PointPacket), 19700);
       delay(5);
       udp.broadcastTo((uint8_t *)&pp, sizeof(PointPacket), 19700);
-      Serial.println("Point found");
+      Serial.printf("Point found, shotId: %u, clientId: %u\n", pp.idPacket.shotId, pp.idPacket.clientId);
       lastShotPacket.clientId = 0;
 
       while (p.found) {

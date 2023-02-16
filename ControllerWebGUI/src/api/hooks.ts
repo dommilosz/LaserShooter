@@ -98,17 +98,18 @@ export function useWaitForCanvas(ctx: CanvasRenderingContext2D | undefined | nul
         cb(ctx)
 }
 
-export async function drawImageOnCanvas(ctx: CanvasRenderingContext2D, src: string) {
-    return await new Promise<void>((r)=>{
-        let w = ctx.canvas.width;
-        let h = ctx.canvas.height;
+export async function drawImageOnCanvas(ctx: CanvasRenderingContext2D, src: string, clear: boolean = true, x?:number, y?:number, w?:number,h?:number) {
+    return await new Promise<void>((r) => {
+        let _w = w??ctx.canvas.width;
+        let _h = h??ctx.canvas.height;
         ctx.imageSmoothingEnabled = false;
 
         let image = new Image();
         image.src = src;
         image.onload = () => {
-            ctx.clearRect(0, 0, w, h);
-            ctx.drawImage(image, 0, 0, w, h);
+            if (clear)
+                ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+            ctx.drawImage(image, x??0, y??0, _w, _h);
             r();
         }
     })

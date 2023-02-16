@@ -26,7 +26,7 @@ export const PointStruct = Struct<PointStructType>()
 
 export const PointPacket = Struct<{pktype:number, idPacket:IDPacketType, w:number, h:number, score:number, p:PointStructType}>()
     .word32Ule("pktype")
-    .struct("idPacket", IDPacket)
+    .struct("idPacket", IDShotPacket)
     .word32Ule("w")
     .word32Ule("h")
     .word32Sle("score")

@@ -47,7 +47,7 @@ client.on("message", async function (message, rinfo) {
 
     if(packetId === IDPacket_ID){
         IDPacket.setBuffer(message);
-        stateData.clients[IDPacket.fields.cliendId] = {lastPacket:+new Date()};
+        stateData.clients[IDPacket.fields.clientId] = {lastPacket:+new Date()};
     }
 });
 
