@@ -31,6 +31,7 @@ void OnPacket(AsyncUDPPacket packet) {
       lastShotPacketTime = millis();
       Serial.printf(", ClientID: %u, ShotID: %u\n", lastShotPacket.clientId, lastShotPacket.shotId);
     } else {
+      lastShotPacketTime = millis();
       Serial.print(", Ignored\n");
     }
   }
