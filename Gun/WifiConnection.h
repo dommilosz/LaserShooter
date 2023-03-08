@@ -17,6 +17,12 @@ void ConnectToWiFi() {
     if (i > 30) {
       digitalWrite(LASER_PIN, HIGH);
       PlayInfoSound(3);
+
+      digitalWrite(LASER_PIN, !LASER_ACTIVE_STATE);
+      digitalWrite(BLOWBACK_PIN, !BLOWBACK_PIN_STATE);
+      gpio_hold_en((gpio_num_t)LASER_PIN);
+      gpio_hold_en((gpio_num_t)BLOWBACK_PIN);
+
       esp_deep_sleep_start();
     }
     delay(1000);
@@ -30,7 +36,7 @@ void ConnectToWiFi() {
   PlayInfoSound(1);
 }
 
-void CheckWifiConnection(){
+void CheckWifiConnection() {
   if ((millis() - lastKA) > KA_TIMEOUT || WiFi.status() != WL_CONNECTED) {
     PlayInfoSound(3);
     WiFi.disconnect();

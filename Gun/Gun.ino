@@ -21,12 +21,17 @@ void setup() {
 
   pinMode(FIRE_BUTTON_PIN, INPUT_PULLUP);
   pinMode(LASER_PIN, OUTPUT);
+  pinMode(BLOWBACK_PIN, OUTPUT);
 
   digitalWrite(LASER_PIN, !LASER_ACTIVE_STATE);
+  digitalWrite(BLOWBACK_PIN, !BLOWBACK_PIN_STATE);
   button.setCallback(buttonChanged);
 
   if (digitalRead(FIRE_BUTTON_PIN) == FIRE_BUTTON_PIN_STATE) {
     digitalWrite(LASER_PIN, LASER_ACTIVE_STATE);
+    digitalWrite(BLOWBACK_PIN, BLOWBACK_PIN_STATE);
+    delay(100);
+    digitalWrite(BLOWBACK_PIN, !BLOWBACK_PIN_STATE);
     while (digitalRead(FIRE_BUTTON_PIN) == FIRE_BUTTON_PIN_STATE) {
       delay(100);
     }
@@ -64,6 +69,7 @@ void fire() {
 
   playRandomFromFolder(2, 2);
   digitalWrite(LASER_PIN, LASER_ACTIVE_STATE);
+  digitalWrite(BLOWBACK_PIN, BLOWBACK_PIN_STATE);
 
   int start = millis();
   while ((millis() - start) < MAX_LASER_ACTIVE_TIME) {
@@ -72,5 +78,6 @@ void fire() {
   }
 
   digitalWrite(LASER_PIN, !LASER_ACTIVE_STATE);
+  digitalWrite(BLOWBACK_PIN, !BLOWBACK_PIN_STATE);
   Serial.println("AFTER FIRE!");
 }
